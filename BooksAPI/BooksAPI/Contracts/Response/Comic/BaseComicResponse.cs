@@ -1,6 +1,6 @@
-﻿namespace BooksAPI.Contracts.Requests.Comic;
+﻿namespace BooksAPI.Contracts.Response.Comic;
 
-public class ComicBaseRequest:BookBaseRequest
+public class BaseComicResponse:BookBaseResponse
 {
     public string DemographicType { get; set; } = string.Empty;
 

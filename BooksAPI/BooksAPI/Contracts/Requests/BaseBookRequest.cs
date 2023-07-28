@@ -1,6 +1,6 @@
 ﻿namespace BooksAPI.Contracts.Requests;
 
-public class BookBaseRequest
+public class BaseBookRequest
 {
     public string Title { get; set; } = string.Empty;
 

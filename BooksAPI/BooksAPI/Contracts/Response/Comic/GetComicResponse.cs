@@ -1,6 +1,6 @@
 ﻿namespace BooksAPI.Contracts.Response.Comic;
 
-public class ComicCreateResponse
+public class GetComicResponse:BaseComicResponse
 {
     
 }

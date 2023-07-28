@@ -1,5 +1,5 @@
 ﻿namespace BooksAPI.Contracts.Requests.Comic;
 
-public class ComicCreateRequest : ComicBaseRequest
+public class UpdateComicRequest:BaseComicRequest
 {
 }
