@@ -11,12 +11,12 @@ public class BookConfiguration<T> : IEntityTypeConfiguration<T> where T : Book
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
-        builder.Property(x => x.Author).IsRequired().HasMaxLength(50);
+        builder.Property(x => x.Author).IsRequired();
 
-        builder.Property(x => x.Title).IsRequired().HasMaxLength(60);
+        builder.Property(x => x.Title).IsRequired();
 
         builder.Property(x => x.Price).IsRequired();
 
-        builder.Property(x => x.ReadingStatus).IsRequired().HasMaxLength(20);
+        builder.Property(x => x.ReadingStatus).IsRequired();
     }
 }
