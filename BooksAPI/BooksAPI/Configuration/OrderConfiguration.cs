@@ -20,9 +20,5 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(x => x.Amount).IsRequired();
 
         builder.Property(x => x.NumberOfItems).IsRequired();
-
-        builder.HasMany(x => x.Comics)
-            .WithOne(x => x.Order)
-            .HasForeignKey(x => x.Id);
     }
 }

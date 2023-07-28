@@ -8,6 +8,4 @@ public class Order
     public string Place { get; set; } = string.Empty;
     public decimal Amount { get; set; }
     public int NumberOfItems { get; set; }
-
-    public List<Comic> Comics { get; set; } = new List<Comic>();
 }

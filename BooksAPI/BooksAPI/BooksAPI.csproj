@@ -22,7 +22,11 @@
 
 
     <ItemGroup>
+      <Folder Include="Contracts\Requests\Order\" />
+      <Folder Include="Contracts\Response\Order\" />
       <Folder Include="Controllers\" />
+      <Folder Include="Endpoints\" />
+      <Folder Include="Services\" />
     </ItemGroup>
 
 </Project>
