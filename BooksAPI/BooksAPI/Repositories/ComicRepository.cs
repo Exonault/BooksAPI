@@ -32,6 +32,26 @@ public class ComicRepository : IComicRepository
         return await _dbContext.Comics.ToListAsync();
     }
 
+    public async Task<List<Comic>> GetAllComicsByReadingStatus(String readingStatus)
+    {
+        return await _dbContext.Comics.Where(x => x.ReadingStatus == readingStatus).ToListAsync();
+    }
+
+    public async Task<List<Comic>> GetAllComicsByDemographic(String demographic)
+    {
+        return await _dbContext.Comics.Where(x => x.DemographicType == demographic).ToListAsync();
+    }
+
+    public async Task<List<Comic>> GetAllComicsByPublishingStatus(String publishingStatus)
+    {
+        return await _dbContext.Comics.Where(x => x.PublishingStatus == publishingStatus).ToListAsync();
+    }
+
+    public async Task<List<Comic>> GetAllComicsByComicType(String comicType)
+    {
+        return await _dbContext.Comics.Where(x => x.ComicType == comicType).ToListAsync();
+    }
+
     public async Task<Comic> UpdateComic(Comic comic)
     {
         _dbContext.Entry(comic).State = EntityState.Modified;

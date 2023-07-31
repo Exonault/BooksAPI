@@ -67,6 +67,35 @@ public class ComicService : IComicService
         return _mapper.Map<List<GetComicResponse>>(comics);
     }
 
+    public async Task<List<GetComicResponse>> GetAllComicsByReadingStatus(string readingStatus)
+    {
+        List<Comic> allComicsByReadingStatus = await _comicRepository.GetAllComicsByReadingStatus(readingStatus);
+
+        return _mapper.Map<List<GetComicResponse>>(allComicsByReadingStatus);
+    }
+
+    public async Task<List<GetComicResponse>> GetAllComicsByDemographic(string demographic)
+    {
+        List<Comic> allComicsByDemographic = await _comicRepository.GetAllComicsByDemographic(demographic);
+
+        return _mapper.Map<List<GetComicResponse>>(allComicsByDemographic);
+    }
+
+    public async Task<List<GetComicResponse>> GetAllComicsByPublishingStatus(string publishingStatus)
+    {
+        List<Comic> allComicsByPublishingStatus =
+            await _comicRepository.GetAllComicsByPublishingStatus(publishingStatus);
+
+        return _mapper.Map<List<GetComicResponse>>(allComicsByPublishingStatus);
+    }
+
+    public async Task<List<GetComicResponse>> GetAllComicsByComicType(string comicType)
+    {
+        List<Comic> allComicsByComicType = await _comicRepository.GetAllComicsByComicType(comicType);
+
+        return _mapper.Map<List<GetComicResponse>>(allComicsByComicType);
+    }
+
     public async Task<UpdateComicResponse> UpdateComic(Guid id, UpdateComicRequest request)
     {
         Comic? comic = await _comicRepository.GetComicById(id);
@@ -112,7 +141,7 @@ public class ComicService : IComicService
         {
             await _comicRepository.DeleteComic(comic);
         }
-        catch (System.Exception e)
+        catch (System.Exception)
         {
             throw;
         }

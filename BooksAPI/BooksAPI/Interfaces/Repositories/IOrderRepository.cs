@@ -10,6 +10,8 @@ public interface IOrderRepository
 
     public Task<List<Order>> GetAllOrders();
 
+    public Task<List<Order>> GetAllOrdersByPlace(String place);
+
     public Task<Order> UpdateOrder(Order order);
 
     public Task DeleteOrder(Order order);

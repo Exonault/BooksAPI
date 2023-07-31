@@ -1,5 +1,6 @@
 ﻿using BooksAPI.Constants;
 using BooksAPI.Entities;
+using BooksAPI.Messages;
 using FluentValidation;
 
 namespace BooksAPI.Validation;
@@ -14,29 +15,26 @@ public class ComicValidator : AbstractValidator<Comic>
             .NotEmpty()
             .WithMessage("Demographic type is required")
             .Must(x => AppConstants.DemographicTypes.Contains(x))
-            .WithMessage("Demographic type must be one of the following: " +
-                         String.Join(", ", AppConstants.DemographicTypes));
+            .WithMessage(ComicValidationMessages.DemographicTypesMessage);
 
         RuleFor(x => x.ComicType)
             .NotEmpty()
             .WithMessage("Comic type is required")
             .Must(x => AppConstants.ComicTypes.Contains(x))
-            .WithMessage("Comic type must be one of the following: " +
-                         String.Join(", ", AppConstants.ComicTypes));
+            .WithMessage(ComicValidationMessages.ComicTypeValidationMessage);
 
         RuleFor(x => x.PublishingStatus)
             .NotEmpty()
             .WithMessage("Publishing status is required")
             .Must(x => AppConstants.PublishingStatuses.Contains(x))
-            .WithMessage("Publishing status must be one of the following: " +
-                         String.Join(", ", AppConstants.PublishingStatuses));
+            .WithMessage(ComicValidationMessages.PublishingStatusValidationMessage);
 
         RuleFor(x => x.TotalVolumes)
             .Must(x => x >= 1)
-            .WithMessage("Total volumes is required and it must be at least 1");
+            .WithMessage(ComicValidationMessages.TotalVolumeValidationMessage);
 
         RuleFor(x => x.CollectedVolumes)
             .NotEmpty()
-            .WithMessage("Collected volumes is required");
+            .WithMessage(ComicValidationMessages.CollectedVolumesValidationMessage);
     }
 }

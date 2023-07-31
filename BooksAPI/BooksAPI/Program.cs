@@ -16,6 +16,7 @@ MapperConfiguration mapperConfig = new MapperConfiguration(config =>
     config.AddProfile(new OrderProfile());
     config.AddProfile(new ComicProfile());
 });
+
 builder.Services.AddSingleton(mapperConfig.CreateMapper());
 builder.Services.AddComicServices();
 builder.Services.AddOrderServices();
@@ -33,8 +34,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-//app.UseAuthorization();
 app.MapComicEndpoints();
 app.MapOrderEndpoints();
 

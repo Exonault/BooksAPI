@@ -21,6 +21,7 @@ public static class OrderEndpoints
 
         app.MapGet("/orders", GetOrders);
         app.MapGet("/orders/{id}", GetOrderById);
+        app.MapGet("/orders/place/{place}", GetOrdersByPlace);
 
         app.MapPut("/orders/{id}", UpdateOrder);
 
@@ -69,6 +70,13 @@ public static class OrderEndpoints
         }
 
         return Results.Ok(response);
+    }
+
+    internal static async Task<IResult> GetOrdersByPlace(IOrderService service, string place)
+    {
+        List<GetOrderResponse> allOrdersFromPlace = await service.GetAllOrdersFromPlace(place);
+
+        return Results.Ok(allOrdersFromPlace);
     }
 
     internal static async Task<IResult> UpdateOrder(IOrderService service, Guid id,

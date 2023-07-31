@@ -1,9 +1,11 @@
-﻿using BooksAPI.Contracts.Requests.Comic;
+﻿using BooksAPI.Constants;
+using BooksAPI.Contracts.Requests.Comic;
 using BooksAPI.Contracts.Response.Comic;
 using BooksAPI.Entities;
 using BooksAPI.Exception;
 using BooksAPI.Interfaces.Repositories;
 using BooksAPI.Interfaces.Services;
+using BooksAPI.Messages;
 using BooksAPI.Repositories;
 using BooksAPI.Services;
 using BooksAPI.Validation;
@@ -19,7 +21,11 @@ public static class ComicEndpoints
         app.MapPost("/comics/", CreateComic);
 
         app.MapGet("/comics", GetComics);
-        app.MapGet("/comics/{id}", GetComicById);
+        app.MapGet("/comics/{guid}", GetComicById);
+        app.MapGet("/comics/readingStatus/{readingStatus}", GetComicsByReadingStatus);
+        app.MapGet("/comics/demographic/{demographic}", GetComicsByDemographic);
+        app.MapGet("/comics/publishingStatus/{publishingStatus}", GetComicsByPublishingStatus);
+        app.MapGet("/comics/comicType/{comicType}", GetComicsByComicType);
 
         app.MapPut("/comics/{id}", UpdateComic);
 
@@ -71,6 +77,55 @@ public static class ComicEndpoints
         }
 
         return Results.Ok(response);
+    }
+
+    internal static async Task<IResult> GetComicsByReadingStatus(IComicService service, string readingStatus)
+    {
+        if (!AppConstants.ReadingStatuses.Contains(readingStatus))
+        {
+            return Results.BadRequest(BookValidationMessages.ReadingStatusMessageMessage);
+        }
+
+        List<GetComicResponse> allComicsByReadingStatus = await service.GetAllComicsByReadingStatus(readingStatus);
+
+        return Results.Ok(allComicsByReadingStatus);
+    }
+
+    internal static async Task<IResult> GetComicsByDemographic(IComicService service, string demographic)
+    {
+        if (!AppConstants.DemographicTypes.Contains(demographic))
+        {
+            return Results.BadRequest(ComicValidationMessages.DemographicTypesMessage);
+        }
+
+        List<GetComicResponse> allComicsByDemographic = await service.GetAllComicsByDemographic(demographic);
+
+        return Results.Ok(allComicsByDemographic);
+    }
+
+    internal static async Task<IResult> GetComicsByPublishingStatus(IComicService service, string publishingStatus)
+    {
+        if (!AppConstants.PublishingStatuses.Contains(publishingStatus))
+        {
+            return Results.BadRequest(ComicValidationMessages.PublishingStatusValidationMessage);
+        }
+
+        List<GetComicResponse> allComicsByPublishingStatus =
+            await service.GetAllComicsByPublishingStatus(publishingStatus);
+
+        return Results.Ok(allComicsByPublishingStatus);
+    }
+
+    internal static async Task<IResult> GetComicsByComicType(IComicService service, string comicType)
+    {
+        if (!AppConstants.ComicTypes.Contains(comicType))
+        {
+            return Results.BadRequest(ComicValidationMessages.ComicTypeValidationMessage);
+        }
+
+        List<GetComicResponse> allComicsByComicType = await service.GetAllComicsByComicType(comicType);
+
+        return Results.Ok(allComicsByComicType);
     }
 
 

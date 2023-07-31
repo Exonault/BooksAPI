@@ -1,5 +1,6 @@
 ﻿using BooksAPI.Constants;
 using BooksAPI.Entities;
+using BooksAPI.Messages;
 using FluentValidation;
 
 
@@ -11,18 +12,18 @@ public class BookValidator : AbstractValidator<Book>
     {
         RuleFor(x => x.Author)
             .NotEmpty()
-            .WithMessage("Author name is required");
+            .WithMessage(BookValidationMessages.AuthorValidationMessage);
 
         RuleFor(x => x.Title)
             .NotEmpty()
-            .WithMessage("Title is required");
+            .WithMessage(BookValidationMessages.TitleValidationMessage);
 
         RuleFor(x => x.Price)
             .NotEmpty()
-            .WithMessage("Price is required");
+            .WithMessage(BookValidationMessages.PriceValidationMessage);
 
         RuleFor(x => x.ReadingStatus)
             .Must(x => AppConstants.ReadingStatuses.Contains(x))
-            .WithMessage("Status must be one of the following: " + String.Join(", ", AppConstants.ReadingStatuses));
+            .WithMessage(BookValidationMessages.ReadingStatusMessageMessage);
     }
 }

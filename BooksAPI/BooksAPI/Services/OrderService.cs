@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BooksAPI.Contracts.Requests.Order;
-using BooksAPI.Contracts.Response.Comic;
 using BooksAPI.Contracts.Response.Order;
 using BooksAPI.Entities;
 using BooksAPI.Exception;
@@ -67,6 +66,13 @@ public class OrderService : IOrderService
 
 
         return _mapper.Map<List<GetOrderResponse>>(orders);
+    }
+
+    public async Task<List<GetOrderResponse>> GetAllOrdersFromPlace(string place)
+    {
+        List<Order> allOrdersByPlace = await _orderRepository.GetAllOrdersByPlace(place);
+
+        return _mapper.Map<List<GetOrderResponse>>(allOrdersByPlace);
     }
 
     public async Task<UpdateOrderResponse> UpdateOrder(Guid id, UpdateOrderRequest request)

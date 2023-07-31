@@ -31,6 +31,11 @@ public class OrderRepository : IOrderRepository
         return await _dbContext.Orders.ToListAsync();
     }
 
+    public async Task<List<Order>> GetAllOrdersByPlace(string place)
+    {
+        return await _dbContext.Orders.Where(x => x.Place == place).ToListAsync();
+    }
+
     public async Task<Order> UpdateOrder(Order order)
     {
         _dbContext.Entry(order).State = EntityState.Modified;

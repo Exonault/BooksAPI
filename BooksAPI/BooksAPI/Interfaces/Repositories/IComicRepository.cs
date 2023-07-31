@@ -10,6 +10,15 @@ public interface IComicRepository
 
     public Task<List<Comic>> GetAllComics();
 
+    public Task<List<Comic>> GetAllComicsByReadingStatus(String readingStatus);
+
+    public Task<List<Comic>> GetAllComicsByDemographic(String demographic);
+
+    public Task<List<Comic>> GetAllComicsByPublishingStatus(String publishingStatus);
+
+    public Task<List<Comic>> GetAllComicsByComicType(String comicType);
+
+
     public Task<Comic> UpdateComic(Comic comic);
 
     public Task DeleteComic(Comic comic);

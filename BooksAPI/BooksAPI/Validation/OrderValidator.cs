@@ -1,4 +1,5 @@
 ﻿using BooksAPI.Entities;
+using BooksAPI.Messages;
 using FluentValidation;
 
 namespace BooksAPI.Validation;
@@ -9,22 +10,22 @@ public class OrderValidator : AbstractValidator<Order>
     {
         RuleFor(x => x.Date)
             .NotEmpty()
-            .WithMessage("Date is required");
+            .WithMessage(OrderValidationMessages.DateValidationMessage);
 
         RuleFor(x => x.Description)
             .NotEmpty()
-            .WithMessage("Description is required");
-        
+            .WithMessage(OrderValidationMessages.DescriptionValidationMessage);
+
         RuleFor(x => x.Place)
             .NotEmpty()
-            .WithMessage("Place is required");
+            .WithMessage(OrderValidationMessages.PlaceValidationMessage);
 
         RuleFor(x => x.Amount)
             .NotEmpty()
-            .WithMessage("Amount is required");
+            .WithMessage(OrderValidationMessages.AmountValidationMessage);
 
         RuleFor(x => x.NumberOfItems)
             .NotEmpty()
-            .WithMessage("Number of items is required");
+            .WithMessage(OrderValidationMessages.NumberOfItemsValidationMessage);
     }
 }
