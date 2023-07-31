@@ -1,16 +1,17 @@
-﻿using BooksAPI.Contracts.Response.Order;
+﻿using BooksAPI.Contracts.Requests.Order;
+using BooksAPI.Contracts.Response.Order;
 
 namespace BooksAPI.Interfaces.Services;
 
 public interface IOrderService
 {
-    public Task<CreateOrderResponse> CreateComic(CreateOrderResponse request);
+    public Task<CreateOrderResponse> CreateOrder(CreateOrderRequest request);
 
-    public Task<GetOrderResponse> GetComic(Guid id);
+    public Task<GetOrderResponse> GetOrder(Guid id);
 
-    public Task<List<GetOrderResponse>> GetAllComics();
+    public Task<List<GetOrderResponse>> GetAllOrders();
 
-    public Task<UpdateOrderResponse> UpdateComic(Guid id, UpdateOrderResponse request);
+    public Task<UpdateOrderResponse> UpdateOrder(Guid id, UpdateOrderRequest request);
 
-    public Task<DeleteOrderResponse> DeleteComic(Guid id);
+    public Task<DeleteOrderResponse> DeleteOrder(Guid id);
 }

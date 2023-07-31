@@ -1,13 +1,7 @@
 using AutoMapper;
 using BooksAPI.Data;
-using BooksAPI.Entities;
-using BooksAPI.Interfaces.Repositories;
-using BooksAPI.Interfaces.Services;
+using BooksAPI.Endpoints;
 using BooksAPI.Mapping;
-using BooksAPI.Repositories;
-using BooksAPI.Services;
-using BooksAPI.Validation;
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,21 +17,12 @@ MapperConfiguration mapperConfig = new MapperConfiguration(config =>
     config.AddProfile(new ComicProfile());
 });
 builder.Services.AddSingleton(mapperConfig.CreateMapper());
-
-builder.Services.AddScoped<IComicRepository, ComicRepository>();
-builder.Services.AddScoped<IComicService, ComicService>();
-builder.Services.AddScoped<IValidator<Comic>, ComicValidator>();
-
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<IValidator<Order>, OrderValidator>();
-
-
+builder.Services.AddComicServices();
+builder.Services.AddOrderServices();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationDb"));
 });
-
 
 var app = builder.Build();
 
@@ -49,9 +34,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
+//app.UseAuthorization();
+app.MapComicEndpoints();
+app.MapOrderEndpoints();
 
 app.Run();
