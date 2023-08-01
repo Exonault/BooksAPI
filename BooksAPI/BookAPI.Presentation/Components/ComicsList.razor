@@ -1,0 +1,66 @@
+@using BookAPI.Presentation.Data
+@using System.Text.Json
+@using System.Net
+@inject IHttpClientFactory ClientFactory
+@inject IConfiguration Configuration
+
+@if (_error || _comics is null)
+{
+    <h3>Unable to get comics. Please try again later.</h3>
+}
+else
+{
+    <div class="card-columns">
+        @foreach (var item in _comics)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"> @item.Title </h5>
+                    <h5> @item.Author </h5>
+                    <h5> @item.DemographicType </h5>
+                    <h5> @item.TotalVolumes </h5>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private IEnumerable<ComicResponse>? _comics = Array.Empty<ComicResponse>();
+    private bool _shouldRender = false;
+    private bool _error = false;
+
+    protected override bool ShouldRender() => _shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, Configuration["ApiUri:ComicsUri"]);
+
+        var client = ClientFactory.CreateClient();
+
+
+        try
+        {
+            HttpResponseMessage response = await client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+
+                _comics = await JsonSerializer.DeserializeAsync<IEnumerable<ComicResponse>>(responseStream);
+
+                _shouldRender = true;
+            }
+            else
+            {
+                _error = true;
+                _shouldRender = true;
+            }
+        }
+        catch (Exception e)
+        {
+            _error = true;
+            _shouldRender = true;
+        }
+    }
+
+}
