@@ -4,24 +4,35 @@
 @inject IHttpClientFactory ClientFactory
 @inject IConfiguration Configuration
 
+
+
+
+
 @if (_error || _comics is null)
 {
     <h3>Unable to get comics. Please try again later.</h3>
 }
 else
 {
-    <div class="card-columns">
-        @foreach (var item in _comics)
-        {
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"> @item.Title </h5>
-                    <h5> @item.Author </h5>
-                    <h5> @item.DemographicType </h5>
-                    <h5> @item.TotalVolumes </h5>
+    <div class="container">
+        <div class="row">
+            @foreach (var comic in _comics)
+            {
+                <div class="col-sm-3">
+                    <div class="card">
+                        <h5 class="card-header">@comic.Title</h5>
+                        <div class="card-body">
+                            <h5 class="card-subtitle">@comic.Author</h5>
+                            <h5>@comic.TotalVolumes</h5>
+                            <h5>@comic.PublishingStatus</h5>
+                            <h5>@comic.DemographicType</h5>
+                            <h5>@comic.ReadingStatus</h5>
+                            <a class="btn btn-primary">Update</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     </div>
 }
 
