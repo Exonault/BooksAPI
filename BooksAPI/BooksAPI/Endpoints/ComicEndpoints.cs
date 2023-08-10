@@ -21,7 +21,7 @@ public static class ComicEndpoints
         app.MapPost("/comics/", CreateComic);
 
         app.MapGet("/comics", GetComics);
-        app.MapGet("/comics/{guid}", GetComicById);
+        app.MapGet("/comics/{id:guid}", GetComicById);
         app.MapGet("/comics/readingStatus/{readingStatus}", GetComicsByReadingStatus);
         app.MapGet("/comics/demographic/{demographic}", GetComicsByDemographic);
         app.MapGet("/comics/publishingStatus/{publishingStatus}", GetComicsByPublishingStatus);

@@ -1,0 +1,64 @@
+@page "/comicInfo/{id:guid}"
+@using System.Text.Json
+@using BookAPI.Presentation.Data
+@inject IHttpClientFactory ClientFactory
+@inject IConfiguration Configuration
+@inject NavigationManager NavigationManager
+<h3>Comic Info</h3>
+
+@if (_error || _comic is null)
+{
+    <h3>Unable to get comics. Please try again later.</h3>
+}
+else
+{
+    <h3> @_comic.Title</h3>
+}
+
+
+
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private ComicResponse? _comic { get; set; }
+
+    private bool _shouldRender = false;
+    private bool _error = false;
+
+    protected override bool ShouldRender() => _shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, Configuration["ApiUri:ComicsUri"] + Id.ToString());
+
+        var client = ClientFactory.CreateClient();
+
+
+        try
+        {
+            HttpResponseMessage response = await client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+
+                _comic = await JsonSerializer.DeserializeAsync<ComicResponse>(responseStream);
+
+                _shouldRender = true;
+            }
+            else
+            {
+                _error = true;
+                _shouldRender = true;
+            }
+        }
+        catch (Exception e)
+        {
+            _error = true;
+            _shouldRender = true;
+        }
+    }
+
+}
