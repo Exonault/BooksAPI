@@ -15,10 +15,10 @@
     else
     {
         <div class="row">
-            @foreach (var comic in _comics)
+            @foreach (var comic in _comics.Reverse())
             {
-                <div class="col-sm-3">
-                    <div class="card">
+                <div class="col-4">
+                    <div class="card" style="margin-bottom: 25px">
                         <div class="card-header">
                             <h5 class="card-title text-center">@comic.Title</h5>
                             <h5 class="card-subtitle text-center">Author: @comic.Author</h5>
@@ -29,7 +29,7 @@
                             <h5>Demographic type: @comic.DemographicType</h5>
                             <h5>Reading status: @comic.ReadingStatus</h5>
                             <div class="card-footer">
-                                <button @onclick="() => ButtonHandler(comic)">Update</button>
+                                <button type="submit" class="btn btn-primary" @onclick="() => ButtonHandler(comic)">Update</button>
                             </div>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, Configuration["ApiUri:ComicsUri"]);
+        var request = new HttpRequestMessage(HttpMethod.Get, Configuration["ApiUri:Comics:GetAllComicsUri"]);
 
         var client = ClientFactory.CreateClient();
 
