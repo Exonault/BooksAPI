@@ -1,9 +1,7 @@
-﻿namespace BooksAPI.Contracts.Response.Order;
+﻿namespace BookAPI.Presentation.Contracts.Requests.Order;
 
-public class GetOrderResponse
+public class UpdateOrderRequest
 {
-    public Guid Id { get; set; }
-    
     public DateOnly Date { get; set; }
     
     public string Description { get; set; } = string.Empty;
@@ -13,5 +11,5 @@ public class GetOrderResponse
     public decimal Amount { get; set; }
     
     public int NumberOfItems { get; set; }
-    
+
 }

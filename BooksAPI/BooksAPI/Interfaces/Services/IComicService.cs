@@ -5,7 +5,7 @@ namespace BooksAPI.Interfaces.Services;
 
 public interface IComicService
 {
-    public Task<CreateComicResponse> CreateComic(CreateComicRequest request);
+    public Task CreateComic(CreateComicRequest request);
 
     public Task<GetComicResponse> GetComic(Guid id);
 
@@ -19,7 +19,7 @@ public interface IComicService
 
     public Task<List<GetComicResponse>> GetAllComicsByComicType(string comicType);
 
-    public Task<UpdateComicResponse> UpdateComic(Guid id, UpdateComicRequest request);
+    public Task UpdateComic(Guid id, UpdateComicRequest request);
 
-    public Task<DeleteComicResponse> DeleteComic(Guid id);
+    public Task DeleteComic(Guid id);
 }

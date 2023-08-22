@@ -1,17 +1,23 @@
 @page "/comics"
 @using BookAPI.Presentation.Components
-@inject IHttpClientFactory ClientFactory
-@inject IConfiguration Configuration
+@inject NavigationManager NavigationManager
 
 
 <PageTitle>Comics</PageTitle>
 
-<h1>Comics</h1>
+<div id="main">
+    <h1>Comics</h1> 
+    <button type="submit" class="btn btn-primary" @onclick="ButtonHandler">Create</button>
+</div>
 
 <ComicsList/>
 
 
-
 @code {
+
+    private void ButtonHandler()
+    {
+        NavigationManager.NavigateTo($"/createComic/");
+    }
 
 }

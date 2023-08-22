@@ -1,12 +1,10 @@
 @using BookAPI.Presentation.Data
 @using System.Text.Json
 @using System.Net
+@using BookAPI.Presentation.Contracts
 @inject IHttpClientFactory ClientFactory
 @inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
-
-
-<div class="container">
 
     @if (_error || _comics is null)
     {
@@ -17,7 +15,7 @@
         <div class="row">
             @foreach (var comic in _comics.Reverse())
             {
-                <div class="col-4">
+                <div class="col-3">
                     <div class="card" style="margin-bottom: 25px">
                         <div class="card-header">
                             <h5 class="card-title text-center">@comic.Title</h5>
@@ -37,7 +35,6 @@
             }
         </div>
     }
-</div>
 
 @code {
     private IEnumerable<ComicResponse>? _comics = Array.Empty<ComicResponse>();
@@ -48,7 +45,7 @@
 
     private void ButtonHandler(ComicResponse comicResponse)
     {
-        NavigationManager.NavigateTo($"/comicInfo/{comicResponse.Id.ToString()}");
+        NavigationManager.NavigateTo($"/updateComic/{comicResponse.Id.ToString()}");
     }
 
     protected override async Task OnInitializedAsync()

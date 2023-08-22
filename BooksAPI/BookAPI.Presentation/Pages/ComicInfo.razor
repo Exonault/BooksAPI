@@ -1,94 +1,92 @@
-@page "/comicInfo/{id:guid}"
+@page "/updateComic/{id:guid}"
+@page "/createComic"
 @using System.Text.Json
+@using BookAPI.Presentation.Contracts
 @using BookAPI.Presentation.Data
 @inject IHttpClientFactory ClientFactory
 @inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
-<h3>Comic Info</h3>
 
-@if (_error || _comic is null)
-{
-    <h3>Unable to get comics. Please try again later.</h3>
-}
-else
-{
-    <div class="container">
-        <form>
-            <div class="row mb-4 mt-4">
-                <div class="col">
-                    <label for="inputTitle" class="form-label">Title</label>
-                    <input type="text" id="inputTitle" class="form-control" value="@_comic.Title" required/>
-                </div>
-                <div class="col">
-                    <label for="inputAuthor" class="form-label">Author</label>
-                    <input type="text" id="inputAuthor" class="form-control" value="@_comic.Author" required/>
-                </div>
-            </div>
-            <div class="row mb-4">
-                <div class="col">
-                    <label for="inputReadingStatus" class="form-label">Reading status</label>
-                    <select class="form-control" id="inputReadingStatus" value="@_comic.ReadingStatus">
-                        <option id="Reading" value="Reading">Reading</option>
-                        <option id="Finished" value="Finished">Finished</option>
-                        <option id="OnHold" value="OnHold">On hold</option>
-                        <option id="Dropped" value="Dropped">Dropped</option>
-                        <option id="PlanToRead" value="PlanToRead">Plan to read</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label for="inputDemographic" class="form-label">Demographic type</label>
-                    <select class="form-control" id="inputDemographic" value="@_comic.DemographicType">
-                        <option id="Shonen" value="Shonen">Shonen</option>
-                        <option id="Shojo" value="Shojo">Shojo</option>
-                        <option id="Seinen" value="Seinen">Seinen</option>
-                        <option id="Josei" value="Josei">Josei</option>
-                        <option id="Kodomomuke" value="Kodomomuke">Kodomomuke</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label for="inputComicType" class="form-label">Comic type</label>
-                    <select class="form-control" id="inputComicType" value="@_comic.ComicType">
-                        <option id="Comic" value="Comic">Comic</option>
-                        <option id="Manga" value="Manga">Manga</option>
-                        <option id="LightNovel" value="LightNovel">Light novel</option>
-                        <option id="OneShot" value="OneShot">One shot</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label for="inputPublishingStatus" class="form-label">Publishing status</label>
-                    <select class="form-control" id="inputPublishingStatus" value="@_comic.PublishingStatus">
-                        <option id="Publishing" value="Publishing">Publishing</option>
-                        <option id="Finished" value="Finished">Finished</option>
-                        <option id="OnHiatus" value="OnHiatus">On hiatus</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <label for="inputTotalVolumes" class="form-label">Total volumes</label>
-                    <input type="number" id="inputTotalVolumes" class="form-control" value="@_comic.TotalVolumes"/>
-                </div>
-                <div class="col">
-                    <label for="inputCollectedVolumes" class="form-label">Collected volumes</label>
-                    <input type="number" id="inputCollectedVolumes" class="form-control" value="@_comic.CollectedVolumes"/>
-                </div>
-                <div class="col">
-                    <label for="inputPrice" class="form-label">Price per volume</label>
-                    <input type="number" id="inputPrice" class="form-control" value="@_comic.Price"/>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+
+<h3>@(IsCreate ? "Create a comic" : "Update a comic")</h3>
+
+<form>
+    <div class="row mb-4 mt-4">
+        <div class="col">
+            <label for="inputTitle" class="form-label">Title</label>
+            <input type="text" id="inputTitle" class="form-control" value="@(_comic is null ? string.Empty : _comic.Title)" required/>
+        </div>
+        <div class="col">
+            <label for="inputAuthor" class="form-label">Author</label>
+            <input type="text" id="inputAuthor" class="form-control" value="@(_comic is null ? string.Empty : _comic.Author)" required/>
+        </div>
     </div>
-}
-
-
+    <div class="row mb-4">
+        <div class="col">
+            <label for="inputReadingStatus" class="form-label">Reading status</label>
+            <select class="form-control" id="inputReadingStatus" value="@(_comic is null ? string.Empty : _comic.ReadingStatus)" required>
+                <option id="Reading" value="Reading">Reading</option>
+                <option id="Finished" value="Finished">Finished</option>
+                <option id="OnHold" value="OnHold">On hold</option>
+                <option id="Dropped" value="Dropped">Dropped</option>
+                <option id="PlanToRead" value="PlanToRead">Plan to read</option>
+            </select>
+        </div>
+        <div class="col">
+            <label for="inputDemographic" class="form-label">Demographic type</label>
+            <select class="form-control" id="inputDemographic" value="@(_comic is null ? string.Empty : _comic.DemographicType)" required>
+                <option id="Shonen" value="Shonen">Shonen</option>
+                <option id="Shojo" value="Shojo">Shojo</option>
+                <option id="Seinen" value="Seinen">Seinen</option>
+                <option id="Josei" value="Josei">Josei</option>
+                <option id="Kodomomuke" value="Kodomomuke">Kodomomuke</option>
+            </select>
+        </div>
+        <div class="col">
+            <label for="inputComicType" class="form-label">Comic type</label>
+            <select class="form-control" id="inputComicType" value="@(_comic is null ? string.Empty : _comic.ComicType)" required>
+                <option id="Comic" value="Comic">Comic</option>
+                <option id="Manga" value="Manga">Manga</option>
+                <option id="LightNovel" value="LightNovel">Light novel</option>
+                <option id="OneShot" value="OneShot">One shot</option>
+            </select>
+        </div>
+        <div class="col">
+            <label for="inputPublishingStatus" class="form-label">Publishing status</label>
+            <select class="form-control" id="inputPublishingStatus" value="@(_comic is null ? string.Empty : _comic.PublishingStatus)" required>
+                <option id="Publishing" value="Publishing">Publishing</option>
+                <option id="Finished" value="Finished">Finished</option>
+                <option id="OnHiatus" value="OnHiatus">On hiatus</option>
+            </select>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
+            <label for="inputTotalVolumes" class="form-label">Total volumes</label>
+            <input type="number" id="inputTotalVolumes" class="form-control" value="@(_comic is null ? string.Empty : _comic.TotalVolumes)" required/>
+        </div>
+        <div class="col">
+            <label for="inputCollectedVolumes" class="form-label">Collected volumes</label>
+            <input type="number" id="inputCollectedVolumes" class="form-control" value="@(_comic is null ? string.Empty : _comic.CollectedVolumes)" required/>
+        </div>
+        <div class="col">
+            <label for="inputPrice" class="form-label">Price per volume</label>
+            <input type="number" id="inputPrice" class="form-control" value="@(_comic is null ? string.Empty : _comic.Price)" required/>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary" @onclick="() => ButtonHandler(_comic)">@(IsCreate ? "Create" : "Update") </button>
+</form>
 
 
 @code {
 
     [Parameter]
     public Guid Id { get; set; }
+
+    public bool IsCreate
+    {
+        get => Id == Guid.Empty;
+    }
 
     private ComicResponse? _comic;
 
@@ -99,35 +97,42 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        string uri = String.Format(Configuration["ApiUri:Comics:GetComicByIdUri"] ?? string.Empty, Id.ToString());
-
-        var request = new HttpRequestMessage(HttpMethod.Get, uri);
-
-        var client = ClientFactory.CreateClient();
-
-
-        try
+        if (!IsCreate)
         {
-            HttpResponseMessage response = await client.SendAsync(request);
-            if (response.IsSuccessStatusCode)
+            string uri = String.Format(Configuration["ApiUri:Comics:GetComicByIdUri"] ?? string.Empty, Id.ToString());
+
+            var request = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            var client = ClientFactory.CreateClient();
+
+
+            try
             {
-                using var responseStream = await response.Content.ReadAsStreamAsync();
+                HttpResponseMessage response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    using var responseStream = await response.Content.ReadAsStreamAsync();
 
-                _comic = await JsonSerializer.DeserializeAsync<ComicResponse>(responseStream);
+                    _comic = await JsonSerializer.DeserializeAsync<ComicResponse>(responseStream);
 
-                _shouldRender = true;
+                    _shouldRender = true;
+                }
+                else
+                {
+                    _error = true;
+                    _shouldRender = true;
+                }
             }
-            else
+            catch (Exception e)
             {
                 _error = true;
                 _shouldRender = true;
             }
         }
-        catch (Exception e)
-        {
-            _error = true;
-            _shouldRender = true;
-        }
+    }
+
+    private void ButtonHandler(ComicResponse comic)
+    {
     }
 
 }

@@ -5,7 +5,7 @@ namespace BooksAPI.Interfaces.Services;
 
 public interface IOrderService
 {
-    public Task<CreateOrderResponse> CreateOrder(CreateOrderRequest request);
+    public Task CreateOrder(CreateOrderRequest request);
 
     public Task<GetOrderResponse> GetOrder(Guid id);
 
@@ -13,7 +13,7 @@ public interface IOrderService
 
     public Task<List<GetOrderResponse>> GetAllOrdersFromPlace(string place);
 
-    public Task<UpdateOrderResponse> UpdateOrder(Guid id, UpdateOrderRequest request);
+    public Task UpdateOrder(Guid id, UpdateOrderRequest request);
 
-    public Task<DeleteOrderResponse> DeleteOrder(Guid id);
+    public Task DeleteOrder(Guid id);
 }

@@ -10,13 +10,13 @@ public class ComicProfile : Profile
     public ComicProfile()
     {
         CreateMap<CreateComicRequest, Comic>();
-        CreateMap<Comic, CreateComicResponse>();
+       // CreateMap<Comic, CreateComicResponse>();
 
         CreateMap<Comic, GetComicResponse>();
 
         CreateMap<UpdateComicRequest, Comic>();
-        CreateMap<Comic, UpdateComicResponse>();
+       // CreateMap<Comic, UpdateComicResponse>();
 
-        CreateMap<Comic, DeleteComicResponse>();
+       // CreateMap<Comic, DeleteComicResponse>();
     }
 }

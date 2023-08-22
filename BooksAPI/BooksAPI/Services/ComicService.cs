@@ -24,11 +24,11 @@ public class ComicService : IComicService
         _mapper = mapper;
     }
 
-    public async Task<CreateComicResponse> CreateComic(CreateComicRequest request)
+    public async Task CreateComic(CreateComicRequest request)
     {
         Comic comic = _mapper.Map<Comic>(request);
 
-        ValidationResult validationResult = _validator.Validate(comic);
+        ValidationResult validationResult = await _validator.ValidateAsync(comic);
 
 
         if (!validationResult.IsValid)
@@ -38,14 +38,12 @@ public class ComicService : IComicService
 
         try
         {
-            comic = await _comicRepository.CreateComic(comic);
+            await _comicRepository.CreateComic(comic);
         }
         catch (System.Exception)
         {
             throw;
         }
-
-        return _mapper.Map<CreateComicResponse>(comic);
     }
 
     public async Task<GetComicResponse> GetComic(Guid id)
@@ -96,7 +94,7 @@ public class ComicService : IComicService
         return _mapper.Map<List<GetComicResponse>>(allComicsByComicType);
     }
 
-    public async Task<UpdateComicResponse> UpdateComic(Guid id, UpdateComicRequest request)
+    public async Task UpdateComic(Guid id, UpdateComicRequest request)
     {
         Comic? comic = await _comicRepository.GetComicById(id);
 
@@ -107,7 +105,7 @@ public class ComicService : IComicService
 
         Comic updatedComic = _mapper.Map<Comic>(request);
 
-        ValidationResult validationResult = _validator.Validate(updatedComic);
+        ValidationResult validationResult = await _validator.ValidateAsync(updatedComic);
 
 
         if (!validationResult.IsValid)
@@ -118,17 +116,15 @@ public class ComicService : IComicService
         try
         {
             _mapper.Map(request, comic);
-            comic = await _comicRepository.UpdateComic(comic);
+            await _comicRepository.UpdateComic(comic);
         }
         catch (System.Exception)
         {
             throw;
         }
-
-        return _mapper.Map<UpdateComicResponse>(comic);
     }
 
-    public async Task<DeleteComicResponse> DeleteComic(Guid id)
+    public async Task DeleteComic(Guid id)
     {
         Comic? comic = await _comicRepository.GetComicById(id);
 
@@ -145,7 +141,5 @@ public class ComicService : IComicService
         {
             throw;
         }
-
-        return _mapper.Map<DeleteComicResponse>(comic);
     }
 }

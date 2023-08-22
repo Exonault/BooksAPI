@@ -25,11 +25,11 @@ public class OrderService : IOrderService
     }
 
 
-    public async Task<CreateOrderResponse> CreateOrder(CreateOrderRequest request)
+    public async Task CreateOrder(CreateOrderRequest request)
     {
         Order order = _mapper.Map<Order>(request);
 
-        ValidationResult validationResult = _validator.Validate(order);
+        ValidationResult validationResult = await _validator.ValidateAsync(order);
 
         if (!validationResult.IsValid)
         {
@@ -38,14 +38,12 @@ public class OrderService : IOrderService
 
         try
         {
-            order = await _orderRepository.CreateOrder(order);
+            await _orderRepository.CreateOrder(order);
         }
         catch (System.Exception)
         {
             throw;
         }
-
-        return _mapper.Map<CreateOrderResponse>(order);
     }
 
     public async Task<GetOrderResponse> GetOrder(Guid id)
@@ -75,7 +73,7 @@ public class OrderService : IOrderService
         return _mapper.Map<List<GetOrderResponse>>(allOrdersByPlace);
     }
 
-    public async Task<UpdateOrderResponse> UpdateOrder(Guid id, UpdateOrderRequest request)
+    public async Task UpdateOrder(Guid id, UpdateOrderRequest request)
     {
         Order? order = await _orderRepository.GetOrderById(id);
 
@@ -86,7 +84,7 @@ public class OrderService : IOrderService
 
         Order updatedOrder = _mapper.Map<Order>(request);
 
-        ValidationResult validationResult = _validator.Validate(updatedOrder);
+        ValidationResult validationResult = await _validator.ValidateAsync(updatedOrder);
 
         if (!validationResult.IsValid)
         {
@@ -96,17 +94,15 @@ public class OrderService : IOrderService
         try
         {
             _mapper.Map(request, order);
-            order = await _orderRepository.UpdateOrder(order);
+            await _orderRepository.UpdateOrder(order);
         }
         catch (System.Exception)
         {
             throw;
         }
-
-        return _mapper.Map<UpdateOrderResponse>(order);
     }
 
-    public async Task<DeleteOrderResponse> DeleteOrder(Guid id)
+    public async Task DeleteOrder(Guid id)
     {
         Order? order = await _orderRepository.GetOrderById(id);
 
@@ -123,7 +119,5 @@ public class OrderService : IOrderService
         {
             throw;
         }
-
-        return _mapper.Map<DeleteOrderResponse>(order);
     }
 }

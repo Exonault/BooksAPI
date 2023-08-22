@@ -41,18 +41,16 @@ public static class ComicEndpoints
 
     internal static async Task<IResult> CreateComic(IComicService service, [FromBody] CreateComicRequest request)
     {
-        CreateComicResponse response;
-
         try
         {
-            response = await service.CreateComic(request);
+            await service.CreateComic(request);
         }
         catch (ValidationException ex)
         {
             return Results.BadRequest(ex.Message);
         }
 
-        return Results.Ok(response);
+        return Results.Ok();
     }
 
 
@@ -132,10 +130,9 @@ public static class ComicEndpoints
     internal static async Task<IResult> UpdateComic(IComicService service, Guid id,
         [FromBody] UpdateComicRequest request)
     {
-        UpdateComicResponse response;
         try
         {
-            response = await service.UpdateComic(id, request);
+            await service.UpdateComic(id, request);
         }
         catch (ResourceNotFoundException ex)
         {
@@ -146,22 +143,20 @@ public static class ComicEndpoints
             return Results.BadRequest(ex1.Message);
         }
 
-        return Results.Ok(response);
+        return Results.Ok();
     }
 
     internal static async Task<IResult> DeleteComic(IComicService service, Guid id)
     {
-        DeleteComicResponse response;
-
         try
         {
-            response = await service.DeleteComic(id);
+            await service.DeleteComic(id);
         }
         catch (ResourceNotFoundException ex)
         {
             return Results.NotFound(ex.Message);
         }
 
-        return Results.Ok(response);
+        return Results.Ok();
     }
 }

@@ -15,11 +15,10 @@ public class ComicRepository : IComicRepository
     }
 
 
-    public async Task<Comic> CreateComic(Comic comic)
+    public async Task CreateComic(Comic comic)
     {
         await _dbContext.Comics.AddAsync(comic);
         await _dbContext.SaveChangesAsync();
-        return comic;
     }
 
     public async Task<Comic?> GetComicById(Guid id)
@@ -52,11 +51,10 @@ public class ComicRepository : IComicRepository
         return await _dbContext.Comics.Where(x => x.ComicType == comicType).ToListAsync();
     }
 
-    public async Task<Comic> UpdateComic(Comic comic)
+    public async Task UpdateComic(Comic comic)
     {
         _dbContext.Entry(comic).State = EntityState.Modified;
         await _dbContext.SaveChangesAsync();
-        return comic;
     }
 
     public async Task DeleteComic(Comic comic)

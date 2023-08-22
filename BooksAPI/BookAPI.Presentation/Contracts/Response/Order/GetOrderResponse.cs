@@ -1,4 +1,4 @@
-﻿namespace BooksAPI.Contracts.Response.Order;
+﻿namespace BookAPI.Presentation.Contracts.Response.Order;
 
 public class GetOrderResponse
 {
@@ -13,5 +13,4 @@ public class GetOrderResponse
     public decimal Amount { get; set; }
     
     public int NumberOfItems { get; set; }
-    
 }

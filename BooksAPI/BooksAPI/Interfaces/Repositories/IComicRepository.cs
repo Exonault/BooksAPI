@@ -4,7 +4,7 @@ namespace BooksAPI.Interfaces.Repositories;
 
 public interface IComicRepository
 {
-    public Task<Comic> CreateComic(Comic comic);
+    public Task CreateComic(Comic comic);
 
     public Task<Comic?> GetComicById(Guid id);
 
@@ -18,8 +18,7 @@ public interface IComicRepository
 
     public Task<List<Comic>> GetAllComicsByComicType(String comicType);
 
-
-    public Task<Comic> UpdateComic(Comic comic);
+    public Task UpdateComic(Comic comic);
 
     public Task DeleteComic(Comic comic);
 }

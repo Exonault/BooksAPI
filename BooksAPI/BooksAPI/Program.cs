@@ -33,8 +33,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.MapComicEndpoints();
 app.MapOrderEndpoints();
+
 
 app.Run();

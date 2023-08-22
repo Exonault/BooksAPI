@@ -37,17 +37,16 @@ public static class OrderEndpoints
 
     internal static async Task<IResult> CreateOrder(IOrderService service, [FromBody] CreateOrderRequest request)
     {
-        CreateOrderResponse response;
         try
         {
-            response = await service.CreateOrder(request);
+            await service.CreateOrder(request);
         }
         catch (ValidationException ex)
         {
             return Results.BadRequest(ex.Message);
         }
 
-        return Results.Ok(response);
+        return Results.Ok();
     }
 
     internal static async Task<IResult> GetOrders(IOrderService service)
@@ -82,10 +81,9 @@ public static class OrderEndpoints
     internal static async Task<IResult> UpdateOrder(IOrderService service, Guid id,
         [FromBody] UpdateOrderRequest request)
     {
-        UpdateOrderResponse response;
         try
         {
-            response = await service.UpdateOrder(id, request);
+            await service.UpdateOrder(id, request);
         }
         catch (ResourceNotFoundException ex)
         {
@@ -96,22 +94,20 @@ public static class OrderEndpoints
             return Results.BadRequest(ex1.Message);
         }
 
-        return Results.Ok(response);
+        return Results.Ok();
     }
 
     internal static async Task<IResult> DeleteOrder(IOrderService service, Guid id)
     {
-        DeleteOrderResponse response;
-
         try
         {
-            response = await service.DeleteOrder(id);
+            await service.DeleteOrder(id);
         }
         catch (ResourceNotFoundException ex)
         {
             return Results.NotFound(ex.Message);
         }
 
-        return Results.Ok(response);
+        return Results.Ok();
     }
 }

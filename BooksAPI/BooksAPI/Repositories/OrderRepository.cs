@@ -14,11 +14,10 @@ public class OrderRepository : IOrderRepository
         _dbContext = dbContext;
     }
 
-    public async Task<Order> CreateOrder(Order order)
+    public async Task CreateOrder(Order order)
     {
         await _dbContext.Orders.AddAsync(order);
         await _dbContext.SaveChangesAsync();
-        return order;
     }
 
     public async Task<Order?> GetOrderById(Guid id)
@@ -36,11 +35,10 @@ public class OrderRepository : IOrderRepository
         return await _dbContext.Orders.Where(x => x.Place == place).ToListAsync();
     }
 
-    public async Task<Order> UpdateOrder(Order order)
+    public async Task UpdateOrder(Order order)
     {
         _dbContext.Entry(order).State = EntityState.Modified;
         await _dbContext.SaveChangesAsync();
-        return order;
     }
 
     public async Task DeleteOrder(Order order)

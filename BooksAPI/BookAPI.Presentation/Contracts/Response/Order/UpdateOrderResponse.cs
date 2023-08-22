@@ -1,6 +1,6 @@
-﻿namespace BooksAPI.Contracts.Response.Order;
+﻿namespace BookAPI.Presentation.Contracts.Response.Order;
 
-public class GetOrderResponse
+public class UpdateOrderResponse
 {
     public Guid Id { get; set; }
     
@@ -13,5 +13,4 @@ public class GetOrderResponse
     public decimal Amount { get; set; }
     
     public int NumberOfItems { get; set; }
-    
 }

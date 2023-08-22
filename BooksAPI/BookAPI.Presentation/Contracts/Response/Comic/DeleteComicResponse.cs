@@ -1,4 +1,4 @@
-﻿namespace BooksAPI.Contracts.Response.Comic;
+﻿namespace BookAPI.Presentation.Contracts.Response.Comic;
 
 public class DeleteComicResponse
 {

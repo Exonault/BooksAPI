@@ -10,13 +10,13 @@ public class OrderProfile : Profile
     public OrderProfile()
     {
         CreateMap<CreateOrderRequest, Order>();
-        CreateMap<Order, CreateOrderResponse>();
+        // CreateMap<Order, CreateOrderResponse>();
 
         CreateMap<Order, GetOrderResponse>();
 
         CreateMap<UpdateOrderRequest, Order>();
-        CreateMap<Order, UpdateOrderResponse>();
+        //  CreateMap<Order, UpdateOrderResponse>();
 
-        CreateMap<Order, DeleteOrderResponse>();
+        // CreateMap<Order, DeleteOrderResponse>();
     }
 }
