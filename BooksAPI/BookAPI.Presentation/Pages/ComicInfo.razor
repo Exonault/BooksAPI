@@ -1,81 +1,86 @@
 @page "/updateComic/{id:guid}"
 @page "/createComic"
+@using BookAPI.Presentation.Contracts.Response.Comic
 @using System.Text.Json
-@using BookAPI.Presentation.Contracts
-@using BookAPI.Presentation.Data
+@using AutoMapper
+@using BookAPI.Presentation.Models
 @inject IHttpClientFactory ClientFactory
 @inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
+@inject IMapper Mapper;
 
 
 <h3>@(IsCreate ? "Create a comic" : "Update a comic")</h3>
 
-<form>
+<EditForm Model="@_model" OnValidSubmit="ButtonHandler">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
     <div class="row mb-4 mt-4">
         <div class="col">
             <label for="inputTitle" class="form-label">Title</label>
-            <input type="text" id="inputTitle" class="form-control" value="@(_comic is null ? string.Empty : _comic.Title)" required/>
+            <InputText type="text" id="inputTitle" class="form-control" @bind-Value="_model.Title" />
+            <ValidationMessage For="() => _model.Title"/>
         </div>
         <div class="col">
             <label for="inputAuthor" class="form-label">Author</label>
-            <input type="text" id="inputAuthor" class="form-control" value="@(_comic is null ? string.Empty : _comic.Author)" required/>
+            <InputText type="text" id="inputAuthor" class="form-control" @bind-Value="_model.Author" />
         </div>
     </div>
     <div class="row mb-4">
         <div class="col">
             <label for="inputReadingStatus" class="form-label">Reading status</label>
-            <select class="form-control" id="inputReadingStatus" value="@(_comic is null ? string.Empty : _comic.ReadingStatus)" required>
+            <InputSelect class="form-control" id="inputReadingStatus" @bind-Value="_model.ReadingStatus" >
                 <option id="Reading" value="Reading">Reading</option>
                 <option id="Finished" value="Finished">Finished</option>
                 <option id="OnHold" value="OnHold">On hold</option>
                 <option id="Dropped" value="Dropped">Dropped</option>
                 <option id="PlanToRead" value="PlanToRead">Plan to read</option>
-            </select>
+            </InputSelect>
         </div>
         <div class="col">
             <label for="inputDemographic" class="form-label">Demographic type</label>
-            <select class="form-control" id="inputDemographic" value="@(_comic is null ? string.Empty : _comic.DemographicType)" required>
+            <InputSelect class="form-control" id="inputDemographic" @bind-Value="_model.DemographicType" >
                 <option id="Shonen" value="Shonen">Shonen</option>
                 <option id="Shojo" value="Shojo">Shojo</option>
                 <option id="Seinen" value="Seinen">Seinen</option>
                 <option id="Josei" value="Josei">Josei</option>
                 <option id="Kodomomuke" value="Kodomomuke">Kodomomuke</option>
-            </select>
+            </InputSelect>
         </div>
         <div class="col">
             <label for="inputComicType" class="form-label">Comic type</label>
-            <select class="form-control" id="inputComicType" value="@(_comic is null ? string.Empty : _comic.ComicType)" required>
+            <InputSelect class="form-control" id="inputComicType" @bind-Value="_model.ComicType" >
                 <option id="Comic" value="Comic">Comic</option>
                 <option id="Manga" value="Manga">Manga</option>
                 <option id="LightNovel" value="LightNovel">Light novel</option>
                 <option id="OneShot" value="OneShot">One shot</option>
-            </select>
+            </InputSelect>
         </div>
         <div class="col">
             <label for="inputPublishingStatus" class="form-label">Publishing status</label>
-            <select class="form-control" id="inputPublishingStatus" value="@(_comic is null ? string.Empty : _comic.PublishingStatus)" required>
+            <InputSelect class="form-control" id="inputPublishingStatus" @bind-Value="_model.PublishingStatus" >
                 <option id="Publishing" value="Publishing">Publishing</option>
                 <option id="Finished" value="Finished">Finished</option>
                 <option id="OnHiatus" value="OnHiatus">On hiatus</option>
-            </select>
+            </InputSelect>
         </div>
     </div>
     <div class="row mb-3">
         <div class="col">
             <label for="inputTotalVolumes" class="form-label">Total volumes</label>
-            <input type="number" id="inputTotalVolumes" class="form-control" value="@(_comic is null ? string.Empty : _comic.TotalVolumes)" required/>
+            <InputNumber id="inputTotalVolumes" class="form-control" @bind-Value="_model.TotalVolumes" />
         </div>
         <div class="col">
             <label for="inputCollectedVolumes" class="form-label">Collected volumes</label>
-            <input type="number" id="inputCollectedVolumes" class="form-control" value="@(_comic is null ? string.Empty : _comic.CollectedVolumes)" required/>
+            <InputNumber id="inputCollectedVolumes" class="form-control" @bind-Value="_model.CollectedVolumes" />
         </div>
         <div class="col">
             <label for="inputPrice" class="form-label">Price per volume</label>
-            <input type="number" id="inputPrice" class="form-control" value="@(_comic is null ? string.Empty : _comic.Price)" required/>
+            <InputNumber id="inputPrice" class="form-control" @bind-Value="_model.Price" />
         </div>
     </div>
-    <button type="submit" class="btn btn-primary" @onclick="() => ButtonHandler(_comic)">@(IsCreate ? "Create" : "Update") </button>
-</form>
+    <button type="submit" class="btn btn-primary" @onclick="ButtonHandler">@(IsCreate ? "Create" : "Update") </button>
+</EditForm>
 
 
 @code {
@@ -83,12 +88,12 @@
     [Parameter]
     public Guid Id { get; set; }
 
-    public bool IsCreate
+    private bool IsCreate
     {
         get => Id == Guid.Empty;
     }
 
-    private ComicResponse? _comic;
+    private CreateComicsModel _model = new();
 
     private bool _shouldRender = false;
     private bool _error = false;
@@ -104,8 +109,7 @@
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
 
             var client = ClientFactory.CreateClient();
-
-
+            
             try
             {
                 HttpResponseMessage response = await client.SendAsync(request);
@@ -113,7 +117,9 @@
                 {
                     using var responseStream = await response.Content.ReadAsStreamAsync();
 
-                    _comic = await JsonSerializer.DeserializeAsync<ComicResponse>(responseStream);
+                    GetComicResponse? comic = await JsonSerializer.DeserializeAsync<GetComicResponse>(responseStream);
+
+                    _model = Mapper.Map<CreateComicsModel>(comic);
 
                     _shouldRender = true;
                 }
@@ -131,7 +137,7 @@
         }
     }
 
-    private void ButtonHandler(ComicResponse comic)
+    private void ButtonHandler()
     {
     }
 

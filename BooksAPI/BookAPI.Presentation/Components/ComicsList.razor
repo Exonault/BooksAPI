@@ -2,50 +2,51 @@
 @using System.Text.Json
 @using System.Net
 @using BookAPI.Presentation.Contracts
+@using BookAPI.Presentation.Contracts.Response.Comic
 @inject IHttpClientFactory ClientFactory
 @inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
 
-    @if (_error || _comics is null)
-    {
-        <h3>Unable to get comics. Please try again later.</h3>
-    }
-    else
-    {
-        <div class="row">
-            @foreach (var comic in _comics.Reverse())
-            {
-                <div class="col-3">
-                    <div class="card" style="margin-bottom: 25px">
-                        <div class="card-header">
-                            <h5 class="card-title text-center">@comic.Title</h5>
-                            <h5 class="card-subtitle text-center">Author: @comic.Author</h5>
-                        </div>
-                        <div class="card-body">
-                            <h5>Total volumes: @comic.TotalVolumes</h5>
-                            <h5>Publishing status: @comic.PublishingStatus</h5>
-                            <h5>Demographic type: @comic.DemographicType</h5>
-                            <h5>Reading status: @comic.ReadingStatus</h5>
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-primary" @onclick="() => ButtonHandler(comic)">Update</button>
-                            </div>
+@if (_error || _comics is null)
+{
+    <h3>Unable to get comics. Please try again later.</h3>
+}
+else
+{
+    <div class="row">
+        @foreach (var comic in _comics.Reverse())
+        {
+            <div class="col-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title text-center">@comic.Title</h5>
+                        <h5 class="card-subtitle text-center">Author: @comic.Author</h5>
+                    </div>
+                    <div class="card-body">
+                        <h5>Total volumes: @comic.TotalVolumes</h5>
+                        <h5>Publishing status: @comic.PublishingStatus</h5>
+                        <h5>Demographic type: @comic.DemographicType</h5>
+                        <h5>Reading status: @comic.ReadingStatus</h5>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary" @onclick="() => ButtonHandler(comic.Id.ToString())">Update</button>
                         </div>
                     </div>
                 </div>
-            }
-        </div>
-    }
+            </div>
+        }
+    </div>
+}
 
 @code {
-    private IEnumerable<ComicResponse>? _comics = Array.Empty<ComicResponse>();
+    private IEnumerable<GetComicResponse>? _comics = Array.Empty<GetComicResponse>();
     private bool _shouldRender = false;
     private bool _error = false;
 
     protected override bool ShouldRender() => _shouldRender;
 
-    private void ButtonHandler(ComicResponse comicResponse)
+    private void ButtonHandler(String id)
     {
-        NavigationManager.NavigateTo($"/updateComic/{comicResponse.Id.ToString()}");
+        NavigationManager.NavigateTo($"/updateComic/{id}");
     }
 
     protected override async Task OnInitializedAsync()
@@ -62,7 +63,7 @@
             {
                 using var responseStream = await response.Content.ReadAsStreamAsync();
 
-                _comics = await JsonSerializer.DeserializeAsync<IEnumerable<ComicResponse>>(responseStream);
+                _comics = await JsonSerializer.DeserializeAsync<IEnumerable<GetComicResponse>>(responseStream);
 
                 _shouldRender = true;
             }

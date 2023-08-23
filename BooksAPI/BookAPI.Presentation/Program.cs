@@ -1,6 +1,6 @@
+using AutoMapper;
 using BookAPI.Presentation.Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using BookAPI.Presentation.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +9,9 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddHttpClient();
+
+MapperConfiguration mapperConfig = new MapperConfiguration(config => { config.AddProfile(new ComicProfile()); });
+builder.Services.AddSingleton(mapperConfig.CreateMapper());
 
 var app = builder.Build();
 
