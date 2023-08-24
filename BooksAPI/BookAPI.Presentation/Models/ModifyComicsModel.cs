@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using BookAPI.Presentation.Attributes;
 
 namespace BookAPI.Presentation.Models;
 
-public class CreateComicsModel
+public class ModifyComicsModel
 {
     [Required(ErrorMessage = "Title is required")]
     public string Title { get; set; } = string.Empty;
@@ -11,9 +12,10 @@ public class CreateComicsModel
     public string Author { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Price is required")]
+    [Range(1,double.MaxValue,ErrorMessage = "Price must be greater than 0")]
     public decimal Price { get; set; }
 
-    [Required(ErrorMessage = "ReadingStatus is required")]
+    [Required(ErrorMessage = "Reading status is required")]
     public string ReadingStatus { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Demographic type is required")]
@@ -30,5 +32,7 @@ public class CreateComicsModel
     public int TotalVolumes { get; set; }
 
     [Required(ErrorMessage = "Collected volumes is required")]
+    [Range(0, int.MaxValue, ErrorMessage = "Collected volumes must be positive")]
+    [LessThanOrEqualToTotalVolumesValidator("TotalVolumes")]
     public int CollectedVolumes { get; set; }
 }

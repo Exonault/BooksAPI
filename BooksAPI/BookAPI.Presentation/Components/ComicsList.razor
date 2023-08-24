@@ -1,11 +1,14 @@
 @using BookAPI.Presentation.Data
 @using System.Text.Json
 @using System.Net
+@using AutoMapper
 @using BookAPI.Presentation.Contracts
 @using BookAPI.Presentation.Contracts.Response.Comic
+@using BookAPI.Presentation.Models
 @inject IHttpClientFactory ClientFactory
 @inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
+@inject IMapper Mapper;
 
 @if (_error || _comics is null)
 {
@@ -29,6 +32,7 @@ else
                         <h5>Reading status: @comic.ReadingStatus</h5>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary" @onclick="() => ButtonHandler(comic.Id.ToString())">Update</button>
+                            <button type="reset" class="btn btn-primary" @onclick="() => DeleteComic(comic.Id.ToString())">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -38,7 +42,7 @@ else
 }
 
 @code {
-    private IEnumerable<GetComicResponse>? _comics = Array.Empty<GetComicResponse>();
+    private IEnumerable<ComicsListElementModel>? _comics = Array.Empty<ComicsListElementModel>();
     private bool _shouldRender = false;
     private bool _error = false;
 
@@ -47,6 +51,28 @@ else
     private void ButtonHandler(String id)
     {
         NavigationManager.NavigateTo($"/updateComic/{id}");
+    }
+
+    private async Task DeleteComic(String id)
+    {
+        string uri = string.Format(Configuration["ApiUri:Comics:DeleteComic"] ?? string.Empty, id);
+
+        var request = new HttpRequestMessage(HttpMethod.Delete, uri);
+
+        var client = ClientFactory.CreateClient();
+        try
+        {
+            HttpResponseMessage response = await client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                _shouldRender = true;
+                StateHasChanged();
+            }
+        }
+        catch (Exception e)
+        {
+    //ignored
+        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -63,7 +89,12 @@ else
             {
                 using var responseStream = await response.Content.ReadAsStreamAsync();
 
-                _comics = await JsonSerializer.DeserializeAsync<IEnumerable<GetComicResponse>>(responseStream);
+                IEnumerable<GetComicResponse>? comics = await JsonSerializer.DeserializeAsync<IEnumerable<GetComicResponse>>(responseStream);
+
+                if (comics is not null)
+                {
+                    _comics = Mapper.Map<IEnumerable<ComicsListElementModel>>(comics);
+                }
 
                 _shouldRender = true;
             }

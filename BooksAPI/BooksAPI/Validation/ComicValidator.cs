@@ -35,6 +35,8 @@ public class ComicValidator : AbstractValidator<Comic>
 
         RuleFor(x => x.CollectedVolumes)
             .NotEmpty()
-            .WithMessage(ComicValidationMessages.CollectedVolumesValidationMessage);
+            .WithMessage(ComicValidationMessages.CollectedVolumesValidationMessage)
+            .LessThanOrEqualTo(x => x.TotalVolumes)
+            .WithMessage(ComicValidationMessages.CollectedVolumesLessThanTotalVolumes);
     }
 }

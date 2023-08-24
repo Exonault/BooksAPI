@@ -3,6 +3,7 @@
 @using BookAPI.Presentation.Contracts.Response.Comic
 @using System.Text.Json
 @using AutoMapper
+@using BookAPI.Presentation.Contracts.Requests.Comic
 @using BookAPI.Presentation.Models
 @inject IHttpClientFactory ClientFactory
 @inject IConfiguration Configuration
@@ -12,24 +13,23 @@
 
 <h3>@(IsCreate ? "Create a comic" : "Update a comic")</h3>
 
-<EditForm Model="@_model" OnValidSubmit="ButtonHandler">
+<EditForm Model="@_model">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
     <div class="row mb-4 mt-4">
         <div class="col">
             <label for="inputTitle" class="form-label">Title</label>
-            <InputText type="text" id="inputTitle" class="form-control" @bind-Value="_model.Title" />
-            <ValidationMessage For="() => _model.Title"/>
+            <InputText type="text" id="inputTitle" class="form-control" @bind-Value="_model.Title"/>
         </div>
         <div class="col">
             <label for="inputAuthor" class="form-label">Author</label>
-            <InputText type="text" id="inputAuthor" class="form-control" @bind-Value="_model.Author" />
+            <InputText type="text" id="inputAuthor" class="form-control" @bind-Value="_model.Author"/>
         </div>
     </div>
     <div class="row mb-4">
         <div class="col">
             <label for="inputReadingStatus" class="form-label">Reading status</label>
-            <InputSelect class="form-control" id="inputReadingStatus" @bind-Value="_model.ReadingStatus" >
+            <InputSelect class="form-control" id="inputReadingStatus" @bind-Value="_model.ReadingStatus">
                 <option id="Reading" value="Reading">Reading</option>
                 <option id="Finished" value="Finished">Finished</option>
                 <option id="OnHold" value="OnHold">On hold</option>
@@ -39,7 +39,7 @@
         </div>
         <div class="col">
             <label for="inputDemographic" class="form-label">Demographic type</label>
-            <InputSelect class="form-control" id="inputDemographic" @bind-Value="_model.DemographicType" >
+            <InputSelect class="form-control" id="inputDemographic" @bind-Value="_model.DemographicType">
                 <option id="Shonen" value="Shonen">Shonen</option>
                 <option id="Shojo" value="Shojo">Shojo</option>
                 <option id="Seinen" value="Seinen">Seinen</option>
@@ -49,7 +49,7 @@
         </div>
         <div class="col">
             <label for="inputComicType" class="form-label">Comic type</label>
-            <InputSelect class="form-control" id="inputComicType" @bind-Value="_model.ComicType" >
+            <InputSelect class="form-control" id="inputComicType" @bind-Value="_model.ComicType">
                 <option id="Comic" value="Comic">Comic</option>
                 <option id="Manga" value="Manga">Manga</option>
                 <option id="LightNovel" value="LightNovel">Light novel</option>
@@ -58,7 +58,7 @@
         </div>
         <div class="col">
             <label for="inputPublishingStatus" class="form-label">Publishing status</label>
-            <InputSelect class="form-control" id="inputPublishingStatus" @bind-Value="_model.PublishingStatus" >
+            <InputSelect class="form-control" id="inputPublishingStatus" @bind-Value="_model.PublishingStatus">
                 <option id="Publishing" value="Publishing">Publishing</option>
                 <option id="Finished" value="Finished">Finished</option>
                 <option id="OnHiatus" value="OnHiatus">On hiatus</option>
@@ -68,15 +68,15 @@
     <div class="row mb-3">
         <div class="col">
             <label for="inputTotalVolumes" class="form-label">Total volumes</label>
-            <InputNumber id="inputTotalVolumes" class="form-control" @bind-Value="_model.TotalVolumes" />
+            <InputNumber id="inputTotalVolumes" class="form-control" @bind-Value="_model.TotalVolumes"/>
         </div>
         <div class="col">
             <label for="inputCollectedVolumes" class="form-label">Collected volumes</label>
-            <InputNumber id="inputCollectedVolumes" class="form-control" @bind-Value="_model.CollectedVolumes" />
+            <InputNumber id="inputCollectedVolumes" class="form-control" @bind-Value="_model.CollectedVolumes"/>
         </div>
         <div class="col">
             <label for="inputPrice" class="form-label">Price per volume</label>
-            <InputNumber id="inputPrice" class="form-control" @bind-Value="_model.Price" />
+            <InputNumber id="inputPrice" class="form-control" @bind-Value="_model.Price"/>
         </div>
     </div>
     <button type="submit" class="btn btn-primary" @onclick="ButtonHandler">@(IsCreate ? "Create" : "Update") </button>
@@ -93,23 +93,21 @@
         get => Id == Guid.Empty;
     }
 
-    private CreateComicsModel _model = new();
+    private ModifyComicsModel _model = new();
 
     private bool _shouldRender = false;
-    private bool _error = false;
 
     protected override bool ShouldRender() => _shouldRender;
 
     protected override async Task OnInitializedAsync()
     {
+        string uri = string.Format(Configuration["ApiUri:Comics:GetComicByIdUri"] ?? string.Empty, Id.ToString());
         if (!IsCreate)
         {
-            string uri = String.Format(Configuration["ApiUri:Comics:GetComicByIdUri"] ?? string.Empty, Id.ToString());
-
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
 
             var client = ClientFactory.CreateClient();
-            
+
             try
             {
                 HttpResponseMessage response = await client.SendAsync(request);
@@ -119,26 +117,70 @@
 
                     GetComicResponse? comic = await JsonSerializer.DeserializeAsync<GetComicResponse>(responseStream);
 
-                    _model = Mapper.Map<CreateComicsModel>(comic);
+                    _model = Mapper.Map<ModifyComicsModel>(comic);
 
                     _shouldRender = true;
                 }
                 else
                 {
-                    _error = true;
                     _shouldRender = true;
                 }
             }
             catch (Exception e)
             {
-                _error = true;
                 _shouldRender = true;
             }
         }
     }
 
-    private void ButtonHandler()
+    private async Task ButtonHandler()
     {
+        if (IsCreate)
+        {
+            CreateComicRequest requestContent = Mapper.Map<CreateComicRequest>(_model);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, Configuration["ApiUri:Comics:CreateComic"]);
+            request.Content = JsonContent.Create(requestContent);
+
+            var client = ClientFactory.CreateClient();
+
+
+            try
+            {
+                HttpResponseMessage response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    NavigationManager.NavigateTo("/comics");
+                }
+            }
+            catch (Exception e)
+            {
+    // ignored
+            }
+        }
+        else
+        {
+            UpdateComicRequest requestContent = Mapper.Map<UpdateComicRequest>(_model);
+
+            string uri = string.Format(Configuration["ApiUri:Comics:UpdateComic"] ?? string.Empty, Id.ToString());
+
+            var request = new HttpRequestMessage(HttpMethod.Put, uri);
+            request.Content = JsonContent.Create(requestContent);
+
+            var client = ClientFactory.CreateClient();
+            try
+            {
+                HttpResponseMessage response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    NavigationManager.NavigateTo("/comics");
+                }
+            }
+            catch (Exception e)
+            {
+    // ignored
+            }
+        }
     }
 
 }

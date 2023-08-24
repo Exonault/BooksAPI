@@ -8,6 +8,9 @@ public static class ComicValidationMessages
 
     public const string CollectedVolumesValidationMessage = "Collected volumes is required";
 
+    public const string CollectedVolumesLessThanTotalVolumes =
+        "Collected volumes must be less than or equal to the total volumes";
+
     public static readonly string DemographicTypesMessage =
         $"Demographic type must be one of the following: {string.Join(", ", AppConstants.DemographicTypes)}";
 
