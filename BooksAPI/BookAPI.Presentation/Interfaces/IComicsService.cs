@@ -6,11 +6,11 @@ public interface IComicsService
 {
     Task<HttpResponseMessage> CreateComic(ModifyComicsModel model);
 
-    Task<IEnumerable<ComicsListElementModel>> GetAllComics();
+    Task<HttpResponseMessage> GetAllComics();
 
-    Task<ModifyComicsModel> GetComic(String id);
+    Task<HttpResponseMessage> GetComic(string id);
 
-    Task<HttpResponseMessage> UpdateComic(String id, ModifyComicsModel model);
+    Task<HttpResponseMessage> UpdateComic(string id, ModifyComicsModel model);
 
-    Task<HttpResponseMessage> DeleteComic(String id);
+    Task<HttpResponseMessage> DeleteComic(string id);
 }

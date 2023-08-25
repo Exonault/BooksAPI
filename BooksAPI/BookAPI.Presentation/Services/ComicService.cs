@@ -1,8 +1,6 @@
 ﻿using System.Net;
-using System.Text.Json;
 using AutoMapper;
 using BookAPI.Presentation.Contracts.Requests.Comic;
-using BookAPI.Presentation.Contracts.Response.Comic;
 using BookAPI.Presentation.Interfaces;
 using BookAPI.Presentation.Models;
 
@@ -42,38 +40,24 @@ public class ComicService : IComicsService
         }
     }
 
-    public async Task<IEnumerable<ComicsListElementModel>> GetAllComics()
+    public async Task<HttpResponseMessage> GetAllComics()
     {
         var request = new HttpRequestMessage(HttpMethod.Get, _configuration["ApiUri:Comics:GetAllComicsUri"]);
 
         var client = _clientFactory.CreateClient();
 
-        IEnumerable<ComicsListElementModel>? result = Array.Empty<ComicsListElementModel>();
         try
         {
             HttpResponseMessage response = await client.SendAsync(request);
-            if (response.IsSuccessStatusCode)
-            {
-                using var responseStream = await response.Content.ReadAsStreamAsync();
-
-                IEnumerable<GetComicResponse>? comics =
-                    await JsonSerializer.DeserializeAsync<IEnumerable<GetComicResponse>>(responseStream);
-
-                if (comics is not null)
-                {
-                    result = _mapper.Map<IEnumerable<ComicsListElementModel>>(comics);
-                }
-            }
+            return response;
         }
         catch (Exception e)
         {
-            //ignored
+            return new HttpResponseMessage(HttpStatusCode.InternalServerError);
         }
-
-        return result;
     }
 
-    public async Task<ModifyComicsModel> GetComic(string id)
+    public async Task<HttpResponseMessage> GetComic(string id)
     {
         string uri = string.Format(_configuration["ApiUri:Comics:GetComicByIdUri"] ?? string.Empty, id);
 
@@ -81,28 +65,15 @@ public class ComicService : IComicsService
 
         var client = _clientFactory.CreateClient();
 
-        ModifyComicsModel? result;
-
         try
         {
             HttpResponseMessage response = await client.SendAsync(request);
-            if (response.IsSuccessStatusCode)
-            {
-                using var responseStream = await response.Content.ReadAsStreamAsync();
-
-                GetComicResponse? comic = await JsonSerializer.DeserializeAsync<GetComicResponse>(responseStream);
-
-                result = _mapper.Map<ModifyComicsModel>(comic);
-
-                return result;
-            }
+            return response;
         }
         catch (Exception e)
         {
-            //ignored
+            return new HttpResponseMessage(HttpStatusCode.InternalServerError);
         }
-
-        return null;
     }
 
     public async Task<HttpResponseMessage> UpdateComic(string id, ModifyComicsModel model)
