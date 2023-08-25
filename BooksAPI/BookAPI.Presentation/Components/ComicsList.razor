@@ -65,8 +65,7 @@ else
             HttpResponseMessage response = await client.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
-                _shouldRender = true;
-                StateHasChanged();
+                NavigationManager.NavigateTo("/comics", true);
             }
         }
         catch (Exception e)
@@ -77,10 +76,16 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine("OnInitializedAsync");
+        await GetAllComics();
+    }
+
+
+    private async Task GetAllComics()
+    {
         var request = new HttpRequestMessage(HttpMethod.Get, Configuration["ApiUri:Comics:GetAllComicsUri"]);
 
         var client = ClientFactory.CreateClient();
-
 
         try
         {
@@ -89,7 +94,8 @@ else
             {
                 using var responseStream = await response.Content.ReadAsStreamAsync();
 
-                IEnumerable<GetComicResponse>? comics = await JsonSerializer.DeserializeAsync<IEnumerable<GetComicResponse>>(responseStream);
+                IEnumerable<GetComicResponse>? comics =
+                    await JsonSerializer.DeserializeAsync<IEnumerable<GetComicResponse>>(responseStream);
 
                 if (comics is not null)
                 {

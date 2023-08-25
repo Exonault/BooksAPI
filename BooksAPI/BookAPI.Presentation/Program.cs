@@ -1,6 +1,8 @@
 using AutoMapper;
 using BookAPI.Presentation.Data;
+using BookAPI.Presentation.Interfaces;
 using BookAPI.Presentation.Mapping;
+using BookAPI.Presentation.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddSingleton<IComicsService, ComicService>();
 builder.Services.AddHttpClient();
 
 MapperConfiguration mapperConfig = new MapperConfiguration(config => { config.AddProfile(new ComicProfile()); });
