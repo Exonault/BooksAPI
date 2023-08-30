@@ -1,0 +1,91 @@
+﻿@using BookAPI.Presentation.Models
+@using AutoMapper
+@using BookAPI.Presentation.Interfaces
+@using BookAPI.Presentation.Contracts.Response.Order
+@using System.Text.Json
+@inject NavigationManager NavigationManager
+@inject IMapper Mapper;
+@inject IOrderService OrderService;
+
+@if (_error || _orders is null)
+{
+    <h3>Unable to get orders. Please try again later.</h3>
+}
+else
+{
+    <div class="row">
+        @foreach (var order in _orders.Reverse())
+        {
+            @* <div class="col-3"> *@
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title text-center">@order.Date</h5>
+                        <h5 class="card-subtitle text-center">Place: @order.Place</h5>
+                    </div>
+                    <div class="card-body">
+                        <h5>Description: @order.Description</h5>
+                        <div class="card-footer">
+                            <button class="btn btn-primary float-start" @onclick="() => ButtonHandler(order.Id.ToString())">Update</button>
+                            <button class="btn btn-primary float-end" @onclick="() => DeleteComic(order.Id.ToString())">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            // </div>
+        }
+    </div>
+}
+
+@code {
+    private IEnumerable<OrderListElementModel>? _orders = Array.Empty<OrderListElementModel>();
+    private bool _shouldRender = false;
+    private bool _error = false;
+
+    protected override bool ShouldRender() => _shouldRender;
+
+    private void ButtonHandler(String id)
+    {
+        NavigationManager.NavigateTo($"/updateOrder/{id}");
+    }
+
+    private async Task DeleteComic(String id)
+    {
+        HttpResponseMessage httpResponseMessage = await OrderService.DeleteOrder(id);
+
+        if (httpResponseMessage.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/orders", true);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetAllOrders();
+    }
+
+
+    private async Task GetAllOrders()
+    {
+        HttpResponseMessage response = await OrderService.GetAllOrders();
+
+        if (response.IsSuccessStatusCode)
+        {
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+
+            IEnumerable<GetOrderResponse>? comics =
+                await JsonSerializer.DeserializeAsync<IEnumerable<GetOrderResponse>>(responseStream);
+
+            if (comics is not null)
+            {
+                _orders = Mapper.Map<IEnumerable<OrderListElementModel>>(comics);
+            }
+
+            _shouldRender = true;
+        }
+        else
+        {
+            _error = true;
+            _shouldRender = true;
+        }
+    }
+
+}

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using AutoMapper;
+using BookAPI.Presentation.Constants;
 using BookAPI.Presentation.Contracts.Requests.Comic;
 using BookAPI.Presentation.Interfaces;
 using BookAPI.Presentation.Models;
@@ -24,7 +25,10 @@ public class ComicService : IComicsService
     {
         CreateComicRequest requestContent = _mapper.Map<CreateComicRequest>(model);
 
-        var request = new HttpRequestMessage(HttpMethod.Post, _configuration["ApiUri:Comics:CreateComic"]);
+        var uri = _configuration.GetSection("ApiUri")
+            .GetSection("Comics")
+            .GetSection(ComicsConstants.CreateComicUri).Value;
+        var request = new HttpRequestMessage(HttpMethod.Post, uri);
         request.Content = JsonContent.Create(requestContent);
 
         var client = _clientFactory.CreateClient();
@@ -42,7 +46,11 @@ public class ComicService : IComicsService
 
     public async Task<HttpResponseMessage> GetAllComics()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, _configuration["ApiUri:Comics:GetAllComicsUri"]);
+        var uri = _configuration.GetSection("ApiUri")
+            .GetSection("Comics")
+            .GetSection(ComicsConstants.GetAllComicsUri).Value;
+
+        var request = new HttpRequestMessage(HttpMethod.Get, uri);
 
         var client = _clientFactory.CreateClient();
 
@@ -59,7 +67,9 @@ public class ComicService : IComicsService
 
     public async Task<HttpResponseMessage> GetComic(string id)
     {
-        string uri = string.Format(_configuration["ApiUri:Comics:GetComicByIdUri"] ?? string.Empty, id);
+        string uri = string.Format(_configuration.GetSection("ApiUri")
+            .GetSection("Comics")
+            .GetSection(ComicsConstants.GetComicByIdUri).Value ?? string.Empty, id);
 
         var request = new HttpRequestMessage(HttpMethod.Get, uri);
 
@@ -80,7 +90,9 @@ public class ComicService : IComicsService
     {
         UpdateComicRequest requestContent = _mapper.Map<UpdateComicRequest>(model);
 
-        string uri = string.Format(_configuration["ApiUri:Comics:UpdateComic"] ?? string.Empty, id);
+        string uri = string.Format(_configuration.GetSection("ApiUri")
+            .GetSection("Comics")
+            .GetSection(ComicsConstants.UpdateComicUri).Value ?? string.Empty, id);
 
         var request = new HttpRequestMessage(HttpMethod.Put, uri);
         request.Content = JsonContent.Create(requestContent);
@@ -99,7 +111,9 @@ public class ComicService : IComicsService
 
     public async Task<HttpResponseMessage> DeleteComic(string id)
     {
-        string uri = string.Format(_configuration["ApiUri:Comics:DeleteComic"] ?? string.Empty, id);
+        string uri = string.Format(_configuration.GetSection("ApiUri")
+            .GetSection("Comics")
+            .GetSection(ComicsConstants.DeleteComicUri).Value ?? string.Empty, id);
 
         var request = new HttpRequestMessage(HttpMethod.Delete, uri);
 
