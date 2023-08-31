@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using AutoMapper;
 using BookAPI.Presentation.Constants;
+using BookAPI.Presentation.Contracts.Requests.Order;
 using BookAPI.Presentation.Interfaces;
 using BookAPI.Presentation.Models;
 
@@ -20,15 +21,34 @@ public class OrderService : IOrderService
         _configuration = configuration;
     }
 
-    public Task<HttpResponseMessage> CreateOrder(ModifyOrderModel model)
+    public async Task<HttpResponseMessage> CreateOrder(ModifyOrderModel model)
     {
-        throw new NotImplementedException();
+        CreateOrderRequest requestContent = _mapper.Map<CreateOrderRequest>(model);
+
+        var uri = _configuration.GetSection("ApiUri")
+            .GetSection(OrderConstants.OrdersSection)
+            .GetSection(OrderConstants.CreateOrderUri).Value;
+
+        var request = new HttpRequestMessage(HttpMethod.Post, uri);
+
+        request.Content = JsonContent.Create(requestContent);
+
+        var cliend = _clientFactory.CreateClient();
+        try
+        {
+            HttpResponseMessage response = await cliend.SendAsync(request);
+            return response;
+        }
+        catch (Exception e)
+        {
+            return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+        }
     }
 
     public async Task<HttpResponseMessage> GetAllOrders()
     {
         var uri = _configuration.GetSection("ApiUri")
-            .GetSection("Orders")
+            .GetSection(OrderConstants.OrdersSection)
             .GetSection(OrderConstants.GetAllOrdersUri).Value;
 
         var request = new HttpRequestMessage(HttpMethod.Get, uri);
@@ -46,18 +66,66 @@ public class OrderService : IOrderService
         }
     }
 
-    public Task<HttpResponseMessage> GetOrder(string id)
+    public async Task<HttpResponseMessage> GetOrder(string id)
     {
-        throw new NotImplementedException();
+        string uri = string.Format(_configuration.GetSection("ApiUri")
+            .GetSection(OrderConstants.OrdersSection)
+            .GetSection(OrderConstants.GetOrderByIdUri).Value ?? string.Empty, id);
+
+        var request = new HttpRequestMessage(HttpMethod.Get, uri);
+
+        var client = _clientFactory.CreateClient();
+
+        try
+        {
+            HttpResponseMessage response = await client.SendAsync(request);
+            return response;
+        }
+        catch (Exception e)
+        {
+            return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+        }
     }
 
-    public Task<HttpResponseMessage> UpdateOrder(string id, ModifyOrderModel model)
+    public async Task<HttpResponseMessage> UpdateOrder(string id, ModifyOrderModel model)
     {
-        throw new NotImplementedException();
+        UpdateOrderRequest requestContent = _mapper.Map<UpdateOrderRequest>(model);
+
+        string uri = string.Format(_configuration.GetSection("ApiUri")
+            .GetSection(OrderConstants.OrdersSection)
+            .GetSection(OrderConstants.UpdateOrderUri).Value ?? string.Empty, id);
+        var request = new HttpRequestMessage(HttpMethod.Put, uri);
+        request.Content = JsonContent.Create(requestContent);
+
+        var client = _clientFactory.CreateClient();
+        try
+        {
+            HttpResponseMessage response = await client.SendAsync(request);
+            return response;
+        }
+        catch (Exception e)
+        {
+            return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+        }
     }
 
-    public Task<HttpResponseMessage> DeleteOrder(string id)
+    public async Task<HttpResponseMessage> DeleteOrder(string id)
     {
-        throw new NotImplementedException();
+        string uri = string.Format(_configuration.GetSection("ApiUri")
+            .GetSection(OrderConstants.OrdersSection)
+            .GetSection(OrderConstants.DeleteOrderUri).Value ?? string.Empty, id);
+
+        var request = new HttpRequestMessage(HttpMethod.Delete, uri);
+
+        var client = _clientFactory.CreateClient();
+        try
+        {
+            HttpResponseMessage response = await client.SendAsync(request);
+            return response;
+        }
+        catch (Exception e)
+        {
+            return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+        }
     }
 }

@@ -1,0 +1,108 @@
+﻿@page "/updateOrder/{id:guid}"
+@page "/createOrder"
+@using BookAPI.Presentation.Models
+@using AutoMapper
+@using BookAPI.Presentation.Contracts.Response.Order
+@using BookAPI.Presentation.Interfaces
+@using System.Text.Json
+@inject NavigationManager NavigationManager
+@inject IMapper Mapper;
+@inject IOrderService OrderService;
+<h3>@(IsCreate ? "Create an order" : "Update an order")</h3>
+
+<EditForm Model="@_model">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <div class="row mb-4 mt-4">
+        <div class="col">
+            <label for="inputDate" class="form-label">Date</label>
+            <InputDate id="inputDate" class="form-control" @bind-Value="_model.Date"/>
+        </div>
+        <div class="col">
+            <label for="inputPlace" class="form-label">Place</label>
+            <InputText id="inputPlace" class="form-control" @bind-Value="_model.Place"/>
+        </div>
+    </div>
+    <div class="row mb-4 mt-4">
+        <div class="col">
+            <label for="inputDescription" class="form-label">Description</label>
+            <InputText id="inputDescription" class="form-control" @bind-Value="_model.Description"/>
+        </div>
+    </div>
+    <div class="row mb-4 mt-4">
+        <div class="col">
+            <label for="inputAmount" class="form-label">Price</label>
+            <InputNumber id="inputAmount" class="form-control" @bind-Value="_model.Amount"/>
+        </div>
+        <div class="col">
+            <label for="inputNumberOfItems" class="form-label">Number of items</label>
+            <InputNumber id="inputNumberOfItems" class="form-control" @bind-Value="_model.NumberOfItems"/>
+        </div>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary" @onclick="ButtonHandler">@(IsCreate ? "Create" : "Update") </button>
+
+
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private bool IsCreate => Id == Guid.Empty;
+
+    private ModifyOrderModel _model = new();
+
+    private bool _shouldRender = false;
+
+    protected override bool ShouldRender() => _shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!IsCreate)
+        {
+            HttpResponseMessage response = await OrderService.GetOrder(Id.ToString());
+
+            if (response.IsSuccessStatusCode)
+            {
+                await using var responseStream = await response.Content.ReadAsStreamAsync();
+
+                GetOrderResponse? order = await JsonSerializer.DeserializeAsync<GetOrderResponse>(responseStream);
+
+                _model = Mapper.Map<ModifyOrderModel>(order);
+
+                _shouldRender = true;
+            }
+            else
+            {
+                _shouldRender = true;
+            }
+        }
+        else
+        {
+            _model.Date = DateOnly.FromDateTime(DateTime.Now);
+        }
+    }
+
+    private async Task ButtonHandler()
+    {
+        HttpResponseMessage response;
+        if (IsCreate)
+        {
+            response = await OrderService.CreateOrder(_model);
+        }
+        else
+        {
+            response = await OrderService.UpdateOrder(Id.ToString(), _model);
+        }
+
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/orders");
+        }
+    }
+
+}

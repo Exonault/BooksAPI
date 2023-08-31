@@ -2,6 +2,8 @@
 
 public class ComicsConstants
 {
+    public const string ComicsSection = "Comics";
+
     public const string GetAllComicsUri = "GetAllComicsUri";
 
     public const string GetComicByIdUri = "GetComicByIdUri";

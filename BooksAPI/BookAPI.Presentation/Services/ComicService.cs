@@ -26,7 +26,7 @@ public class ComicService : IComicsService
         CreateComicRequest requestContent = _mapper.Map<CreateComicRequest>(model);
 
         var uri = _configuration.GetSection("ApiUri")
-            .GetSection("Comics")
+            .GetSection(ComicsConstants.ComicsSection)
             .GetSection(ComicsConstants.CreateComicUri).Value;
         var request = new HttpRequestMessage(HttpMethod.Post, uri);
         request.Content = JsonContent.Create(requestContent);
@@ -47,7 +47,7 @@ public class ComicService : IComicsService
     public async Task<HttpResponseMessage> GetAllComics()
     {
         var uri = _configuration.GetSection("ApiUri")
-            .GetSection("Comics")
+            .GetSection(ComicsConstants.ComicsSection)
             .GetSection(ComicsConstants.GetAllComicsUri).Value;
 
         var request = new HttpRequestMessage(HttpMethod.Get, uri);
@@ -68,7 +68,7 @@ public class ComicService : IComicsService
     public async Task<HttpResponseMessage> GetComic(string id)
     {
         string uri = string.Format(_configuration.GetSection("ApiUri")
-            .GetSection("Comics")
+            .GetSection(ComicsConstants.ComicsSection)
             .GetSection(ComicsConstants.GetComicByIdUri).Value ?? string.Empty, id);
 
         var request = new HttpRequestMessage(HttpMethod.Get, uri);
@@ -91,7 +91,7 @@ public class ComicService : IComicsService
         UpdateComicRequest requestContent = _mapper.Map<UpdateComicRequest>(model);
 
         string uri = string.Format(_configuration.GetSection("ApiUri")
-            .GetSection("Comics")
+            .GetSection(ComicsConstants.ComicsSection)
             .GetSection(ComicsConstants.UpdateComicUri).Value ?? string.Empty, id);
 
         var request = new HttpRequestMessage(HttpMethod.Put, uri);
@@ -112,7 +112,7 @@ public class ComicService : IComicsService
     public async Task<HttpResponseMessage> DeleteComic(string id)
     {
         string uri = string.Format(_configuration.GetSection("ApiUri")
-            .GetSection("Comics")
+            .GetSection(ComicsConstants.ComicsSection)
             .GetSection(ComicsConstants.DeleteComicUri).Value ?? string.Empty, id);
 
         var request = new HttpRequestMessage(HttpMethod.Delete, uri);
