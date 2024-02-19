@@ -13,6 +13,10 @@
 {
     <h3>Unable to get comics. Please try again later.</h3>
 }
+@if (!_comics.Any())
+{
+    <h3>No comics in data.</h3>
+}
 else
 {
     <div class="row">
@@ -29,10 +33,10 @@ else
                         <h5>Publishing status: @comic.PublishingStatus</h5>
                         <h5>Demographic type: @comic.DemographicType</h5>
                         <h5>Reading status: @comic.ReadingStatus</h5>
-                        <div class="card-footer">
-                            <button class="btn btn-primary float-start" @onclick="() => ButtonHandler(comic.Id.ToString())">Update</button>
-                            <button class="btn btn-primary float-end" @onclick="() => DeleteComic(comic.Id.ToString())">Delete</button>
-                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary float-start" @onclick="() => ButtonHandler(comic.Id.ToString())">Update</button>
+                        <button class="btn btn-primary float-end" @onclick="() => DeleteComic(comic.Id.ToString())">Delete</button>
                     </div>
                 </div>
             </div>
@@ -56,9 +60,9 @@ else
     {
         HttpResponseMessage httpResponseMessage = await ComicsService.DeleteComic(id);
 
-        if (httpResponseMessage.IsSuccessStatusCode)
+        if (httpResponseMessage.IsSuccessStatusCode) //Refill the collection
         {
-            NavigationManager.NavigateTo("/comics", true);
+            await GetAllComics();
         }
     }
 
