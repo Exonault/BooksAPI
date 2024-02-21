@@ -11,12 +11,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddIdentityCore<User>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddApiEndpoints();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql("Server=localhost;Database=testDbBooks;Username=postgres;Password=1234");
-    //options.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationDb1"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationDb1"));
 });
 
 
@@ -31,5 +31,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapIdentityApi<User>();
 
 app.Run();
