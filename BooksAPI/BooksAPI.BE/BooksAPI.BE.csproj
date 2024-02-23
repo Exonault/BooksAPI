@@ -29,7 +29,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Interfaces\Services\" />
+      <Folder Include="Contracts\LibraryComic\" />
+      <Folder Include="Contracts\Order\" />
+      <Folder Include="Contracts\UserComic\" />
     </ItemGroup>
 
 </Project>

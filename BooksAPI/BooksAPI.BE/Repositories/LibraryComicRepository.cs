@@ -7,7 +7,7 @@ namespace BooksAPI.BE.Repositories;
 
 public class LibraryComicRepository:ILibraryComicRepository
 {
-    private ApplicationDbContext _dbContext;
+    private readonly ApplicationDbContext _dbContext;
 
     public LibraryComicRepository(ApplicationDbContext dbContext)
     {

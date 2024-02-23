@@ -8,7 +8,7 @@ namespace BooksAPI.BE.Repositories;
 public class UserComicRepository:IUserComicRepository
 {
 
-    private ApplicationDbContext _dbContext;
+    private readonly ApplicationDbContext _dbContext;
 
     public UserComicRepository(ApplicationDbContext dbContext)
     {
@@ -23,12 +23,18 @@ public class UserComicRepository:IUserComicRepository
 
     public async Task<UserComic?> GetUserComicById(Guid id)
     {
-       return await _dbContext.UserComics.FirstOrDefaultAsync(x => x.Id == id);
+       return await _dbContext.UserComics
+           .Include(uc=> uc.LibraryComic)
+           .Include(uc=>uc.User)
+           .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<List<UserComic>> GetAllUserComic()
     {
-        return await _dbContext.UserComics.ToListAsync();
+        return await _dbContext.UserComics
+            .Include(uc=> uc.LibraryComic)
+            .Include(uc=>uc.User)
+            .ToListAsync();
     }
 
     public async Task UpdateUserComic(UserComic userComic)

@@ -7,7 +7,7 @@ namespace BooksAPI.BE.Repositories;
 
 public class OrderRepository:IOrderRepository
 {
-    private ApplicationDbContext _dbContext;
+    private readonly ApplicationDbContext _dbContext;
 
     public OrderRepository(ApplicationDbContext dbContext)
     {
@@ -22,12 +22,16 @@ public class OrderRepository:IOrderRepository
 
     public async Task<Order?> GetOrderById(Guid id)
     {
-        return await _dbContext.Orders.FirstOrDefaultAsync(x => x.Id == id);
+        return await _dbContext.Orders
+            .Include(o=> o.User)
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<List<Order>> GetAllOrders()
     {
-        return await _dbContext.Orders.ToListAsync();
+        return await _dbContext.Orders
+            .Include(o=> o.User)
+            .ToListAsync();
     }
 
     public async Task UpdateOrder(Order order)
