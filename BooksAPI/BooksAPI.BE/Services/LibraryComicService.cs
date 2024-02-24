@@ -4,6 +4,7 @@ using BooksAPI.BE.Entities;
 using BooksAPI.BE.Exception;
 using BooksAPI.BE.Interfaces.Repositories;
 using BooksAPI.BE.Interfaces.Services;
+using BooksAPI.BE.Messages;
 using FluentValidation;
 using FluentValidation.Results;
 
@@ -50,7 +51,7 @@ public class LibraryComicService : ILibraryComicService
         LibraryComic? libraryComic = await _libraryComicRepository.GetLibraryComicById(id);
         if (libraryComic is null)
         {
-            throw new ResourceNotFoundException("Library comic with id doesn't exist.");
+            throw new ResourceNotFoundException(LibraryComicMessages.NoLibraryComicWithId);
         }
 
         return _mapper.Map<LibraryComicResponse>(libraryComic);
@@ -69,7 +70,7 @@ public class LibraryComicService : ILibraryComicService
         
         if (libraryComic is null)
         {
-            throw new ResourceNotFoundException("Library comic with id doesn't exist.");
+            throw new ResourceNotFoundException(LibraryComicMessages.NoLibraryComicWithId);
         }
 
         LibraryComic updatedComic = _mapper.Map<LibraryComic>(request);
@@ -99,7 +100,7 @@ public class LibraryComicService : ILibraryComicService
 
         if (libraryComic is null)
         {
-            throw new ResourceNotFoundException("Library comic with id doesn't exist.");
+            throw new ResourceNotFoundException(LibraryComicMessages.NoLibraryComicWithId);
         }
 
         try

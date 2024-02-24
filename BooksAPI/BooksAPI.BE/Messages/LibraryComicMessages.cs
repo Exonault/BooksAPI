@@ -2,7 +2,7 @@
 
 namespace BooksAPI.BE.Messages;
 
-public class LibraryComicMessages
+public static class LibraryComicMessages
 {
     public const string TitleValidationMessage = "Title is required";
 
@@ -27,5 +27,5 @@ public class LibraryComicMessages
 
     public const string TotalChaptersValidationMessage = "Total chapters is required and it must be at least 1";
 
-    
+    public const string NoLibraryComicWithId = "Library comic with id doesn't exist.";
 }

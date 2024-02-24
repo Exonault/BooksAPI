@@ -1,44 +1,83 @@
-using AutoMapper;using BooksAPI.BE.Data;
+using System.Text;
+using AutoMapper;
+using BooksAPI.BE.Data;
 using BooksAPI.BE.Endpoints;
 using BooksAPI.BE.Entities;
 using BooksAPI.BE.Mapping;
+using BooksAPI.BE.Swagger;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
+//Swagger
+builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+
+//DB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationDb1"));
+    options.UseNpgsql(configuration.GetConnectionString("ApplicationDb1"));
 });
 
+
+
+//Auth
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddRoles<IdentityRole>()
+    .AddSignInManager();
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            ValidIssuer = configuration["Jwt:Issuer"],
+            ValidAudience = configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+//CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowedOrigin",
+        policy =>
+        {
+            policy.WithOrigins(configuration.GetSection("FrontEndUrl").Value!);
+        });
+});
+
+//Entity Services
+builder.Services.AddLibraryComicServices();
+builder.Services.AddUserServices();
+
+//Mapping
 MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
 {
     config.AddProfile(new LibraryComicProfile());
 });
 
 builder.Services.AddSingleton(mapperConfiguration.CreateMapper());
-builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
-builder.Services.AddAuthorizationBuilder();
-
-builder.Services.AddIdentityCore<User>(options =>
-    {
-        options.Password.RequiredLength = 3;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequireUppercase = false;
-        options.Password.RequireLowercase = false;
-        options.Password.RequireDigit = false;
-    }
-    )
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddApiEndpoints();
-
-builder.Services.AddLibraryComicServices();
 
 var app = builder.Build();
 
@@ -49,12 +88,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowedOrigin");
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapIdentityApi<User>();
 app.MapLibraryComicEndpoints();
+app.MapUserEndpoints();
 
 app.Run();

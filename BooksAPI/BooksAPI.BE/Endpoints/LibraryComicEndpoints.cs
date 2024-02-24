@@ -18,6 +18,7 @@ public static class LibraryComicEndpoints
         app.MapPost("/libraryComic/", CreateLibraryComic);
         
         app.MapGet("/libraryComic/{id:guid}", GetLibraryComicById);
+        app.MapGet("/libraryComic/", GetAllLibraryComics);
 
         app.MapPut("/libraryComic/{id:guid}", UpdateLibraryComic);
 
@@ -43,7 +44,7 @@ public static class LibraryComicEndpoints
         {
             return Results.BadRequest(ex.Message);
         }
-        catch (System.Exception e)
+        catch (System.Exception ex)
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -62,12 +63,20 @@ public static class LibraryComicEndpoints
         {
             return Results.NotFound(ex.Message);
         }
-        catch (System.Exception e)
+        catch (System.Exception ex)
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
 
         return Results.Ok(response);
+    }
+
+    static async Task<IResult> GetAllLibraryComics(ILibraryComicService service)
+    {
+        List<LibraryComicResponse> libraryComicResponses = await service.GetAllLibraryComics();
+
+        return Results.Ok(libraryComicResponses);
+
     }
 
 
@@ -83,11 +92,11 @@ public static class LibraryComicEndpoints
         {
             return Results.NotFound(ex.Message);
         }
-        catch (ValidationException ex1)
+        catch (ValidationException ex)
         {
-            return Results.BadRequest(ex1.Message);
+            return Results.BadRequest(ex.Message);
         }
-        catch (System.Exception e)
+        catch (System.Exception ex)
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -105,7 +114,7 @@ public static class LibraryComicEndpoints
         {
             return Results.NotFound(ex.Message);
         }
-        catch (System.Exception e)
+        catch (System.Exception ex)
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
