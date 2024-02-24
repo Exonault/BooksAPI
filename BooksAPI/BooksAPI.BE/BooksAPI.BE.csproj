@@ -29,7 +29,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Contracts\LibraryComic\" />
       <Folder Include="Contracts\Order\" />
       <Folder Include="Contracts\UserComic\" />
     </ItemGroup>
