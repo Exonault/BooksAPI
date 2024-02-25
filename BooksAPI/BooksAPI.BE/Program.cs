@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using System.Text;
 using AutoMapper;
+using BooksAPI.BE.Constants;
 using BooksAPI.BE.Data;
 using BooksAPI.BE.Endpoints;
 using BooksAPI.BE.Entities;
@@ -55,7 +57,13 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(AppConstants.AdminRolePolicyName, p =>
+    {
+        p.RequireClaim(ClaimTypes.Role, "Admin");
+    });
+});
 
 //CORS
 builder.Services.AddCors(options =>

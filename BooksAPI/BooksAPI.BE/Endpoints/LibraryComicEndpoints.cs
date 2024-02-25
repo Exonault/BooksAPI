@@ -1,4 +1,5 @@
-﻿using BooksAPI.BE.Contracts.LibraryComic;
+﻿using BooksAPI.BE.Constants;
+using BooksAPI.BE.Contracts.LibraryComic;
 using BooksAPI.BE.Entities;
 using BooksAPI.BE.Exception;
 using BooksAPI.BE.Interfaces.Repositories;
@@ -15,14 +16,14 @@ public static class LibraryComicEndpoints
 {
     public static void MapLibraryComicEndpoints(this WebApplication app)
     {
-        app.MapPost("/libraryComic/", CreateLibraryComic);
+        app.MapPost("/libraryComic/", CreateLibraryComic).RequireAuthorization(AppConstants.AdminRolePolicyName);
         
         app.MapGet("/libraryComic/{id:guid}", GetLibraryComicById);
         app.MapGet("/libraryComic/", GetAllLibraryComics);
 
-        app.MapPut("/libraryComic/{id:guid}", UpdateLibraryComic);
+        app.MapPut("/libraryComic/{id:guid}", UpdateLibraryComic).RequireAuthorization(AppConstants.AdminRolePolicyName);
 
-        app.MapDelete("/libraryComic/{id:guid}", DeleteLibraryComic);
+        app.MapDelete("/libraryComic/{id:guid}", DeleteLibraryComic).RequireAuthorization(AppConstants.AdminRolePolicyName);
     }
     
     

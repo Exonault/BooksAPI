@@ -2,6 +2,8 @@
 
 public static class AppConstants
 {
+    public const string AdminRolePolicyName = "Admin";
+    
     public static readonly IReadOnlyList<string> ReadingStatuses = new []
     {
         "Reading",
