@@ -25,21 +25,21 @@ public class UserRepository : IUserRepository
 
     public async Task Register(User newUser)
     {
-        User? user = await _userManager.FindByEmailAsync(newUser.Email!);
+        User? user = await _userManager.FindByEmailAsync(newUser.Email);
 
         if (user is not null)
         {
             throw new UserAlreadyRegisteredException(UserMessages.AlreadyRegistered);
         }
 
-        IdentityResult createdUser = await _userManager.CreateAsync(newUser);
+        IdentityResult createdUser = await _userManager.CreateAsync(newUser, newUser.PasswordHash);
 
         if (!createdUser.Succeeded)
         {
             throw new System.Exception(UserMessages.ErrorOccured);
         }
 
-        IdentityRole? checkAdmin = await _roleManager.FindByIdAsync("Admin");
+        IdentityRole? checkAdmin = await _roleManager.FindByNameAsync("Admin");
 
         if (checkAdmin is null)
         {
