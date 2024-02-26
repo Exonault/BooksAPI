@@ -36,14 +36,7 @@ public class LibraryComicService : ILibraryComicService
             throw new ValidationException(validationResult.Errors);
         }
 
-        try
-        {
-            await _libraryComicRepository.CreateLibraryComic(libraryComic);
-        }
-        catch (System.Exception)
-        {
-            throw;
-        }
+        await _libraryComicRepository.CreateLibraryComic(libraryComic);
     }
 
     public async Task<LibraryComicResponse> GetLibraryComic(Guid id)
@@ -67,7 +60,7 @@ public class LibraryComicService : ILibraryComicService
     public async Task UpdateLibraryComic(Guid id, UpdateLibraryComicRequest request)
     {
         LibraryComic? libraryComic = await _libraryComicRepository.GetLibraryComicById(id);
-        
+
         if (libraryComic is null)
         {
             throw new ResourceNotFoundException(LibraryComicMessages.NoLibraryComicWithId);
@@ -82,16 +75,8 @@ public class LibraryComicService : ILibraryComicService
             throw new ValidationException(validationResult.Errors);
         }
 
-        try
-        {
-            _mapper.Map(request, libraryComic);
-            await _libraryComicRepository.UpdateLibraryComic(libraryComic);
-        }
-        catch (System.Exception )
-        {
-            throw;
-        }
-      
+        _mapper.Map(request, libraryComic);
+        await _libraryComicRepository.UpdateLibraryComic(libraryComic);
     }
 
     public async Task DeleteLibraryComic(Guid id)
@@ -103,15 +88,6 @@ public class LibraryComicService : ILibraryComicService
             throw new ResourceNotFoundException(LibraryComicMessages.NoLibraryComicWithId);
         }
 
-        try
-        {
-            await _libraryComicRepository.DeleteLibraryComic(libraryComic);
-        }
-        catch (System.Exception e)
-        {
-            throw;
-        }
-        
-        throw new NotImplementedException();
+        await _libraryComicRepository.DeleteLibraryComic(libraryComic);
     }
 }

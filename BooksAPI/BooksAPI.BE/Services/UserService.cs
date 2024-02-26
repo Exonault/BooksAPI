@@ -31,14 +31,7 @@ public class UserService : IUserService
             UserName = request.Email
         };
 
-        try
-        {
-            await _userRepository.Register(newUser);
-        }
-        catch (System.Exception)
-        {
-            throw;
-        }
+        await _userRepository.Register(newUser, request.Admin);
 
         return new RegisterResponse(UserMessages.AccountCreated);
     }
@@ -50,16 +43,8 @@ public class UserService : IUserService
             throw new ArgumentException(UserMessages.EmptyRequest);
         }
 
-        String token;
-        try
-        {
-            token = await _userRepository.Login(request.Email, request.Password);
-        }
-        catch (System.Exception)
-        {
-            throw;
-        }
+        String token = await _userRepository.Login(request.Email, request.Password);
 
-        return new LoginResponse(token!, UserMessages.LoginComplete);
+        return new LoginResponse(token, UserMessages.LoginComplete);
     }
 }

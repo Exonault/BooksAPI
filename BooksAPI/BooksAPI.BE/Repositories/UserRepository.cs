@@ -23,7 +23,7 @@ public class UserRepository : IUserRepository
         _config = config;
     }
 
-    public async Task Register(User newUser)
+    public async Task Register(User newUser, bool admin)
     {
         User? user = await _userManager.FindByEmailAsync(newUser.Email);
 
@@ -39,52 +39,79 @@ public class UserRepository : IUserRepository
             throw new System.Exception(UserMessages.ErrorOccured);
         }
 
-        IdentityRole? checkAdmin = await _roleManager.FindByNameAsync("Admin");
 
+        await CreateRoles();
+
+        if (admin)
+        {
+            await _userManager.AddToRoleAsync(newUser, "Admin");
+        }
+
+        await _userManager.AddToRoleAsync(newUser, "User");
+
+
+        // IdentityRole? checkAdmin = await _roleManager.FindByNameAsync("Admin");
+        //
+        // if (checkAdmin is null)
+        // {
+        //     await _roleManager.CreateAsync(new IdentityRole() { Name = "Admin" });
+        //     await _userManager.AddToRoleAsync(newUser, "Admin");
+        // }
+        // else
+        // {
+        //     IdentityRole? checkedUser = await _roleManager.FindByNameAsync("User");
+        //     if (checkedUser is null)
+        //     {
+        //         await _roleManager.CreateAsync(new IdentityRole()
+        //         {
+        //             Name = "User"
+        //         });
+        //     }
+        //     await _userManager.AddToRoleAsync(newUser, "User");
+        // }
+    }
+
+    private async Task CreateRoles()
+    {
+        IdentityRole? checkAdmin = await _roleManager.FindByNameAsync("Admin");
         if (checkAdmin is null)
         {
             await _roleManager.CreateAsync(new IdentityRole() { Name = "Admin" });
-            await _userManager.AddToRoleAsync(newUser, "Admin");
         }
-        else
+
+        IdentityRole? checkedUser = await _roleManager.FindByNameAsync("User");
+        if (checkedUser is null)
         {
-            IdentityRole? checkedUser = await _roleManager.FindByNameAsync("User");
-            if (checkedUser is null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole()
-                {
-                    Name = "User"
-                });
-            }
-            await _userManager.AddToRoleAsync(newUser, "User");
+            await _roleManager.CreateAsync(new IdentityRole() { Name = "User" });
         }
     }
 
     public async Task<string> Login(String email, String password)
     {
         User? getUser = await _userManager.FindByEmailAsync(email);
-        
+
         if (getUser is null)
         {
             throw new UserNotFoundException(UserMessages.UserNotFound);
         }
-        
+
         bool checkUserPassword = await _userManager.CheckPasswordAsync(getUser, password);
-        
+
         if (!checkUserPassword)
         {
             throw new InvalidEmailPasswordException(UserMessages.InvalidEmailPassword);
             //return new LoginResponse(false, null!, UserMessages.InvalidEmailPassword);
         }
+
         IList<string> roles = await _userManager.GetRolesAsync(getUser);
-        
+
         var userSession = new UserSession(getUser.Id, getUser.Email, roles.First());
-        
+
         string token = GenerateToken(userSession);
 
         return token;
     }
-    
+
     private string GenerateToken(UserSession user)
     {
         SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));

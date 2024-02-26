@@ -16,14 +16,17 @@ public static class LibraryComicEndpoints
 {
     public static void MapLibraryComicEndpoints(this WebApplication app)
     {
-        app.MapPost("/libraryComic/", CreateLibraryComic).RequireAuthorization(AppConstants.AdminRolePolicyName);
+        app.MapPost("/libraryComic/", CreateLibraryComic)
+            .RequireAuthorization(AppConstants.AdminRolePolicyName);
         
         app.MapGet("/libraryComic/{id:guid}", GetLibraryComicById);
         app.MapGet("/libraryComic/", GetAllLibraryComics);
 
-        app.MapPut("/libraryComic/{id:guid}", UpdateLibraryComic).RequireAuthorization(AppConstants.AdminRolePolicyName);
+        app.MapPut("/libraryComic/{id:guid}", UpdateLibraryComic)
+            .RequireAuthorization(AppConstants.AdminRolePolicyName);
 
-        app.MapDelete("/libraryComic/{id:guid}", DeleteLibraryComic).RequireAuthorization(AppConstants.AdminRolePolicyName);
+        app.MapDelete("/libraryComic/{id:guid}", DeleteLibraryComic)
+            .RequireAuthorization(AppConstants.AdminRolePolicyName);
     }
     
     

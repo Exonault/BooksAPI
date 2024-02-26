@@ -5,9 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BooksAPI.BE.Repositories;
 
-public class UserComicRepository:IUserComicRepository
+public class UserComicRepository : IUserComicRepository
 {
-
     private readonly ApplicationDbContext _dbContext;
 
     public UserComicRepository(ApplicationDbContext dbContext)
@@ -23,17 +22,26 @@ public class UserComicRepository:IUserComicRepository
 
     public async Task<UserComic?> GetUserComicById(Guid id)
     {
-       return await _dbContext.UserComics
-           .Include(uc=> uc.LibraryComic)
-           .Include(uc=>uc.User)
-           .FirstOrDefaultAsync(x => x.Id == id);
+        return await _dbContext.UserComics
+            .Include(uc => uc.LibraryComic)
+            .Include(uc => uc.User)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<List<UserComic>> GetUserComicsByUserId(string id)
+    {
+        return await _dbContext.UserComics
+            .Include(uc => uc.LibraryComic)
+            .Include(uc => uc.User)
+            .Where(x => x.User.Id == id)
+            .ToListAsync();
     }
 
     public async Task<List<UserComic>> GetAllUserComic()
     {
         return await _dbContext.UserComics
-            .Include(uc=> uc.LibraryComic)
-            .Include(uc=>uc.User)
+            .Include(uc => uc.LibraryComic)
+            .Include(uc => uc.User)
             .ToListAsync();
     }
 

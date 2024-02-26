@@ -20,19 +20,19 @@ public class LibraryComicValidator : AbstractValidator<LibraryComic>
         RuleFor(x => x.DemographicType)
             .NotEmpty()
             .WithMessage(LibraryComicMessages.DemographicTypeRequiredMessage)
-            .Must(x => AppConstants.DemographicTypes.Contains(x))
+            .Must(x => LibraryComicConstants.DemographicTypes.Contains(x))
             .WithMessage(LibraryComicMessages.DemographicTypeMessage);
 
         RuleFor(x => x.ComicType)
             .NotEmpty()
             .WithMessage(LibraryComicMessages.ComicTypeRequiredMessage)
-            .Must(x => AppConstants.ComicTypes.Contains(x))
+            .Must(x => LibraryComicConstants.ComicTypes.Contains(x))
             .WithMessage(LibraryComicMessages.ComicTypeValidationMessage);
 
         RuleFor(x => x.PublishingStatus)
             .NotEmpty()
             .WithMessage(LibraryComicMessages.PublishingStatusRequiredMessage)
-            .Must(x => AppConstants.PublishingStatuses.Contains(x))
+            .Must(x => LibraryComicConstants.PublishingStatuses.Contains(x))
             .WithMessage(LibraryComicMessages.PublishingStatusValidationMessage);
 
         RuleFor(x => x.TotalVolumes)

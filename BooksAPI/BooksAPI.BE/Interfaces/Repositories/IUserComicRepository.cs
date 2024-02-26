@@ -8,6 +8,8 @@ public interface IUserComicRepository
 
     public Task<UserComic?> GetUserComicById(Guid id);
 
+    public Task<List<UserComic>> GetUserComicsByUserId(string id);
+
     public Task<List<UserComic>> GetAllUserComic();
     
     public Task UpdateUserComic(UserComic userComic);

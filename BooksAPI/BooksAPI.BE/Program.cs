@@ -83,6 +83,7 @@ builder.Services.AddUserServices();
 MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
 {
     config.AddProfile(new LibraryComicProfile());
+    config.AddProfile(new UserComicProfile());
 });
 
 builder.Services.AddSingleton(mapperConfiguration.CreateMapper());

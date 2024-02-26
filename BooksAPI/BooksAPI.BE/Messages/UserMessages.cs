@@ -2,17 +2,17 @@
 
 public static class UserMessages
 {
-    public const string EmptyRequest = "Empty request";
+    public const string EmptyRequest = "Empty request.";
 
-    public const string AlreadyRegistered = "User already registered";
+    public const string AlreadyRegistered = "User already registered.";
 
-    public const string ErrorOccured = "Error occured";
+    public const string ErrorOccured = "Error occured.";
 
-    public const string AccountCreated = "Account created";
+    public const string AccountCreated = "Account created.";
 
-    public const string UserNotFound = "UserNotFound";
+    public const string UserNotFound = "UserNotFound.";
 
-    public const string InvalidEmailPassword = "Invalid email/password";
+    public const string InvalidEmailPassword = "Invalid email/password.";
 
-    public const string LoginComplete = "Login complete";
+    public const string LoginComplete = "Login complete.";
 }
