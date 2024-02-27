@@ -18,7 +18,7 @@ public static class LibraryComicEndpoints
     {
         app.MapPost("/libraryComic/", CreateLibraryComic)
             .RequireAuthorization(AppConstants.AdminRolePolicyName);
-        
+
         app.MapGet("/libraryComic/{id:guid}", GetLibraryComicById);
         app.MapGet("/libraryComic/", GetAllLibraryComics);
 
@@ -28,8 +28,8 @@ public static class LibraryComicEndpoints
         app.MapDelete("/libraryComic/{id:guid}", DeleteLibraryComic)
             .RequireAuthorization(AppConstants.AdminRolePolicyName);
     }
-    
-    
+
+
     public static void AddLibraryComicServices(this IServiceCollection services)
     {
         services.AddScoped<ILibraryComicRepository, LibraryComicRepository>();
@@ -37,12 +37,13 @@ public static class LibraryComicEndpoints
         services.AddScoped<IValidator<LibraryComic>, LibraryComicValidator>();
     }
 
-    static async Task<IResult> CreateLibraryComic(ILibraryComicService service, 
+    static async Task<IResult> CreateLibraryComic(ILibraryComicService service,
         CreateLibraryComicRequest request)
     {
         try
         {
             await service.CreateLibraryComic(request);
+            return Results.Ok();
         }
         catch (ValidationException ex)
         {
@@ -52,16 +53,14 @@ public static class LibraryComicEndpoints
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
-
-        return Results.Ok();
     }
 
     static async Task<IResult> GetLibraryComicById(ILibraryComicService service, Guid id)
     {
-        LibraryComicResponse response;
         try
         {
-            response = await service.GetLibraryComic(id);
+            LibraryComicResponse response = await service.GetLibraryComic(id);
+            return Results.Ok(response);
         }
         catch (ResourceNotFoundException ex)
         {
@@ -71,8 +70,6 @@ public static class LibraryComicEndpoints
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
-
-        return Results.Ok(response);
     }
 
     static async Task<IResult> GetAllLibraryComics(ILibraryComicService service)
@@ -80,17 +77,16 @@ public static class LibraryComicEndpoints
         List<LibraryComicResponse> libraryComicResponses = await service.GetAllLibraryComics();
 
         return Results.Ok(libraryComicResponses);
-
     }
 
 
-    static async Task<IResult> UpdateLibraryComic(ILibraryComicService service, Guid id, 
+    static async Task<IResult> UpdateLibraryComic(ILibraryComicService service, Guid id,
         UpdateLibraryComicRequest request)
     {
-
         try
         {
             await service.UpdateLibraryComic(id, request);
+            return Results.Ok();
         }
         catch (ResourceNotFoundException ex)
         {
@@ -104,8 +100,6 @@ public static class LibraryComicEndpoints
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
-
-        return Results.Ok();
     }
 
     static async Task<IResult> DeleteLibraryComic(ILibraryComicService service, Guid id)
@@ -113,6 +107,7 @@ public static class LibraryComicEndpoints
         try
         {
             await service.DeleteLibraryComic(id);
+            return Results.Ok();
         }
         catch (ResourceNotFoundException ex)
         {
@@ -122,8 +117,5 @@ public static class LibraryComicEndpoints
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
-
-        return Results.Ok();
     }
-    
 }

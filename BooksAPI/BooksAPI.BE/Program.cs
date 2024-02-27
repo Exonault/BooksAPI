@@ -29,8 +29,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("ApplicationDb1"));
 });
 
-
-
 //Auth
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -77,6 +75,7 @@ builder.Services.AddCors(options =>
 
 //Entity Services
 builder.Services.AddLibraryComicServices();
+builder.Services.AddUserComicServices();
 builder.Services.AddUserServices();
 
 //Mapping
@@ -105,6 +104,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapLibraryComicEndpoints();
+app.MapUserComicEndpoints();
 app.MapUserEndpoints();
 
 app.Run();

@@ -16,8 +16,8 @@ public static class UserEndpoints
         app.MapPost("user/register/", RegisterUser);
         app.MapPost("user/login/", Login);
     }
-    
-    
+
+
     public static void AddUserServices(this IServiceCollection services)
     {
         services.AddScoped<IUserRepository, UserRepository>();
@@ -26,10 +26,10 @@ public static class UserEndpoints
 
     static async Task<IResult> RegisterUser(IUserService service, RegisterRequest request)
     {
-        RegisterResponse response;
         try
         {
-           response = await service.RegisterAccount(request);
+            RegisterResponse response = await service.RegisterAccount(request);
+            return Results.Ok(response);
         }
         catch (UserAlreadyRegisteredException ex)
         {
@@ -39,20 +39,18 @@ public static class UserEndpoints
         {
             return Results.BadRequest(ex.Message);
         }
-        catch (System.Exception e)
+        catch (System.Exception ex)
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
-
-        return Results.Ok(response);
     }
 
     static async Task<IResult> Login(IUserService service, LoginRequest request)
     {
-        LoginResponse response;
         try
         {
-            response = await service.LoginAccount(request);
+            LoginResponse response = await service.LoginAccount(request);
+            return Results.Ok(response);
         }
         catch (InvalidEmailPasswordException ex)
         {
@@ -70,8 +68,5 @@ public static class UserEndpoints
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
-        
-        return Results.Ok(response);
     }
-    
 }
