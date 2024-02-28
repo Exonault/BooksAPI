@@ -8,6 +8,7 @@ using BooksAPI.BE.Repositories;
 using BooksAPI.BE.Services;
 using BooksAPI.BE.Validation;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace BooksAPI.BE.Endpoints;
@@ -20,12 +21,12 @@ public static class LibraryComicEndpoints
             .RequireAuthorization(AppConstants.AdminRolePolicyName);
 
         app.MapGet("/libraryComic/{id:guid}", GetLibraryComicById);
-        app.MapGet("/libraryComic/", GetAllLibraryComics);
+        app.MapGet("/libraryComics/", GetAllLibraryComics);
 
-        app.MapPut("/libraryComic/{id:guid}", UpdateLibraryComic)
+        app.MapPut("/libraryComic/", UpdateLibraryComic)
             .RequireAuthorization(AppConstants.AdminRolePolicyName);
 
-        app.MapDelete("/libraryComic/{id:guid}", DeleteLibraryComic)
+        app.MapDelete("/libraryComic/", DeleteLibraryComic)
             .RequireAuthorization(AppConstants.AdminRolePolicyName);
     }
 
@@ -38,7 +39,7 @@ public static class LibraryComicEndpoints
     }
 
     static async Task<IResult> CreateLibraryComic(ILibraryComicService service,
-        CreateLibraryComicRequest request)
+        [FromBody]CreateLibraryComicRequest request)
     {
         try
         {
@@ -55,7 +56,7 @@ public static class LibraryComicEndpoints
         }
     }
 
-    static async Task<IResult> GetLibraryComicById(ILibraryComicService service, Guid id)
+    static async Task<IResult> GetLibraryComicById(ILibraryComicService service, [FromRoute]Guid id)
     {
         try
         {
@@ -80,8 +81,8 @@ public static class LibraryComicEndpoints
     }
 
 
-    static async Task<IResult> UpdateLibraryComic(ILibraryComicService service, Guid id,
-        UpdateLibraryComicRequest request)
+    static async Task<IResult> UpdateLibraryComic(ILibraryComicService service, [FromQuery] Guid id,
+        [FromBody] UpdateLibraryComicRequest request)
     {
         try
         {
@@ -102,7 +103,7 @@ public static class LibraryComicEndpoints
         }
     }
 
-    static async Task<IResult> DeleteLibraryComic(ILibraryComicService service, Guid id)
+    static async Task<IResult> DeleteLibraryComic(ILibraryComicService service, [FromQuery]Guid id)
     {
         try
         {

@@ -139,16 +139,16 @@ public class UserComicService : IUserComicService
         await _userComicRepository.UpdateUserComic(userComic);
     }
 
-    public async Task DeleteUserComic(DeleteUserComicRequest request)
+    public async Task DeleteUserComic(Guid id, String userId)
     {
-        User? user = await _userManager.FindByIdAsync(request.UserId);
+        User? user = await _userManager.FindByIdAsync(userId);
 
         if (user is null)
         {
             throw new UserNotFoundException(UserMessages.UserNotFound);
         }
 
-        UserComic? userComic = await _userComicRepository.GetUserComicById(request.ComicId);
+        UserComic? userComic = await _userComicRepository.GetUserComicById(id);
 
         if (userComic is null)
         {

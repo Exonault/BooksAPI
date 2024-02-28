@@ -4,6 +4,7 @@ using BooksAPI.BE.Interfaces.Repositories;
 using BooksAPI.BE.Interfaces.Services;
 using BooksAPI.BE.Repositories;
 using BooksAPI.BE.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BooksAPI.BE.Endpoints;
 
@@ -24,7 +25,7 @@ public static class UserEndpoints
         services.AddScoped<IUserService, UserService>();
     }
 
-    static async Task<IResult> RegisterUser(IUserService service, RegisterRequest request)
+    static async Task<IResult> RegisterUser(IUserService service, [FromBody]RegisterRequest request)
     {
         try
         {
@@ -45,7 +46,7 @@ public static class UserEndpoints
         }
     }
 
-    static async Task<IResult> Login(IUserService service, LoginRequest request)
+    static async Task<IResult> Login(IUserService service, [FromBody]LoginRequest request)
     {
         try
         {

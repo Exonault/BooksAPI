@@ -7,7 +7,7 @@ using BooksAPI.BE.Repositories;
 using BooksAPI.BE.Services;
 using BooksAPI.BE.Validation;
 using FluentValidation;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BooksAPI.BE.Endpoints;
 
@@ -18,10 +18,10 @@ public static class UserComicEndpoints
         app.MapPost("/userComic", CreateUserComic);
 
         app.MapGet("/userComic/{id:guid}", GetUserComicById);
-        app.MapGet("/userComic", GetAllUserComics);
-        app.MapGet("/userComic/{userId}", GetAllUserComicsByUserId);
+        app.MapGet("/userComic/", GetAllUserComics);
+        app.MapGet("/userComics/", GetAllUserComicsByUserId);
 
-        app.MapPut("/userComic/{id:guid}", UpdateUserComic);
+        app.MapPut("/userComic/", UpdateUserComic);
 
         app.MapDelete("/userComic/", DeleteUserComic);
     }
@@ -33,7 +33,7 @@ public static class UserComicEndpoints
         services.AddScoped<IValidator<UserComic>, UserComicValidator>();
     }
 
-    static async Task<IResult> CreateUserComic(IUserComicService service, CreateUserComicRequest request)
+    static async Task<IResult> CreateUserComic(IUserComicService service, [FromBody]CreateUserComicRequest request)
     {
         try
         {
@@ -58,7 +58,7 @@ public static class UserComicEndpoints
         }
     }
 
-    static async Task<IResult> GetUserComicById(IUserComicService service, Guid id)
+    static async Task<IResult> GetUserComicById(IUserComicService service, [FromRoute]Guid id)
     {
         try
         {
@@ -88,7 +88,7 @@ public static class UserComicEndpoints
         }
     }
 
-    static async Task<IResult> GetAllUserComicsByUserId(IUserComicService service, string userId)
+    static async Task<IResult> GetAllUserComicsByUserId(IUserComicService service, [FromQuery]string userId)
     {
         try
         {
@@ -105,7 +105,7 @@ public static class UserComicEndpoints
         }
     }
 
-    static async Task<IResult> UpdateUserComic(IUserComicService service, Guid id, UpdateUserComicRequest request)
+    static async Task<IResult> UpdateUserComic(IUserComicService service, [FromQuery]Guid id, [FromBody]UpdateUserComicRequest request)
     {
         try
         {
@@ -129,12 +129,12 @@ public static class UserComicEndpoints
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-
-    static async Task<IResult> DeleteUserComic(IUserComicService service, Guid id, DeleteUserComicRequest request)
+    
+    static async Task<IResult> DeleteUserComic(IUserComicService service, [FromQuery]Guid id, [FromQuery]string userId)
     {
         try
         {
-            await service.DeleteUserComic(request);
+            await service.DeleteUserComic(id, userId);
             return Results.Ok();
         }
         catch (UserNotFoundException ex)
@@ -150,4 +150,5 @@ public static class UserComicEndpoints
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
+    
 }
