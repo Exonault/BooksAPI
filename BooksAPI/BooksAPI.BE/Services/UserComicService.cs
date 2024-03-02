@@ -155,6 +155,11 @@ public class UserComicService : IUserComicService
             throw new ResourceNotFoundException(UserComicMessages.NoUserComicWithId);
         }
 
+        if (userComic.User.Id != userId)
+        {
+            throw new InvalidOperationException(UserComicMessages.DeleteImpossible);
+        }
+
         await _userComicRepository.DeleteUserComic(userComic);
     }
 

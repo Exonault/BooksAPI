@@ -33,4 +33,6 @@ public class UserComicMessages
 
     public const string NoUserComicWithId = "No user comic with id";
 
+    public const string DeleteImpossible = "You can't delete a user comic which isn't yours";
+
 }

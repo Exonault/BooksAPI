@@ -10,7 +10,7 @@ public static class UserMessages
 
     public const string AccountCreated = "Account created.";
 
-    public const string UserNotFound = "UserNotFound.";
+    public const string UserNotFound = "User not found.";
 
     public const string InvalidEmailPassword = "Invalid email/password.";
 

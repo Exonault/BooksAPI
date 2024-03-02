@@ -57,20 +57,18 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(AppConstants.AdminRolePolicyName, p =>
-    {
-        p.RequireClaim(ClaimTypes.Role, "Admin");
-    });
+    options.AddPolicy(AppConstants.PolicyNames.AdminRolePolicyName,
+        p => { p.RequireClaim(ClaimTypes.Role, AppConstants.ClaimNames.AdminRoleClaimName); });
+
+    options.AddPolicy(AppConstants.PolicyNames.UserRolePolicyName,
+        p => { p.RequireClaim(ClaimTypes.Role, AppConstants.ClaimNames.UserRoleClaimName); });
 });
 
 //CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowedOrigin",
-        policy =>
-        {
-            policy.WithOrigins(configuration.GetSection("FrontEndUrl").Value!);
-        });
+        policy => { policy.WithOrigins(configuration.GetSection("FrontEndUrl").Value!); });
 });
 
 //Entity Services

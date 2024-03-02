@@ -48,27 +48,6 @@ public class UserRepository : IUserRepository
         }
 
         await _userManager.AddToRoleAsync(newUser, "User");
-
-
-        // IdentityRole? checkAdmin = await _roleManager.FindByNameAsync("Admin");
-        //
-        // if (checkAdmin is null)
-        // {
-        //     await _roleManager.CreateAsync(new IdentityRole() { Name = "Admin" });
-        //     await _userManager.AddToRoleAsync(newUser, "Admin");
-        // }
-        // else
-        // {
-        //     IdentityRole? checkedUser = await _roleManager.FindByNameAsync("User");
-        //     if (checkedUser is null)
-        //     {
-        //         await _roleManager.CreateAsync(new IdentityRole()
-        //         {
-        //             Name = "User"
-        //         });
-        //     }
-        //     await _userManager.AddToRoleAsync(newUser, "User");
-        // }
     }
 
     private async Task CreateRoles()
@@ -105,7 +84,17 @@ public class UserRepository : IUserRepository
 
         IList<string> roles = await _userManager.GetRolesAsync(getUser);
 
-        var userSession = new UserSession(getUser.Id, getUser.Email, roles.First());
+        UserSession userSession;
+        if (roles.Count == 2)
+        {
+            userSession = new UserSession(getUser.Id, getUser.Email, roles.First(), roles.Skip(1).First());
+        }
+        else
+        {
+            userSession = new UserSession(getUser.Id, getUser.Email, roles.First(), "");
+        }
+
+        //var userSession = new UserSession(getUser.Id, getUser.Email, roles.First(), );
 
         string token = GenerateToken(userSession);
 
@@ -116,12 +105,29 @@ public class UserRepository : IUserRepository
     {
         SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-        Claim[] userClaims = new[]
+
+
+        Claim[] userClaims;
+        if (user.SecondRole.IsNullOrEmpty())
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id!),
-            new Claim(ClaimTypes.Email, user.Email!),
-            new Claim(ClaimTypes.Role, user.Role!),
-        };
+            userClaims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id!),
+                new Claim(ClaimTypes.Email, user.Email!),
+                new Claim(ClaimTypes.Role, user.MainRole!),
+            };
+        }
+        else
+        {
+            userClaims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id!),
+                new Claim(ClaimTypes.Email, user.Email!),
+                new Claim(ClaimTypes.Role, user.MainRole!),
+                new Claim(ClaimTypes.Role, user.SecondRole!),
+            };
+        }
+
 
         JwtSecurityToken token = new JwtSecurityToken(
             issuer: _config["Jwt:Issuer"],
@@ -133,5 +139,5 @@ public class UserRepository : IUserRepository
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public record UserSession(string? Id, string? Email, string? Role);
+    public record UserSession(string? Id, string? Email, string? MainRole, string? SecondRole);
 }
