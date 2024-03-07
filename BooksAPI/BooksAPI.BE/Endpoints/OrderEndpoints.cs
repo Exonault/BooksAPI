@@ -1,6 +1,5 @@
-﻿using System.Security.Claims;
-using BooksAPI.BE.Constants;
-using BooksAPI.BE.Contracts.UserComic;
+﻿using BooksAPI.BE.Constants;
+using BooksAPI.BE.Contracts.Order;
 using BooksAPI.BE.Entities;
 using BooksAPI.BE.Exception;
 using BooksAPI.BE.Interfaces.Repositories;
@@ -14,59 +13,58 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BooksAPI.BE.Endpoints;
 
-public static class UserComicEndpoints
+public static class OrderEndpoints
 {
-    public static void MapUserComicEndpoints(this WebApplication app)
+    public static void MapOrderEndpoints(this WebApplication app)
     {
-        app.MapPost("/userComic", CreateUserComic)
+        app.MapPost("/order", CreateOrder)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapGet("/userComic/{id:guid}", GetUserComicById)
+        app.MapGet("/order/{id:guid}", GetOrderById)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapGet("/userComics/", GetAllUserComics)
+        app.MapGet("/order/", GetAllOrdersByUserId)
+            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
+
+        app.MapGet("/orders/", GetAllOrders)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapGet("/userComic/", GetAllUserComicsByUserId)
-            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
-
-        app.MapPut("/userComic/{id:guid}", UpdateUserComic)
+        app.MapPut("/order/{id:guid}", UpdateOrder)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapDelete("/userComic/{id:guid}", DeleteUserComic)
+        app.MapDelete("/order/{id:guid}", DeleteOrder)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status401Unauthorized)
-            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
     }
 
-    public static void AddUserComicServices(this IServiceCollection services)
+    public static void AddOrderServices(this IServiceCollection services)
     {
-        services.AddScoped<IUserComicRepository, UserComicRepository>();
-        services.AddScoped<IUserComicService, UserComicService>();
-        services.AddScoped<IValidator<UserComic>, UserComicValidator>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IOrderService, OrderServices>();
+        services.AddScoped<IValidator<Order>, OrderValidator>();
     }
 
-    private static async Task<IResult> CreateUserComic([FromBody] CreateUserComicRequest request,
-        IUserComicService service, HttpContext httpContext)
+    static async Task<IResult> CreateOrder([FromBody] CreateOrderRequest request,
+        IOrderService service, HttpContext httpContext)
     {
         try
         {
@@ -80,16 +78,12 @@ public static class UserComicEndpoints
                     return Results.Forbid();
                 default:
                 {
-                    await service.CreateUserComic(request);
+                    await service.CreateOrder(request);
                     return Results.Ok();
                 }
             }
         }
         catch (UserNotFoundException ex)
-        {
-            return Results.NotFound(ex.Message);
-        }
-        catch (ResourceNotFoundException ex)
         {
             return Results.NotFound(ex.Message);
         }
@@ -103,12 +97,11 @@ public static class UserComicEndpoints
         }
     }
 
-    private static async Task<IResult> GetUserComicById([FromRoute] Guid id, IUserComicService service,
-        HttpContext httpContext)
+    static async Task<IResult> GetOrderById([FromRoute] Guid id, IOrderService service, HttpContext httpContext)
     {
         try
         {
-            UserComicResponse response = await service.GetUserComic(id);
+            OrderResponse response = await service.GetOrder(id);
             int statusCode = UserValidationUtil.IsUserIdFromRequestValidWithAuthUser(httpContext, response.UserId);
 
             switch (statusCode)
@@ -127,18 +120,19 @@ public static class UserComicEndpoints
         {
             return Results.NotFound(ex.Message);
         }
+
         catch (System.Exception ex)
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
 
-    static async Task<IResult> GetAllUserComics(IUserComicService service)
+    static async Task<IResult> GetAllOrders(IOrderService service)
     {
         try
         {
-            List<UserComicResponse> userComicResponses = await service.GetAllUserComics();
-            return Results.Ok(userComicResponses);
+            List<OrderResponse> orderResponses = await service.GetAllOrders();
+            return Results.Ok(orderResponses);
         }
         catch (System.Exception ex)
         {
@@ -146,8 +140,8 @@ public static class UserComicEndpoints
         }
     }
 
-    static async Task<IResult> GetAllUserComicsByUserId([FromQuery] string userId, IUserComicService service,
-        HttpContext httpContext)
+    static async Task<IResult> GetAllOrdersByUserId([FromQuery] string userId,
+        IOrderService service, HttpContext httpContext)
     {
         try
         {
@@ -161,8 +155,8 @@ public static class UserComicEndpoints
                     return Results.Forbid();
                 default:
                 {
-                    List<UserComicResponse> allUserComicsByUserId = await service.GetAllUserComicsByUserId(userId);
-                    return Results.Ok(allUserComicsByUserId);
+                    List<OrderResponse> response = await service.GetAllOrdersByUserId(userId);
+                    return Results.Ok(response);
                 }
             }
         }
@@ -176,8 +170,8 @@ public static class UserComicEndpoints
         }
     }
 
-    static async Task<IResult> UpdateUserComic([FromRoute] Guid id, [FromBody] UpdateUserComicRequest request,
-        IUserComicService service, HttpContext httpContext)
+    static async Task<IResult> UpdateOrder([FromRoute] Guid id, [FromBody] UpdateOrderRequest request,
+        IOrderService service, HttpContext httpContext)
     {
         try
         {
@@ -191,16 +185,16 @@ public static class UserComicEndpoints
                     return Results.Forbid();
                 default:
                 {
-                    await service.UpdateUserComic(id, request);
+                    await service.UpdateOrder(id, request);
                     return Results.Ok();
                 }
             }
         }
-        catch (UserNotFoundException ex)
+        catch (ResourceNotFoundException ex)
         {
             return Results.NotFound(ex.Message);
         }
-        catch (ResourceNotFoundException ex)
+        catch (UserNotFoundException ex)
         {
             return Results.NotFound(ex.Message);
         }
@@ -214,13 +208,13 @@ public static class UserComicEndpoints
         }
     }
 
-    static async Task<IResult> DeleteUserComic([FromRoute] Guid id, [FromQuery] string userId,
-        IUserComicService service, HttpContext httpContext)
+
+    static async Task<IResult> DeleteOrder([FromRoute] Guid id, [FromQuery] string userId,
+        IOrderService service, HttpContext httpContext)
     {
         try
         {
             int statusCode = UserValidationUtil.IsUserIdFromRequestValidWithAuthUser(httpContext, userId);
-
             switch (statusCode)
             {
                 case StatusCodes.Status401Unauthorized:
@@ -229,7 +223,7 @@ public static class UserComicEndpoints
                     return Results.Forbid();
                 default:
                 {
-                    await service.DeleteUserComic(id, userId);
+                    await service.DeleteOrder(id, userId);
                     return Results.Ok();
                 }
             }

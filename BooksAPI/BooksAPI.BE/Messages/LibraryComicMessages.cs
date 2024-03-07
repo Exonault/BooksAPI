@@ -23,9 +23,9 @@ public static class LibraryComicMessages
     public static readonly string PublishingStatusValidationMessage =
         $"Publishing status must be one of the following: {string.Join(", ", LibraryComicConstants.PublishingStatuses)}";
 
-    public const string TotalVolumesValidationMessage = "Total volumes is required and it must be at least 1.";
+    public const string TotalVolumesValidationMessage = "Total volumes is required and must be at least 1.";
 
-    public const string TotalChaptersValidationMessage = "Total chapters is required and it must be at least 1.";
+    public const string TotalChaptersValidationMessage = "Total chapters is required and must be at least 1.";
 
     public const string NoLibraryComicWithId = "Library comic with id doesn't exist.";
 }

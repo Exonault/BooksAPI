@@ -14,5 +14,5 @@ public interface IUserComicService
 
     public Task UpdateUserComic(Guid id, UpdateUserComicRequest request);
     
-    public Task DeleteUserComic(Guid id, String userId);
+    public Task DeleteUserComic(Guid id, string userId);
 }

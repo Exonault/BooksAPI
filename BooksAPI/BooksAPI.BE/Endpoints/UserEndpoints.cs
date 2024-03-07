@@ -14,8 +14,17 @@ public static class UserEndpoints
 {
     public static void MapUserEndpoints(this WebApplication app)
     {
-        app.MapPost("user/register/", RegisterUser);
-        app.MapPost("user/login/", Login);
+        app.MapPost("user/register/", RegisterUser)
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status409Conflict)
+            .Produces(StatusCodes.Status500InternalServerError);
+        
+        app.MapPost("user/login/", Login)
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
     }
 
 
@@ -25,7 +34,7 @@ public static class UserEndpoints
         services.AddScoped<IUserService, UserService>();
     }
 
-    static async Task<IResult> RegisterUser(IUserService service, [FromBody]RegisterRequest request)
+    private static async Task<IResult> RegisterUser([FromBody]RegisterRequest request, IUserService service)
     {
         try
         {
@@ -46,7 +55,7 @@ public static class UserEndpoints
         }
     }
 
-    static async Task<IResult> Login(IUserService service, [FromBody]LoginRequest request)
+    private static async Task<IResult> Login([FromBody]LoginRequest request, IUserService service)
     {
         try
         {

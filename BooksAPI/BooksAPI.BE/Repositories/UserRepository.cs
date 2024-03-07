@@ -79,22 +79,11 @@ public class UserRepository : IUserRepository
         if (!checkUserPassword)
         {
             throw new InvalidEmailPasswordException(UserMessages.InvalidEmailPassword);
-            //return new LoginResponse(false, null!, UserMessages.InvalidEmailPassword);
         }
 
         IList<string> roles = await _userManager.GetRolesAsync(getUser);
 
-        UserSession userSession;
-        if (roles.Count == 2)
-        {
-            userSession = new UserSession(getUser.Id, getUser.Email, roles.First(), roles.Skip(1).First());
-        }
-        else
-        {
-            userSession = new UserSession(getUser.Id, getUser.Email, roles.First(), "");
-        }
-
-        //var userSession = new UserSession(getUser.Id, getUser.Email, roles.First(), );
+        UserSession userSession = new UserSession(getUser.Id, getUser.Email!, roles);
 
         string token = GenerateToken(userSession);
 
@@ -107,27 +96,17 @@ public class UserRepository : IUserRepository
         SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
 
-        Claim[] userClaims;
-        if (user.SecondRole.IsNullOrEmpty())
+        List<Claim> userClaims = new List<Claim>()
         {
-            userClaims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id!),
-                new Claim(ClaimTypes.Email, user.Email!),
-                new Claim(ClaimTypes.Role, user.MainRole!),
-            };
-        }
-        else
-        {
-            userClaims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id!),
-                new Claim(ClaimTypes.Email, user.Email!),
-                new Claim(ClaimTypes.Role, user.MainRole!),
-                new Claim(ClaimTypes.Role, user.SecondRole!),
-            };
-        }
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(JwtRegisteredClaimNames.NameId, user.Id!),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email!),
+        };
 
+        foreach (string role in user.Roles)
+        {
+            userClaims.Add(new Claim("role", role));
+        }
 
         JwtSecurityToken token = new JwtSecurityToken(
             issuer: _config["Jwt:Issuer"],
@@ -138,6 +117,6 @@ public class UserRepository : IUserRepository
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
-    public record UserSession(string? Id, string? Email, string? MainRole, string? SecondRole);
+    
+    public record UserSession(string Id, string Email, IEnumerable<string> Roles);
 }

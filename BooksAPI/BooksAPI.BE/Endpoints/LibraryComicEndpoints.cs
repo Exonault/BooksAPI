@@ -18,16 +18,35 @@ public static class LibraryComicEndpoints
     public static void MapLibraryComicEndpoints(this WebApplication app)
     {
         app.MapPost("/libraryComic/", CreateLibraryComic)
-            .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName);
+            .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapGet("/libraryComic/{id:guid}", GetLibraryComicById).AllowAnonymous();
-        app.MapGet("/libraryComics/", GetAllLibraryComics).AllowAnonymous();
+        app.MapGet("/libraryComic/{id:guid}", GetLibraryComicById)
+            .AllowAnonymous()
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
+
+
+        app.MapGet("/libraryComics/", GetAllLibraryComics)
+            .AllowAnonymous()
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapPut("/libraryComic/", UpdateLibraryComic)
-            .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName);
+            .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapDelete("/libraryComic/", DeleteLibraryComic)
-            .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName);
+            .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
     }
 
 
@@ -38,8 +57,8 @@ public static class LibraryComicEndpoints
         services.AddScoped<IValidator<LibraryComic>, LibraryComicValidator>();
     }
 
-    static async Task<IResult> CreateLibraryComic(ILibraryComicService service,
-        [FromBody]CreateLibraryComicRequest request)
+    private static async Task<IResult> CreateLibraryComic([FromBody] CreateLibraryComicRequest request,
+        ILibraryComicService service)
     {
         try
         {
@@ -56,7 +75,7 @@ public static class LibraryComicEndpoints
         }
     }
 
-    static async Task<IResult> GetLibraryComicById(ILibraryComicService service, [FromRoute]Guid id)
+    private static async Task<IResult> GetLibraryComicById([FromRoute] Guid id, ILibraryComicService service)
     {
         try
         {
@@ -73,7 +92,7 @@ public static class LibraryComicEndpoints
         }
     }
 
-    static async Task<IResult> GetAllLibraryComics(ILibraryComicService service)
+    private static async Task<IResult> GetAllLibraryComics(ILibraryComicService service)
     {
         List<LibraryComicResponse> libraryComicResponses = await service.GetAllLibraryComics();
 
@@ -81,8 +100,8 @@ public static class LibraryComicEndpoints
     }
 
 
-    static async Task<IResult> UpdateLibraryComic(ILibraryComicService service, [FromQuery] Guid id,
-        [FromBody] UpdateLibraryComicRequest request)
+    private static async Task<IResult> UpdateLibraryComic([FromQuery] Guid id,
+        [FromBody] UpdateLibraryComicRequest request, ILibraryComicService service)
     {
         try
         {
@@ -103,7 +122,7 @@ public static class LibraryComicEndpoints
         }
     }
 
-    static async Task<IResult> DeleteLibraryComic(ILibraryComicService service, [FromQuery]Guid id)
+    private static async Task<IResult> DeleteLibraryComic([FromQuery] Guid id, ILibraryComicService service)
     {
         try
         {

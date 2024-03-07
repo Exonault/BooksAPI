@@ -84,7 +84,7 @@ public class UserComicService : IUserComicService
     public async Task<List<UserComicResponse>> GetAllUserComics()
     {
         List<UserComic> allUserComics = await _userComicRepository.GetAllUserComic();
-        List<UserComicResponse> response = ConvertToUserComicResponseArray(allUserComics);
+        List<UserComicResponse> response = ConvertToUserComicResponseList(allUserComics);
 
         return response;
     }
@@ -100,7 +100,7 @@ public class UserComicService : IUserComicService
 
         List<UserComic> userComics = await _userComicRepository.GetUserComicsByUserId(id);
 
-        List<UserComicResponse> response = ConvertToUserComicResponseArray(userComics);
+        List<UserComicResponse> response = ConvertToUserComicResponseList(userComics);
 
         return response;
     }
@@ -139,7 +139,7 @@ public class UserComicService : IUserComicService
         await _userComicRepository.UpdateUserComic(userComic);
     }
 
-    public async Task DeleteUserComic(Guid id, String userId)
+    public async Task DeleteUserComic(Guid id, string userId)
     {
         User? user = await _userManager.FindByIdAsync(userId);
 
@@ -163,7 +163,7 @@ public class UserComicService : IUserComicService
         await _userComicRepository.DeleteUserComic(userComic);
     }
 
-    private List<UserComicResponse> ConvertToUserComicResponseArray(List<UserComic> userComics)
+    private List<UserComicResponse> ConvertToUserComicResponseList(List<UserComic> userComics)
     {
         List<UserComicResponse> response = new List<UserComicResponse>();
 

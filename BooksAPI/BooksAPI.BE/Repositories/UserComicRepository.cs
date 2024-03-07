@@ -25,15 +25,15 @@ public class UserComicRepository : IUserComicRepository
         return await _dbContext.UserComics
             .Include(uc => uc.LibraryComic)
             .Include(uc => uc.User)
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .FirstOrDefaultAsync(uc => uc.Id == id);
     }
 
-    public async Task<List<UserComic>> GetUserComicsByUserId(string id)
+    public async Task<List<UserComic>> GetUserComicsByUserId(string userId)
     {
         return await _dbContext.UserComics
             .Include(uc => uc.LibraryComic)
             .Include(uc => uc.User)
-            .Where(x => x.User.Id == id)
+            .Where(uc => uc.User.Id == userId)
             .ToListAsync();
     }
 

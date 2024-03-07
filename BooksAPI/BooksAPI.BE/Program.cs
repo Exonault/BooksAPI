@@ -74,13 +74,16 @@ builder.Services.AddCors(options =>
 //Entity Services
 builder.Services.AddLibraryComicServices();
 builder.Services.AddUserComicServices();
+builder.Services.AddOrderServices();
 builder.Services.AddUserServices();
+
 
 //Mapping
 MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
 {
     config.AddProfile(new LibraryComicProfile());
     config.AddProfile(new UserComicProfile());
+    config.AddProfile(new OrderProfile());
 });
 
 builder.Services.AddSingleton(mapperConfiguration.CreateMapper());
@@ -103,6 +106,7 @@ app.UseAuthorization();
 
 app.MapLibraryComicEndpoints();
 app.MapUserComicEndpoints();
+app.MapOrderEndpoints();
 app.MapUserEndpoints();
 
 app.Run();
