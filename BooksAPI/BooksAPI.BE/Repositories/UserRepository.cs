@@ -16,6 +16,8 @@ public class UserRepository : IUserRepository
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IConfiguration _config;
 
+    private static readonly TimeSpan TokenDuration = TimeSpan.FromHours(1);
+    
     public UserRepository(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration config)
     {
         _userManager = userManager;
@@ -84,7 +86,7 @@ public class UserRepository : IUserRepository
         IList<string> roles = await _userManager.GetRolesAsync(getUser);
 
         UserSession userSession = new UserSession(getUser.Id, getUser.Email!, roles);
-
+        
         string token = GenerateToken(userSession);
 
         return token;
@@ -92,31 +94,39 @@ public class UserRepository : IUserRepository
 
     private string GenerateToken(UserSession user)
     {
-        SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
-        SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]!);
 
-
-        List<Claim> userClaims = new List<Claim>()
-        {
+        List<Claim> claims =
+        [
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.NameId, user.Id!),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-        };
-
+            new Claim(JwtRegisteredClaimNames.NameId, user.Id),
+            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        ];
+        
         foreach (string role in user.Roles)
         {
-            userClaims.Add(new Claim("role", role));
+            claims.Add(new Claim("role", role));
         }
 
-        JwtSecurityToken token = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Audience"],
-            claims: userClaims,
-            expires: DateTime.Now.AddHours(1),
-            signingCredentials: credentials);
+        SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.Add(TokenDuration),
+            Issuer = _config["Jwt:Issuer"],
+            IssuedAt = DateTime.UtcNow,
+            NotBefore = DateTime.UtcNow,
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
+            Audience = _config["Jwt:Audience"],
+        };
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+
+        string jwt = tokenHandler.WriteToken(token);
+
+        return jwt;
     }
     
-    public record UserSession(string Id, string Email, IEnumerable<string> Roles);
+    private record UserSession(string Id, string Email, IEnumerable<string> Roles);
 }

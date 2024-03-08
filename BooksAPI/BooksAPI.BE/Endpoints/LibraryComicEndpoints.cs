@@ -21,30 +21,36 @@ public static class LibraryComicEndpoints
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("/libraryComic/{id:guid}", GetLibraryComicById)
             .AllowAnonymous()
-            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status200OK, typeof(LibraryComicResponse), "application/json")
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
 
         app.MapGet("/libraryComics/", GetAllLibraryComics)
             .AllowAnonymous()
-            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status200OK, typeof(List<LibraryComicResponse>), "application/json")
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapPut("/libraryComic/", UpdateLibraryComic)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapDelete("/libraryComic/", DeleteLibraryComic)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
             .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
     }

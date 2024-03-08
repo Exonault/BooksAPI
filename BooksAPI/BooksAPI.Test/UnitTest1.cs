@@ -6,49 +6,19 @@ using BooksAPI.BE.Mapping;
 using BooksAPI.BE.Repositories;
 using BooksAPI.BE.Validation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace BooksAPI.Test;
 
 public class UnitTest1
 {
-    [Fact]
-    public async void TestUserComicRepository()
+    private readonly ITestOutputHelper _testOutputHelper;
+
+    public UnitTest1(ITestOutputHelper testOutputHelper)
     {
-        //Arrange
-        DbContextOptionsBuilder dbContextOptionsBuilder = new DbContextOptionsBuilder()
-            .UseNpgsql("Server=localhost;Database=testDbBooks;Username=postgres;Password=1234");
-
-
-        UserComic userComic;
-        await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
-        {
-            User user = db.Users.FirstOrDefault(x => true)!;
-            LibraryComic libraryComic = db.LibraryComics.FirstOrDefault(x => true)!;
-
-            userComic = new UserComic
-            {
-                ReadingStatus = "Reading",
-                ReadVolumes = 11,
-                ReadChapters = 21,
-                CollectedVolumes = 10,
-                Price = 18,
-                CollectionStatus = "Collecting",
-                User = user,
-                LibraryComic = libraryComic
-            };
-        }
-
-
-        //Act
-        await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
-        {
-            var repo = new UserComicRepository(db);
-
-            await repo.CreateUserComic(userComic);
-        }
-
-        //Assert
+        _testOutputHelper = testOutputHelper;
     }
 
     [Fact]
@@ -178,7 +148,7 @@ public class UnitTest1
 
             Console.WriteLine();
         }
-        
+
     }
 
     [Fact]
@@ -190,8 +160,8 @@ public class UnitTest1
         });
 
         IMapper mapper = mapperConfiguration.CreateMapper();
-        
-        
+
+
         DbContextOptionsBuilder dbContextOptionsBuilder = new DbContextOptionsBuilder()
             .UseNpgsql("Server=localhost;Database=testDbBooks;Username=postgres;Password=1234");
 
@@ -219,7 +189,32 @@ public class UnitTest1
 
             Console.WriteLine();
         }
-        
-        
+
+
     }
+
+    [Fact]
+    public async void TestValidationOrder()
+    {
+        OrderValidator orderValidator = new OrderValidator();
+
+        DateTime dateTime = new DateTime(2024, 3, 7);
+
+        Order order = new Order
+        {
+            Id = Guid.NewGuid(),
+            Date = DateOnly.FromDateTime(dateTime),
+            Description = "something",
+            Place = "somewhere",
+            Amount = 12.33m,
+            NumberOfItems = 1,
+            User = null
+        };
+
+        ValidationResult validationResult = await orderValidator.ValidateAsync(order);
+
+        Console.WriteLine();
+
+    }
+    
 }

@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using BooksAPI.BE.Constants;
+﻿using BooksAPI.BE.Constants;
 using BooksAPI.BE.Contracts.UserComic;
 using BooksAPI.BE.Entities;
 using BooksAPI.BE.Exception;
@@ -22,23 +21,31 @@ public static class UserComicEndpoints
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("/userComic/{id:guid}", GetUserComicById)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status200OK, typeof(UserComicResponse), "application/json")
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("/userComics/", GetAllUserComics)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status200OK, typeof(List<UserComicResponse>), "application/json")
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("/userComic/", GetAllUserComicsByUserId)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status200OK, typeof(List<UserComicResponse>), "application/json")
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
@@ -46,6 +53,8 @@ public static class UserComicEndpoints
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 

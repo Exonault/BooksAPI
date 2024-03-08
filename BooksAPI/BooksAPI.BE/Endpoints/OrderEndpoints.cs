@@ -20,31 +20,41 @@ public static class OrderEndpoints
         app.MapPost("/order", CreateOrder)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("/order/{id:guid}", GetOrderById)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status200OK, typeof(OrderResponse),"application/json")
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("/order/", GetAllOrdersByUserId)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status200OK, typeof(List<OrderResponse>),"application/json")
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("/orders/", GetAllOrders)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status200OK, typeof(List<OrderResponse>),"application/json")
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapPut("/order/{id:guid}", UpdateOrder)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
@@ -52,6 +62,8 @@ public static class OrderEndpoints
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
     }
