@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BooksAPI", "BooksAPI\BooksA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookAPI.Presentation", "BookAPI.Presentation\BookAPI.Presentation.csproj", "{2C67E86B-9117-42A8-BF6E-C94E98EEA68C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksAPI.BE", "BooksAPI.BE\BooksAPI.BE.csproj", "{973E64B7-B53F-4392-A496-D50259ECCB9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksAPI.Test", "BooksAPI.Test\BooksAPI.Test.csproj", "{92BADC12-29F1-46E7-AF39-CEABC7D069C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{2C67E86B-9117-42A8-BF6E-C94E98EEA68C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C67E86B-9117-42A8-BF6E-C94E98EEA68C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C67E86B-9117-42A8-BF6E-C94E98EEA68C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{973E64B7-B53F-4392-A496-D50259ECCB9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{973E64B7-B53F-4392-A496-D50259ECCB9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{973E64B7-B53F-4392-A496-D50259ECCB9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{973E64B7-B53F-4392-A496-D50259ECCB9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92BADC12-29F1-46E7-AF39-CEABC7D069C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92BADC12-29F1-46E7-AF39-CEABC7D069C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92BADC12-29F1-46E7-AF39-CEABC7D069C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92BADC12-29F1-46E7-AF39-CEABC7D069C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
