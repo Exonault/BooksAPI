@@ -58,10 +58,10 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(AppConstants.PolicyNames.AdminRolePolicyName,
-        p => { p.RequireClaim(ClaimTypes.Role, AppConstants.ClaimNames.AdminRoleClaimName); });
+        p => { p.RequireClaim(AppConstants.ClaimTypes.ClaimRoleType, AppConstants.ClaimNames.AdminRoleClaimName); });
 
     options.AddPolicy(AppConstants.PolicyNames.UserRolePolicyName,
-        p => { p.RequireClaim(ClaimTypes.Role, AppConstants.ClaimNames.UserRoleClaimName); });
+        p => { p.RequireClaim(AppConstants.ClaimTypes.ClaimRoleType, AppConstants.ClaimNames.UserRoleClaimName); });
 });
 
 //CORS

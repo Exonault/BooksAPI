@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using BooksAPI.BE.Constants;
 using BooksAPI.BE.Entities;
 using BooksAPI.BE.Exception;
 using BooksAPI.BE.Interfaces.Repositories;
@@ -100,14 +101,13 @@ public class UserRepository : IUserRepository
         List<Claim> claims =
         [
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.NameId, user.Id),
-            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+            new Claim(AppConstants.ClaimTypes.ClaimUserIdType, user.Id),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
         ];
         
         foreach (string role in user.Roles)
         {
-            claims.Add(new Claim("role", role));
+            claims.Add(new Claim(AppConstants.ClaimTypes.ClaimRoleType, role));
         }
 
         SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
@@ -117,8 +117,8 @@ public class UserRepository : IUserRepository
             Issuer = _config["Jwt:Issuer"],
             IssuedAt = DateTime.UtcNow,
             NotBefore = DateTime.UtcNow,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
             Audience = _config["Jwt:Audience"],
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
         };
 
         SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);

@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using BooksAPI.BE.Constants;
 
 namespace BooksAPI.BE.Util;
 
@@ -29,9 +30,10 @@ public static class UserValidationUtil
         string? userIdFromAuth = null;
         foreach (Claim userClaim in user.Claims)
         {
-            if (userClaim.Type == JwtRegisteredClaimNames.NameId)
+            if (userClaim.Type == AppConstants.ClaimTypes.ClaimUserIdType)
             {
                 userIdFromAuth = userClaim.Value;
+                break;
             }
         }
 

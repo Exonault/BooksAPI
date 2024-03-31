@@ -16,5 +16,10 @@ public static class AppConstants
        public const string UserRoleClaimName = "User";
    }
 
-   
+   public static class ClaimTypes
+   {
+       public const string ClaimRoleType = "userRoles";
+
+       public const string ClaimUserIdType = "userId";
+   }
 }
