@@ -25,10 +25,10 @@ public class UserService : IUserService
         }
 
         User newUser = new User()
-        {
-            Email = request.Email,
+        { 
+            UserName =  request.UserName,
             PasswordHash = request.Password,
-            UserName = request.Email
+            Email = request.Email
         };
 
         await _userRepository.Register(newUser, request.Admin);
@@ -43,8 +43,18 @@ public class UserService : IUserService
             throw new ArgumentException(UserMessages.EmptyRequest);
         }
 
-        String token = await _userRepository.Login(request.Email, request.Password);
+        String token = await _userRepository.Login(request.UserName, request.Password);
 
         return new LoginResponse(token, UserMessages.LoginComplete);
+    }
+
+    public Task Refresh(RefreshRequest request)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task Revoke()
+    {
+        throw new NotImplementedException();
     }
 }

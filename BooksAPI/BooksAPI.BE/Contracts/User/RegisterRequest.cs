@@ -4,6 +4,11 @@ namespace BooksAPI.BE.Contracts.User;
 
 public class RegisterRequest
 {
+    
+    [Required]
+    public string UserName { get; set; } = string.Empty;
+    
+    
     [Required]
     [EmailAddress]
     [DataType(DataType.EmailAddress)]

@@ -30,7 +30,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 //Auth
-builder.Services.AddIdentity<User, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+    {
+        options.User.RequireUniqueEmail = true;
+    })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddRoles<IdentityRole>()
     .AddSignInManager();
@@ -65,9 +68,10 @@ builder.Services.AddAuthorization(options =>
 });
 
 //CORS
+const string corsPolicy = "AllowedOrigin";
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowedOrigin",
+    options.AddPolicy(corsPolicy,
         policy => { policy.WithOrigins(configuration.GetSection("FrontEndUrl").Value!); });
 });
 
@@ -97,9 +101,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowedOrigin");
-
 app.UseHttpsRedirection();
+
+app.UseCors(corsPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();

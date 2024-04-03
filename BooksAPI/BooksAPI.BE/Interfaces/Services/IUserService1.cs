@@ -3,7 +3,7 @@
 namespace BooksAPI.BE.Interfaces.Services;
 using static UserResponses;
 
-public interface IUserService
+public interface IUserService1
 {
     Task<RegisterResponse> RegisterAccount(RegisterRequest request);
 
@@ -11,5 +11,5 @@ public interface IUserService
 
     Task Refresh(RefreshRequest request);
 
-    Task Revoke();
+    Task Revoke(); 
 }

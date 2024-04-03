@@ -22,4 +22,11 @@ public static class AppConstants
 
        public const string ClaimUserIdType = "userId";
    }
+
+   public static class RoleTypes
+   {
+       public const string AdminRoleType = "Admin";
+
+       public const string UserRoleType = "User";
+   }
 }

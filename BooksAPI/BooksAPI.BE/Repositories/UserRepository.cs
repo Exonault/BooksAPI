@@ -42,9 +42,6 @@ public class UserRepository : IUserRepository
             throw new System.Exception(UserMessages.ErrorOccured);
         }
 
-
-        await CreateRoles();
-
         if (admin)
         {
             await _userManager.AddToRoleAsync(newUser, "Admin");
@@ -53,24 +50,9 @@ public class UserRepository : IUserRepository
         await _userManager.AddToRoleAsync(newUser, "User");
     }
 
-    private async Task CreateRoles()
+    public async Task<string> Login(string name, string password)
     {
-        IdentityRole? checkAdmin = await _roleManager.FindByNameAsync("Admin");
-        if (checkAdmin is null)
-        {
-            await _roleManager.CreateAsync(new IdentityRole() { Name = "Admin" });
-        }
-
-        IdentityRole? checkedUser = await _roleManager.FindByNameAsync("User");
-        if (checkedUser is null)
-        {
-            await _roleManager.CreateAsync(new IdentityRole() { Name = "User" });
-        }
-    }
-
-    public async Task<string> Login(String email, String password)
-    {
-        User? getUser = await _userManager.FindByEmailAsync(email);
+        User? getUser = await _userManager.FindByNameAsync(name);
 
         if (getUser is null)
         {
@@ -86,11 +68,21 @@ public class UserRepository : IUserRepository
 
         IList<string> roles = await _userManager.GetRolesAsync(getUser);
 
-        UserSession userSession = new UserSession(getUser.Id, getUser.Email!, roles);
+        UserSession userSession = new UserSession(getUser.Id, getUser.UserName!, roles);
         
         string token = GenerateToken(userSession);
 
         return token;
+    }
+
+    public Task<string> Refresh(string token, string refreshToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task Revoke()
+    {
+        throw new NotImplementedException();
     }
 
     private string GenerateToken(UserSession user)
@@ -101,8 +93,8 @@ public class UserRepository : IUserRepository
         List<Claim> claims =
         [
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(JwtRegisteredClaimNames.Name, user.UserName),
             new Claim(AppConstants.ClaimTypes.ClaimUserIdType, user.Id),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
         ];
         
         foreach (string role in user.Roles)
@@ -128,5 +120,5 @@ public class UserRepository : IUserRepository
         return jwt;
     }
     
-    private record UserSession(string Id, string Email, IEnumerable<string> Roles);
+    private record UserSession(string Id, string UserName, IEnumerable<string> Roles);
 }
