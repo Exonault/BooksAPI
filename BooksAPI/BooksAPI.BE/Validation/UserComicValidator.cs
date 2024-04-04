@@ -12,7 +12,7 @@ public class UserComicValidator : AbstractValidator<UserComic>
         RuleFor(x => x.ReadingStatus)
             .NotEmpty()
             .WithMessage(UserComicMessages.ReadingStatusRequiredMessage)
-            .Must(x => UserComicConstants.ReadingStatuses.Contains(x))
+            .Must(x => UserComicConstants.ReadingStatus.ReadingStatuses.Contains(x))
             .WithMessage(UserComicMessages.ReadingStatusValidationMessage);
 
         RuleFor(x => new { x.ReadVolumes, x.LibraryComic.TotalVolumes })
@@ -21,16 +21,10 @@ public class UserComicValidator : AbstractValidator<UserComic>
             .Must(x => x.ReadVolumes <= x.TotalVolumes)
             .WithMessage(UserComicMessages.ReadVolumesLowerThanTotalVolumes);
 
-        RuleFor(x => new { x.ReadChapters, x.LibraryComic.TotalChapters })
-            .Must(x => x.ReadChapters >= 1)
-            .WithMessage(UserComicMessages.ReadChaptersValidationMessage)
-            .Must(x => x.ReadChapters <= x.TotalChapters)
-            .WithMessage(UserComicMessages.ReadChaptersLowerThanTotalChapters);
-
         RuleFor(x => x.CollectionStatus)
             .NotEmpty()
             .WithMessage(UserComicMessages.CollectionStatusRequiredMessage)
-            .Must(x => UserComicConstants.CollectingStatuses.Contains(x))
+            .Must(x => UserComicConstants.CollectingStatus.CollectingStatuses.Contains(x))
             .WithMessage(UserComicMessages.CollectionStatusValidationMessage);
 
         RuleFor(x => x.Price)

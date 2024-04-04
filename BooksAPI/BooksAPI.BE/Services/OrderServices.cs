@@ -34,7 +34,7 @@ public class OrderServices : IOrderService
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         Order order = _mapper.Map<Order>(request);
@@ -80,7 +80,7 @@ public class OrderServices : IOrderService
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         List<Order> orders = await _orderRepository.GetAllOrdersByUserId(userId);
@@ -96,7 +96,7 @@ public class OrderServices : IOrderService
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         Order? order = await _orderRepository.GetOrderById(id);
@@ -130,7 +130,7 @@ public class OrderServices : IOrderService
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         Order? order = await _orderRepository.GetOrderById(id);

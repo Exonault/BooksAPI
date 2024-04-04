@@ -6,7 +6,6 @@ using BooksAPI.BE.Messages;
 
 namespace BooksAPI.BE.Services;
 
-using static UserResponses;
 
 public class UserService : IUserService
 {
@@ -21,7 +20,7 @@ public class UserService : IUserService
     {
         if (request is null)
         {
-            throw new ArgumentException(UserMessages.EmptyRequest);
+            throw new ArgumentException(UserMessages.ValidationMessages.EmptyRequest);
         }
 
         User newUser = new User()
@@ -33,19 +32,31 @@ public class UserService : IUserService
 
         await _userRepository.Register(newUser, request.Admin);
 
-        return new RegisterResponse(UserMessages.AccountCreated);
+        return new RegisterResponse
+        {
+            Message = UserMessages.Messages.AccountCreated,
+            Successful = true,
+            Errors = new List<string>(),
+        };
+        // return new RegisterResponse(UserMessages.AccountCreated, null);
     }
 
     public async Task<LoginResponse> LoginAccount(LoginRequest request)
     {
         if (request is null)
         {
-            throw new ArgumentException(UserMessages.EmptyRequest);
+            throw new ArgumentException(UserMessages.ValidationMessages.EmptyRequest);
         }
 
         String token = await _userRepository.Login(request.UserName, request.Password);
 
-        return new LoginResponse(token, UserMessages.LoginComplete);
+        return new LoginResponse
+        {
+            Token = token,
+            RefreshToken = token,
+            Message = UserMessages.Messages.LoginComplete
+        };
+        //     return new LoginResponse(token, token, UserMessages.LoginComplete);
     }
 
     public Task Refresh(RefreshRequest request)

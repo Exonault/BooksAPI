@@ -37,7 +37,7 @@ public class UserComicService : IUserComicService
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         LibraryComic? libraryComic = await _libraryComicRepository.GetLibraryComicById(request.LibraryComicId);
@@ -95,7 +95,7 @@ public class UserComicService : IUserComicService
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         List<UserComic> userComics = await _userComicRepository.GetUserComicsByUserId(id);
@@ -111,7 +111,7 @@ public class UserComicService : IUserComicService
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         LibraryComic? libraryComic = await _libraryComicRepository.GetLibraryComicById(request.LibraryComicId);
@@ -145,7 +145,7 @@ public class UserComicService : IUserComicService
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         UserComic? userComic = await _userComicRepository.GetUserComicById(id);

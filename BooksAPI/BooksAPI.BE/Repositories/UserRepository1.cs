@@ -33,11 +33,11 @@ public class UserRepository1:IUserRepository1
        return await _userManager.CheckPasswordAsync(user, password);
     }
 
-    public async Task<bool> Create(User user, string password)
+    public async Task<IdentityResult> Create(User user, string password)
     {
         IdentityResult identityResult = await _userManager.CreateAsync(user, password);
 
-        return identityResult.Succeeded;
+        return identityResult;
     }
 
     public async Task AddToRole(User user, string role)
@@ -51,6 +51,11 @@ public class UserRepository1:IUserRepository1
 
         return rolesAsync.ToList();
 
+    }
+
+    public async Task UpdateUser(User user)
+    {
+        await _userManager.UpdateAsync(user);
     }
 
     // public Task Register(User newUser, bool admin)

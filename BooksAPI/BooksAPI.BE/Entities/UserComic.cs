@@ -8,8 +8,6 @@ public class UserComic
     
     public int ReadVolumes { get; set; }
 
-    public int ReadChapters { get; set; }
-
     public int CollectedVolumes { get; set; }
     
     public decimal Price { get; set; }

@@ -1,37 +1,47 @@
-﻿using BooksAPI.BE.Constants;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using BooksAPI.BE.Constants;
 using BooksAPI.BE.Contracts.User;
 using BooksAPI.BE.Entities;
 using BooksAPI.BE.Exception;
 using BooksAPI.BE.Interfaces.Repositories;
 using BooksAPI.BE.Interfaces.Services;
 using BooksAPI.BE.Messages;
-using BooksAPI.BE.Repositories;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BooksAPI.BE.Services;
 
-using static UserResponses;
 
 public class UserService1 : IUserService1
 {
-    private IUserRepository1 _repository;
+    private readonly IUserRepository1 _repository;
+    private readonly IConfiguration _config;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UserService1(UserRepository1 repository)
+    private static readonly TimeSpan TokenDuration = TimeSpan.FromMinutes(30);
+
+    public UserService1(IUserRepository1 repository, IConfiguration config, IHttpContextAccessor httpContextAccessor)
     {
         _repository = repository;
+        _config = config;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<RegisterResponse> RegisterAccount(RegisterRequest request)
     {
-        if (request is null)
+         if (request is null)
         {
-            throw new ArgumentException(UserMessages.EmptyRequest);
+            throw new ArgumentException(UserMessages.ValidationMessages.EmptyRequest);
         }
 
-        User? userByName = await _repository.GetByEmail(request.Email);
+        User? userByName = await _repository.GetByName(request.UserName);
 
         if (userByName is not null)
         {
-            throw new UserAlreadyRegisteredException(UserMessages.AlreadyRegistered);
+            throw new UserAlreadyRegisteredException(UserMessages.ValidationMessages.AlreadyRegistered);
         }
 
         User user = new User()
@@ -41,11 +51,17 @@ public class UserService1 : IUserService1
             Email = request.Email
         };
 
-        bool created = await _repository.Create(user, request.Password);
+        IdentityResult identityResult = await _repository.Create(user, request.Password);
 
-        if (!created)
+        if (!identityResult.Succeeded)
         {
-            throw new System.Exception(UserMessages.ErrorOccured);
+            List<string> errors = identityResult.Errors.Select(e => e.Description).ToList();
+            RegisterResponse failedResponse = new RegisterResponse(){
+                Message = UserMessages.ValidationMessages.RegisterFailed, 
+                Errors = errors,
+                Successful = false,
+            };
+            return failedResponse;
         }
 
         if (request.Admin)
@@ -55,62 +71,169 @@ public class UserService1 : IUserService1
 
         await _repository.AddToRole(user, AppConstants.RoleTypes.UserRoleType);
 
-        return new RegisterResponse(UserMessages.AccountCreated);
+        RegisterResponse response = new RegisterResponse
+        {
+            Message = UserMessages.Messages.AccountCreated,
+            Successful = true,
+            Errors = new List<string>(),
+        };
+        return response;
     }
 
     public async Task<LoginResponse> LoginAccount(LoginRequest request)
     {
         if (request is null)
         {
-            throw new ArgumentException(UserMessages.EmptyRequest);
+            throw new ArgumentException(UserMessages.ValidationMessages.EmptyRequest);
         }
 
         User? user = await _repository.GetByName(request.UserName);
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         bool checkPassword = await _repository.CheckPassword(user, request.Password);
 
         if (!checkPassword)
         {
-            throw new InvalidEmailPasswordException(UserMessages.InvalidEmailPassword);
+            throw new InvalidEmailPasswordException(UserMessages.ValidationMessages.InvalidEmailPassword);
         }
 
         List<string> roles = await _repository.GetAllRoles(user);
-        
 
-        //generate token
-        
-        //generate refresh token
-        
-        
-        throw new NotImplementedException();
+        string token = GenerateToken(user.UserName!, user.Id, roles);
+
+        string refreshToken = GenerateRefreshToken();
+
+        user.RefreshToken = refreshToken;
+
+        user.RefreshTokenExpiry = DateTime.UtcNow.AddHours(24);
+
+        await _repository.UpdateUser(user);
+
+        LoginResponse response = new LoginResponse
+        {
+            Token = token,
+            RefreshToken = refreshToken,
+            Message = UserMessages.Messages.LoginComplete,
+        };
+        return response;
     }
 
-    public Task Refresh(RefreshRequest request)
+    public async Task<LoginResponse> Refresh(RefreshRequest request)
     {
-        throw new NotImplementedException();
+        ClaimsPrincipal? principal = GetUserFromExpiredToken(request.AccessToken);
+
+        if (principal?.Identity?.Name is null)
+        {
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
+        }
+
+        User? user = await _repository.GetByName(principal.Identity.Name);
+
+        if (user is null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiry < DateTime.UtcNow)
+        {
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
+        }
+
+        string token = GenerateToken(user.UserName!, user.Id, await _repository.GetAllRoles(user));
+
+        LoginResponse response = new LoginResponse
+        {
+            Token = token,
+            RefreshToken = request.RefreshToken,
+            Message = UserMessages.Messages.LoginComplete,
+        };
+        return response;
     }
 
-    public Task Revoke()
+    public async Task Revoke()
     {
-        throw new NotImplementedException();
+        string? userName = _httpContextAccessor.HttpContext?.User.Identity?.Name;
+
+        if (userName is null)
+        {
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
+        }
+
+        User? user = await _repository.GetByName(userName);
+
+        if (user is null)
+        {
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
+        }
+
+        user.RefreshToken = null;
+
+        await _repository.UpdateUser(user);
     }
 
-    private string GenerateToken()
+    private string GenerateToken(string userName, string id, List<string> roles)
     {
-        return null;
+        var tokenHandler = new JwtSecurityTokenHandler();
+        string secret = _config["Jwt:Secret"] ?? throw new InvalidOperationException(AuthMessages.SecretNotConfigured);
+        SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+
+        List<Claim> claims =
+        [
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(JwtRegisteredClaimNames.Name, userName),
+            new Claim(AppConstants.ClaimTypes.ClaimUserIdType, id),
+        ];
+
+        foreach (string role in roles)
+        {
+            claims.Add(new Claim(AppConstants.ClaimTypes.ClaimRoleType, role));
+        }
+
+        SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.Add(TokenDuration),
+            Issuer = _config["Jwt:Issuer"],
+            IssuedAt = DateTime.UtcNow,
+            NotBefore = DateTime.UtcNow,
+            Audience = _config["Jwt:Audience"],
+            SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256),
+        };
+
+        SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+
+        string jwt = tokenHandler.WriteToken(token);
+
+        return jwt;
     }
 
 
     private string GenerateRefreshToken()
     {
-        return null;
-    }
-    
-   // private record UserSession(string Id, string UserName, List<string> Roles);
+        byte[] randomNumbers = new byte[64];
 
+        using var generator = RandomNumberGenerator.Create();
+
+        generator.GetBytes(randomNumbers);
+
+        string token = Convert.ToBase64String(randomNumbers);
+
+        return token;
+    }
+
+    private ClaimsPrincipal? GetUserFromExpiredToken(string token)
+    {
+        string secret = _config["Jwt:Secret"] ?? throw new InvalidOperationException(AuthMessages.SecretNotConfigured);
+
+        TokenValidationParameters validation = new TokenValidationParameters()
+        {
+            ValidIssuer = _config["Jwt:Issuer"],
+            ValidAudience = _config["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+            ValidateLifetime = false,
+        };
+
+        ClaimsPrincipal claimsPrincipal = new JwtSecurityTokenHandler().ValidateToken(token, validation, out _);
+
+        return claimsPrincipal;
+    }
 }

@@ -20,27 +20,28 @@ public class LibraryComicValidator : AbstractValidator<LibraryComic>
         RuleFor(x => x.DemographicType)
             .NotEmpty()
             .WithMessage(LibraryComicMessages.DemographicTypeRequiredMessage)
-            .Must(x => LibraryComicConstants.DemographicTypes.Contains(x))
+            .Must(x => LibraryComicConstants.DemographicType.DemographicTypes.Contains(x))
             .WithMessage(LibraryComicMessages.DemographicTypeMessage);
 
         RuleFor(x => x.ComicType)
             .NotEmpty()
             .WithMessage(LibraryComicMessages.ComicTypeRequiredMessage)
-            .Must(x => LibraryComicConstants.ComicTypes.Contains(x))
+            .Must(x => LibraryComicConstants.ComicType.ComicTypes.Contains(x))
             .WithMessage(LibraryComicMessages.ComicTypeValidationMessage);
 
         RuleFor(x => x.PublishingStatus)
             .NotEmpty()
             .WithMessage(LibraryComicMessages.PublishingStatusRequiredMessage)
-            .Must(x => LibraryComicConstants.PublishingStatuses.Contains(x))
+            .Must(x => LibraryComicConstants.PublishingType.PublishingStatuses.Contains(x))
             .WithMessage(LibraryComicMessages.PublishingStatusValidationMessage);
-
-        RuleFor(x => x.TotalVolumes)
-            .Must(x => x >= 1)
-            .WithMessage(LibraryComicMessages.TotalVolumesValidationMessage);
-
-        RuleFor(x => x.TotalChapters)
-            .Must(x => x >= 1)
-            .WithMessage(LibraryComicMessages.TotalChaptersValidationMessage);
+        
+        RuleFor(x => new { x.TotalVolumes, x.PublishingStatus })
+            .Custom((obj, context) =>
+        {
+            if (obj.PublishingStatus is (LibraryComicConstants.PublishingType.Finished or LibraryComicConstants.PublishingType.OnHiatus) && obj.TotalVolumes == 0)
+            {
+                context.AddFailure("TotalVolumes", LibraryComicMessages.TotalVolumesRequired);
+            }
+        });
     }
 }

@@ -18,7 +18,7 @@ public static class LibraryComicEndpoints
     public static void MapLibraryComicEndpoints(this WebApplication app)
     {
         app.MapPost("/libraryComic/", CreateLibraryComic)
-            .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
+            //.RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

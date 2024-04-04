@@ -1,7 +1,6 @@
 ﻿using BooksAPI.BE.Contracts.User;
 
 namespace BooksAPI.BE.Interfaces.Services;
-using static UserResponses;
 
 public interface IUserService1
 {
@@ -9,7 +8,7 @@ public interface IUserService1
 
     Task<LoginResponse> LoginAccount(LoginRequest request);
 
-    Task Refresh(RefreshRequest request);
+    Task<LoginResponse> Refresh(RefreshRequest request);
 
     Task Revoke(); 
 }

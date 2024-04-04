@@ -32,14 +32,14 @@ public class UserRepository : IUserRepository
 
         if (user is not null)
         {
-            throw new UserAlreadyRegisteredException(UserMessages.AlreadyRegistered);
+            throw new UserAlreadyRegisteredException(UserMessages.ValidationMessages.AlreadyRegistered);
         }
 
         IdentityResult createdUser = await _userManager.CreateAsync(newUser, newUser.PasswordHash);
 
         if (!createdUser.Succeeded)
         {
-            throw new System.Exception(UserMessages.ErrorOccured);
+            throw new System.Exception(UserMessages.ValidationMessages.ErrorOccured);
         }
 
         if (admin)
@@ -56,14 +56,14 @@ public class UserRepository : IUserRepository
 
         if (getUser is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         bool checkUserPassword = await _userManager.CheckPasswordAsync(getUser, password);
 
         if (!checkUserPassword)
         {
-            throw new InvalidEmailPasswordException(UserMessages.InvalidEmailPassword);
+            throw new InvalidEmailPasswordException(UserMessages.ValidationMessages.InvalidEmailPassword);
         }
 
         IList<string> roles = await _userManager.GetRolesAsync(getUser);

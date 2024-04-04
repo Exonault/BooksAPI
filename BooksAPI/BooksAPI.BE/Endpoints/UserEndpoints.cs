@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BooksAPI.BE.Endpoints;
 
-using static UserResponses;
 
 public static class UserEndpoints
 {

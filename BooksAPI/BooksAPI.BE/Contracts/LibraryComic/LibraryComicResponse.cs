@@ -24,7 +24,4 @@ public class LibraryComicResponse
     
     [JsonPropertyName("totalVolumes")]
     public int TotalVolumes { get; set; }
-    
-    [JsonPropertyName("totalChapters")]
-    public int TotalChapters { get; set; }
 }

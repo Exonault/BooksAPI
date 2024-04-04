@@ -14,9 +14,6 @@ public class UserComicResponse
     [JsonPropertyName("readVolumes")]
     public int ReadVolumes { get; set; }
 
-    [JsonPropertyName("readChapters")]
-    public int ReadChapters { get; set; }
-
     [JsonPropertyName("collectedVolumes")]
     public int CollectedVolumes { get; set; }
     

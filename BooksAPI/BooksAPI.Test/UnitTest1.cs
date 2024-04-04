@@ -35,7 +35,6 @@ public class UnitTest1
         {
             ReadingStatus = "Reading",
             ReadVolumes = 12,
-            ReadChapters = 111,
             CollectedVolumes = 12,
             Price = 0,
             CollectionStatus = "Collecting",
@@ -73,7 +72,6 @@ public class UnitTest1
                 Id = Guid.NewGuid(),
                 ReadingStatus = "Reading",
                 ReadVolumes = 11,
-                ReadChapters = 21,
                 CollectedVolumes = 10,
                 Price = 18,
                 CollectionStatus = "Collecting",
@@ -110,7 +108,6 @@ public class UnitTest1
                 ComicType = "null",
                 PublishingStatus = "null",
                 TotalVolumes = 0,
-                TotalChapters = 0,
             };
 
 
@@ -119,7 +116,6 @@ public class UnitTest1
                 Id = Guid.NewGuid(),
                 ReadingStatus = "Reading",
                 ReadVolumes = 11,
-                ReadChapters = 21,
                 CollectedVolumes = 10,
                 Price = 18,
                 CollectionStatus = "Collecting",
@@ -170,7 +166,6 @@ public class UnitTest1
         {
             ReadingStatus = "Reading",
             ReadVolumes = 1211,
-            ReadChapters = 11111,
             CollectedVolumes = 111,
             Price = 112.11m,
             CollectionStatus = "Finished",

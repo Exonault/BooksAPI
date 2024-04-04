@@ -15,8 +15,6 @@ public class UserComicConfiguration:IEntityTypeConfiguration<UserComic>
         
         builder.Property(x => x.ReadVolumes).IsRequired();
         
-        builder.Property(x => x.ReadChapters).IsRequired();
-        
         builder.Property(x => x.CollectedVolumes).IsRequired();
         
         builder.Property(x => x.Price).IsRequired();

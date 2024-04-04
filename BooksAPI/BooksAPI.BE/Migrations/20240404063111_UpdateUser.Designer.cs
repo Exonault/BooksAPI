@@ -3,6 +3,7 @@ using System;
 using BooksAPI.BE.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BooksAPI.BE.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240404063111_UpdateUser")]
+    partial class UpdateUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,6 +50,9 @@ namespace BooksAPI.BE.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("TotalChapters")
+                        .HasColumnType("integer");
 
                     b.Property<int>("TotalVolumes")
                         .HasColumnType("integer");
@@ -179,6 +185,9 @@ namespace BooksAPI.BE.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("ReadChapters")
+                        .HasColumnType("integer");
+
                     b.Property<int>("ReadVolumes")
                         .HasColumnType("integer");
 
@@ -227,13 +236,13 @@ namespace BooksAPI.BE.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "3187bce0-f9a9-48fb-adb6-36cea86dfb16",
+                            Id = "e9aebb97-9029-4d92-8972-d40d9eeb948f",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "284b3a5c-4235-4b01-ba23-09f2f6f9737c",
+                            Id = "f66f031e-5eed-45ff-b3c0-c4f43b195fdd",
                             Name = "User",
                             NormalizedName = "USER"
                         });

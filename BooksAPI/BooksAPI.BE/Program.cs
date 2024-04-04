@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using BooksAPI.BE.Constants;
@@ -18,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
 
 //Swagger
 builder.Services.AddSwaggerGen();
@@ -80,7 +80,7 @@ builder.Services.AddLibraryComicServices();
 builder.Services.AddUserComicServices();
 builder.Services.AddOrderServices();
 builder.Services.AddUserServices();
-
+builder.Services.AddUserServices1();
 
 //Mapping
 MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
@@ -112,5 +112,6 @@ app.MapLibraryComicEndpoints();
 app.MapUserComicEndpoints();
 app.MapOrderEndpoints();
 app.MapUserEndpoints();
+app.MapUserEndpoints1();
 
 app.Run();
