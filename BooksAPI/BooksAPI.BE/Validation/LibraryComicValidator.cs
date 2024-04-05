@@ -12,10 +12,6 @@ public class LibraryComicValidator : AbstractValidator<LibraryComic>
         RuleFor(x => x.Title)
             .NotEmpty()
             .WithMessage(LibraryComicMessages.TitleValidationMessage);
-
-        RuleFor(x => x.Author)
-            .NotEmpty()
-            .WithMessage(LibraryComicMessages.AuthorValidationMessage);
         
         RuleFor(x => x.DemographicType)
             .NotEmpty()
@@ -34,6 +30,9 @@ public class LibraryComicValidator : AbstractValidator<LibraryComic>
             .WithMessage(LibraryComicMessages.PublishingStatusRequiredMessage)
             .Must(x => LibraryComicConstants.PublishingType.PublishingStatuses.Contains(x))
             .WithMessage(LibraryComicMessages.PublishingStatusValidationMessage);
+
+        RuleForEach(x => x.Authors)
+            .SetValidator(new AuthorValidator());
         
         RuleFor(x => new { x.TotalVolumes, x.PublishingStatus })
             .Custom((obj, context) =>

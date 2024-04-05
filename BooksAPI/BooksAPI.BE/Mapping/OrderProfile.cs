@@ -8,10 +8,10 @@ public class OrderProfile : Profile
 {
     public OrderProfile()
     {
-        CreateMap<CreateOrderRequest, Order>();
+        CreateMap<CreateOrderRequest, Order>(); // Doesn't map User
 
-        CreateMap<Order, OrderResponse>();
+        CreateMap<Order, OrderResponse>(); 
 
-        CreateMap<UpdateOrderRequest, Order>();
+        CreateMap<UpdateOrderRequest, Order>(); // Doesn't map User
     }
 }

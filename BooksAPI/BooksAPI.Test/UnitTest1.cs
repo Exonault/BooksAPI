@@ -1,4 +1,6 @@
 using AutoMapper;
+using BooksAPI.BE.Contracts.Author;
+using BooksAPI.BE.Contracts.LibraryComic;
 using BooksAPI.BE.Contracts.UserComic;
 using BooksAPI.BE.Data;
 using BooksAPI.BE.Entities;
@@ -27,6 +29,7 @@ public class UnitTest1
         MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
         {
             config.AddProfile(new UserComicProfile());
+            config.AddProfile(new LibraryComicProfile());
         });
 
         IMapper mapper = mapperConfiguration.CreateMapper();
@@ -103,7 +106,7 @@ public class UnitTest1
             {
                 Id = Guid.NewGuid(),
                 Title = "null",
-                Author = "null",
+                //Author = "null",
                 DemographicType = "null",
                 ComicType = "null",
                 PublishingStatus = "null",
@@ -144,7 +147,6 @@ public class UnitTest1
 
             Console.WriteLine();
         }
-
     }
 
     [Fact]
@@ -184,8 +186,6 @@ public class UnitTest1
 
             Console.WriteLine();
         }
-
-
     }
 
     [Fact]
@@ -209,7 +209,71 @@ public class UnitTest1
         ValidationResult validationResult = await orderValidator.ValidateAsync(order);
 
         Console.WriteLine();
-
     }
-    
+
+    [Fact]
+    public async void TestAuthorDb()
+    {
+        DbContextOptionsBuilder dbContextOptionsBuilder = new DbContextOptionsBuilder()
+            .UseNpgsql("Server=localhost;Database=testDbBooks;Username=postgres;Password=1234");
+
+        await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
+        {
+            LibraryComic? firstOrDefault = db.LibraryComics
+                .Include(x => x.Authors)
+                .FirstOrDefault(x => x.Id == Guid.Parse("ac63855c-7ac5-4a12-bfb0-49ac35def588"));
+
+            Console.WriteLine();
+        }
+    }
+
+    [Fact]
+    public async void TestLibraryComicWithNewAuthor()
+    {
+        AuthorRequest authorRequest = new AuthorRequest
+        {
+            FirstName = "firstName",
+            LastName = "lastName",
+            Role = "story"
+        };
+        AuthorRequest authorRequest2 = new AuthorRequest
+        {
+            FirstName = "firstName2",
+            LastName = "lastName2",
+            Role = "story"
+        };
+
+        CreateLibraryComicRequest request = new CreateLibraryComicRequest
+        {
+            Title = "string",
+            DemographicType = "Shonen",
+            ComicType = "Manga",
+            PublishingStatus = "Publishing",
+            TotalVolumes = 121,
+            Authors = new List<AuthorRequest>()
+            {
+                authorRequest, authorRequest2
+            }
+        };
+        
+        
+        MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
+        {
+            config.AddProfile(new LibraryComicProfile());
+            config.AddProfile(new AuthorProfile());
+        });
+
+        IMapper mapper = mapperConfiguration.CreateMapper();
+
+        LibraryComic libraryComic = mapper.Map<LibraryComic>(request);
+
+        Console.WriteLine();
+
+        // DbContextOptionsBuilder dbContextOptionsBuilder = new DbContextOptionsBuilder()
+        //     .UseNpgsql("Server=localhost;Database=testDbBooks;Username=postgres;Password=1234");
+        //
+        // await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
+        // {
+        // }
+    }
 }

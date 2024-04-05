@@ -179,7 +179,7 @@ public class UserService1 : IUserService1
         List<Claim> claims =
         [
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Name, userName),
+            new Claim(ClaimTypes.Name, userName),
             new Claim(AppConstants.ClaimTypes.ClaimUserIdType, id),
         ];
 

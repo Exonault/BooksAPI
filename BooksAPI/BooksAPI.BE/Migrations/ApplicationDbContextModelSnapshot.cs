@@ -22,15 +22,49 @@ namespace BooksAPI.BE.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BooksAPI.BE.Entities.LibraryComic", b =>
+            modelBuilder.Entity("AuthorLibraryComic", b =>
+                {
+                    b.Property<Guid>("AuthorsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LibraryComicsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("AuthorsId", "LibraryComicsId");
+
+                    b.HasIndex("LibraryComicsId");
+
+                    b.ToTable("AuthorLibraryComic");
+                });
+
+            modelBuilder.Entity("BooksAPI.BE.Entities.Author", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Author")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Authors");
+                });
+
+            modelBuilder.Entity("BooksAPI.BE.Entities.LibraryComic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ComicType")
                         .IsRequired()
@@ -343,6 +377,21 @@ namespace BooksAPI.BE.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("AuthorLibraryComic", b =>
+                {
+                    b.HasOne("BooksAPI.BE.Entities.Author", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BooksAPI.BE.Entities.LibraryComic", null)
+                        .WithMany()
+                        .HasForeignKey("LibraryComicsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BooksAPI.BE.Entities.Order", b =>

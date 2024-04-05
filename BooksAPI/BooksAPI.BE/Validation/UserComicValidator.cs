@@ -36,8 +36,7 @@ public class UserComicValidator : AbstractValidator<UserComic>
             .WithMessage(UserComicMessages.CollectedVolumesRequiredMessage)
             .Must(x => x.CollectedVolumes <= x.TotalVolumes)
             .WithMessage(UserComicMessages.CollectedVolumesLowerThanTotalVolumes);
-
-
+        
         RuleFor(x => x.LibraryComic)
             .SetValidator(new LibraryComicValidator());
     }
