@@ -25,7 +25,7 @@ public class LibraryComicService : ILibraryComicService
         _mapper = mapper;
     }
 
-    public async Task CreateLibraryComic(CreateLibraryComicRequest request)
+    public async Task CreateLibraryComic(CreateLibraryComicRequest request)// TODO fix for new authors
     {
         LibraryComic libraryComic = _mapper.Map<LibraryComic>(request);
 
@@ -57,7 +57,7 @@ public class LibraryComicService : ILibraryComicService
         return _mapper.Map<List<LibraryComicResponse>>(allLibraryComics);
     }
 
-    public async Task UpdateLibraryComic(Guid id, UpdateLibraryComicRequest request)
+    public async Task UpdateLibraryComic(Guid id, UpdateLibraryComicRequest request) //TODO Fix for new authors
     {
         LibraryComic? libraryComic = await _libraryComicRepository.GetLibraryComicById(id);
 

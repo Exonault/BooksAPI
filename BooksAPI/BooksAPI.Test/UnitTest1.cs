@@ -228,35 +228,50 @@ public class UnitTest1
     }
 
     [Fact]
-    public async void TestLibraryComicWithNewAuthor()
+    public async void TestLibraryComicWithNewAuthor() // Use this for create library comic
     {
-        AuthorRequest authorRequest = new AuthorRequest
+        // AuthorRequest authorRequest = new AuthorRequest
+        // {
+        //     FirstName = "firstName",
+        //     LastName = "lastName",
+        //     Role = "story"
+        // };
+        // AuthorRequest authorRequest2 = new AuthorRequest
+        // {
+        //     FirstName = "firstName2",
+        //     LastName = "lastName2",
+        //     Role = "story"
+        // };
+
+        Author authorRequest = new Author
         {
+            Id = Guid.Parse("83c48659-4ded-49cd-96d7-09ee8ba60739"),
             FirstName = "firstName",
             LastName = "lastName",
-            Role = "story"
+            Role = "story",
         };
-        AuthorRequest authorRequest2 = new AuthorRequest
+        Author authorRequest2 = new Author
         {
+            Id = Guid.Parse("cec19186-48a6-487c-a1cc-d43e9c22d86c"),
             FirstName = "firstName2",
             LastName = "lastName2",
-            Role = "story"
+            Role = "art"
         };
 
         CreateLibraryComicRequest request = new CreateLibraryComicRequest
         {
             Title = "string",
-            DemographicType = "Shonen",
+            DemographicType = "Seinen",
             ComicType = "Manga",
             PublishingStatus = "Publishing",
             TotalVolumes = 121,
-            Authors = new List<AuthorRequest>()
-            {
-                authorRequest, authorRequest2
-            }
+            // Authors = new List<AuthorRequest>()
+            // {
+            //     authorRequest, authorRequest2
+            // }
         };
-        
-        
+
+
         MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
         {
             config.AddProfile(new LibraryComicProfile());
@@ -269,11 +284,111 @@ public class UnitTest1
 
         Console.WriteLine();
 
-        // DbContextOptionsBuilder dbContextOptionsBuilder = new DbContextOptionsBuilder()
-        //     .UseNpgsql("Server=localhost;Database=testDbBooks;Username=postgres;Password=1234");
-        //
-        // await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
-        // {
-        // }
+
+        DbContextOptionsBuilder dbContextOptionsBuilder = new DbContextOptionsBuilder()
+            .UseNpgsql("Server=localhost;Database=testDbBooks;Username=postgres;Password=1234");
+
+        List<Author> authors = new List<Author>() { authorRequest, authorRequest2};
+
+        await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
+        {
+            foreach (Author author in authors)
+            {
+                Author? searchedAuthor = await db.Authors.FirstOrDefaultAsync(a => a.FirstName == author.FirstName &&
+                    a.LastName == author.LastName &&
+                    a.Role == author.Role);
+
+                if (searchedAuthor == null)
+                {
+                    libraryComic.Authors.Add(author);
+                }
+                else
+                {
+                    libraryComic.Authors.Add(searchedAuthor);
+                }
+            }
+
+            db.LibraryComics.Add(libraryComic);
+            await db.SaveChangesAsync();
+            
+        }
+    }
+    
+    [Fact]
+    public async void TestLibraryComicWithNewAuthorUpdate() // Use this for update libraryComic
+    {
+
+        Author authorRequest = new Author
+        {
+            Id = Guid.Parse("83c48659-4ded-49cd-96d7-09ee8ba60739"),
+            FirstName = "firstName",
+            LastName = "lastName",
+            Role = "story",
+        };
+        Author authorRequest2 = new Author
+        {
+            Id = Guid.Parse("cec19186-48a6-487c-a1cc-d43e9c22d86c"),
+            FirstName = "firstName2",
+            LastName = "lastName2",
+            Role = "art"
+        };
+        Author authorRequest3 = new Author
+        {
+            Id = Guid.Parse("039e9297-3d31-44a2-b899-79f3f164eb62"),
+            FirstName = "firstName3",
+            LastName = "lastName3",
+            Role = "storyAndArt"
+        };
+        
+
+        MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
+        {
+            config.AddProfile(new LibraryComicProfile());
+            config.AddProfile(new AuthorProfile());
+        });
+        
+        Console.WriteLine();
+        
+        DbContextOptionsBuilder dbContextOptionsBuilder = new DbContextOptionsBuilder()
+            .UseNpgsql("Server=localhost;Database=testDbBooks;Username=postgres;Password=1234");
+
+        List<Author> authors = new List<Author>() { authorRequest, authorRequest2, authorRequest3};
+
+        await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
+        {
+            LibraryComic? libraryComic = await db.LibraryComics
+                .Include(x => x.Authors)
+                .Include(x => x.UserComics)
+                .FirstOrDefaultAsync(x => x.Id == Guid.Parse("a1d27d10-8d31-4479-acc4-b35919b0c1d7"));
+            if (libraryComic == null)
+            {
+                return;
+            }
+
+            libraryComic.ComicType = "Seinen";
+            
+            libraryComic.Authors.Clear();
+            
+            foreach (Author author in authors)
+            {
+                Author? searchedAuthor = await db.Authors.FirstOrDefaultAsync(a => a.FirstName == author.FirstName &&
+                    a.LastName == author.LastName &&
+                    a.Role == author.Role);
+
+                if (searchedAuthor == null)
+                {
+                    libraryComic.Authors.Add(author);
+                    db.Authors.Add(author);
+                }
+                else
+                {
+                    libraryComic.Authors.Add(searchedAuthor);
+                }
+            }
+            
+            db.Entry(libraryComic).State = EntityState.Modified;
+            await db.SaveChangesAsync();
+            
+        }
     }
 }

@@ -26,7 +26,7 @@ builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwa
 //DB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql(configuration.GetConnectionString("ApplicationDb1"));
+    options.UseNpgsql(configuration.GetConnectionString("ApplicationDb"));
 });
 
 //Auth
