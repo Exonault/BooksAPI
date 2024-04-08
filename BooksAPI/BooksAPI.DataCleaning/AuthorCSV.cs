@@ -2,10 +2,10 @@
 
 namespace BooksAPI.DataCleaning;
 
-public class Author
+public class AuthorCSV
 {
-    [JsonPropertyName("id")]
-    public string Id { get; set; }
+    // [JsonPropertyName("id")]
+    // public int Id { get; set; }
 
     [JsonPropertyName("first_name")]
     public string FirstName { get; set; }
