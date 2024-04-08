@@ -24,5 +24,5 @@ public class LibraryComicResponse
     public string PublishingStatus { get; set; } = string.Empty;
     
     [JsonPropertyName("totalVolumes")]
-    public int TotalVolumes { get; set; }
+    public int? TotalVolumes { get; set; }
 }

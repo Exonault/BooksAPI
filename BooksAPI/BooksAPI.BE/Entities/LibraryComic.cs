@@ -7,7 +7,7 @@ public class LibraryComic
     public string DemographicType { get; set; } = string.Empty;
     public string ComicType { get; set; } = string.Empty;
     public string PublishingStatus { get; set; } = string.Empty;
-    public int TotalVolumes { get; set; }
+    public int? TotalVolumes { get; set; }
     public List<UserComic> UserComics { get; set; }
     
     public List<Author> Authors { get; set; }

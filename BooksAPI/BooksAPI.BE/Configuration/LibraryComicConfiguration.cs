@@ -18,6 +18,8 @@ public class LibraryComicConfiguration:IEntityTypeConfiguration<LibraryComic>
         builder.Property(x => x.ComicType).IsRequired();
         
         builder.Property(x=> x.PublishingStatus).IsRequired();
-        
+
+        builder.Property(x => x.TotalVolumes).IsRequired(false);
+
     }
 }
