@@ -44,7 +44,6 @@ namespace BooksAPI.BE.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("LastName")
@@ -82,7 +81,7 @@ namespace BooksAPI.BE.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("TotalVolumes")
+                    b.Property<int?>("TotalVolumes")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

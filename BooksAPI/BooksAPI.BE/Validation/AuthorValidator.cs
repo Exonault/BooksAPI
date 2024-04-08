@@ -9,9 +9,9 @@ public class AuthorValidator:AbstractValidator<Author>
 {
     public AuthorValidator()
     {
-        RuleFor(x => x.FirstName)
-            .NotEmpty()
-            .WithMessage(AuthorMessages.FirstNameRequired);
+        // RuleFor(x => x.FirstName)
+        //     .NotEmpty()
+        //     .WithMessage(AuthorMessages.FirstNameRequired);
         
         RuleFor(x => x.LastName)
             .NotEmpty()

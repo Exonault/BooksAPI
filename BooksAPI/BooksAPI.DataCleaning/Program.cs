@@ -6,8 +6,10 @@ using CsvHelper.Configuration;
 
 Console.WriteLine("Hello, World!");
 
-string filePath = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
-if (File.Exists(filePath))
+string filePathData = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
+string filePathAuthorsOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
+string filePathMangasOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
+if (File.Exists(filePathData))
 {
     var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
     {
@@ -15,9 +17,12 @@ if (File.Exists(filePath))
     };
 
     // Open the file for reading
-    using (var reader = new StreamReader(filePath))
+    using (var reader = new StreamReader(filePathData))
     using (var csv = new CsvReader(reader, csvConfig))
     {
+        List<Author> authorsForCsv = new List<Author>();
+        List<LibraryComic> mangasForCsv = new List<LibraryComic>();
+
         // Read the CSV records
         csv.Read();
         csv.ReadHeader();
@@ -26,12 +31,8 @@ if (File.Exists(filePath))
         while (csv.Read())
         {
             //string mangaId = csv.GetField("manga_id");
-            string title = csv.GetField("title");
-            string type = csv.GetField("type");
             // string score = csv.GetField("score");
             //string scoredBy = csv.GetField("scored_by");
-            string status = csv.GetField("status");
-            string volumes = csv.GetField("volumes");
             //string chapters = csv.GetField("chapters");
             //string startDate = csv.GetField("start_date");
             //string endDate = csv.GetField("end_date");
@@ -45,8 +46,6 @@ if (File.Exists(filePath))
             //string realEndDate = csv.GetField("real_end_date");
             //string genres = csv.GetField("genres");
             // string themes = csv.GetField("themes");
-            string demographics = csv.GetField("demographics");
-            string authors = csv.GetField("authors");
             //string synopsis = csv.GetField("synopsis");
             //string background = csv.GetField("background");
             // string mainPicture = csv.GetField("main_picture");
@@ -54,46 +53,162 @@ if (File.Exists(filePath))
             // string titleEnglish = csv.GetField("title_english");
             // string titleJapanese = csv.GetField("title_japanese");
             //string titleSynonyms = csv.GetField("title_synonyms");
-
             // Do something with the fields
             // Console.WriteLine(
             //     $"Manga ID: {mangaId}, Title: {title}, Type: {type}, Score: {score}, Scored By: {scoredBy}");
             //
             // Console.WriteLine($"{synopsis}");
             // Console.WriteLine($"{background}");
-            authors = authors.Replace("'", "\"");
-            IList<Author>? deserialize = JsonSerializer.Deserialize<IList<Author>>(authors);
-            Console.WriteLine($"{title}; {type}; {status}; {volumes}; {demographics}; {authors}");
+
+            string title = csv.GetField("title");
+            string type = csv.GetField("type"); //manga; manhwa; light_novel; one_shot; manhua; novel; doujinshi; 
+            string status = csv.GetField("status"); // currently_publishing; finished; on_hiatus; discontinued; 
+            string volumes = csv.GetField("volumes");
+            string demographics = csv.GetField("demographics");
+            string authors = csv.GetField("authors");
+
+            ExtractAuthors(authors, title);
+
+            //Console.WriteLine($"{title}; {type}; {status}; {volumes}; {demographics}; {authors}");
+            type = FormatType(type);
+            status = FormatPublishingStatus(status);
+
+            if ("other" == type || "other" == status)
+            {
+                continue;
+            }
+
+            int? volumesInt;
+            if (int.TryParse(volumes, out int result))
+            {
+                volumesInt = result;
+            }
+            else volumesInt = null;
+
+            LibraryComic libraryComic = new LibraryComic
+            {
+                Id = Guid.NewGuid(),
+                Title = title,
+                DemographicType = demographics,
+                ComicType = type,
+                PublishingStatus = status,
+                TotalVolumes = volumesInt,
+            };
+
+
+            List<Author> extractedAuthors = ExtractAuthors(authors, title);
+
+            libraryComic.Authors = extractedAuthors;
+
+            mangasForCsv.Add(libraryComic);
+
+            // foreach (var author in extractedAuthors)
+            // {
+            //     Author? authorSearch = authorsForCsv
+            //         .FirstOrDefault(a => a.FirstName == author.FirstName
+            //                              && a.LastName == author.LastName
+            //                              && a.Role == author.Role);
+            //
+            //     if (authorSearch is null)
+            //     {
+            //         authorsForCsv.Add(author);
+            //     }
+            // }
         }
+
+        //WriteAuthorsToCsv(authorsForCsv);
+        WriteMangaToCsv(mangasForCsv);
     }
 }
 else
 {
-    Console.WriteLine("File not found: " + filePath);
+    Console.WriteLine("File not found: " + filePathData);
 }
-// if (File.Exists(filePath))
-// {
-//     // Open the file for reading
-//     using (StreamReader reader = new StreamReader(filePath))
-//     {
-//         while (!reader.EndOfStream)
-//         {
-//             string line = reader.ReadLine();
-//             
-//             string[] fields = line.Split(',');
-//             
-//             foreach (string field in fields)
-//             {
-//                 Console.Write($"{field} ");
-//             }
-//         
-//             Console.WriteLine();
-//         }
-//
-//         
-//     }
-// }
-// else
-// {
-//     Console.WriteLine("File not found: " + filePath);
-// }
+
+string FormatType(string type)
+{
+    //manga; light_novel; one_shot;
+    if ("manga" == type)
+    {
+        type = "Manga";
+    }
+    else if ("light_novel" == type)
+    {
+        type = "LightNovel";
+    }
+    else if ("one_shot" == type)
+    {
+        type = "OneShot";
+    }
+    else type = "other";
+
+    return type;
+}
+
+string FormatPublishingStatus(string status)
+{
+    // currently_publishing; finished; on_hiatus; discontinued; 
+    if ("currently_publishing" == status)
+    {
+        status = "Publishing";
+    }
+    else if ("finished" == status)
+    {
+        status = "Finished";
+    }
+    else if ("on_hiatus" == status)
+    {
+        status = "OnHiatus";
+    }
+    else status = "other";
+
+    return status;
+}
+
+void WriteAuthorsToCsv(List<Author> authors)
+{
+    using (var writer = new StreamWriter(filePathAuthorsOut))
+    using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+    {
+        csv.WriteRecords(authors);
+    }
+}
+
+void WriteMangaToCsv(List<LibraryComic> libraryComics)
+{
+    using (var writer = new StreamWriter(filePathMangasOut))
+    using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+    {
+        csv.WriteRecords(libraryComics);
+    }
+}
+
+
+List<Author> ExtractAuthors(string authors, string title)
+{
+    List<Author> result = new List<Author>();
+    try
+    {
+        authors = authors.Replace("'", "\"");
+        IList<AuthorCSV>? authorsDeserialized = JsonSerializer.Deserialize<IList<AuthorCSV>>(authors);
+        foreach (AuthorCSV author in authorsDeserialized)
+        {
+            author.Role = author.Role == "Story & Art" ? "StoryAndArt" : author.Role;
+
+            Author mappedAuthor = new Author
+            {
+                Id = Guid.NewGuid().ToString(),
+                FirstName = author.FirstName,
+                LastName = author.LastName,
+                Role = author.Role,
+            };
+            result.Add(mappedAuthor);
+        }
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine($"{title}, {authors}");
+    }
+
+    return result;
+}
