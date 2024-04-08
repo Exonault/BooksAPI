@@ -88,6 +88,7 @@ MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
     config.AddProfile(new LibraryComicProfile());
     config.AddProfile(new UserComicProfile());
     config.AddProfile(new OrderProfile());
+    config.AddProfile(new AuthorProfile());
 });
 
 builder.Services.AddSingleton(mapperConfiguration.CreateMapper());

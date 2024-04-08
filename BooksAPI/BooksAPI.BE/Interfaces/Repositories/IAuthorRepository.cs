@@ -10,6 +10,8 @@ public interface IAuthorRepository
     
     public Task<Author?> GetAuthorByName(string firstName, string lastName);
 
+    public Task<Author?> GetAuthor(string firstName, string lastName, string role);
+
     public Task<List<Author>> GetAllAuthors();
 
     public Task UpdateAuthor(Author author);

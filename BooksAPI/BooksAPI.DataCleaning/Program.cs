@@ -6,7 +6,7 @@ using CsvHelper.Configuration;
 
 Console.WriteLine("Hello, World!");
 
-string filePathData = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
+string filePathData = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
 string filePathAuthorsOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
 string filePathMangasOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
 if (File.Exists(filePathData))
@@ -22,11 +22,13 @@ if (File.Exists(filePathData))
     {
         List<Author> authorsForCsv = new List<Author>();
         List<LibraryComic> mangasForCsv = new List<LibraryComic>();
+        List<string> demographicsList = new List<string>();
 
         // Read the CSV records
         csv.Read();
         csv.ReadHeader();
 
+        int i = 0;
         // Iterate over each record
         while (csv.Read())
         {
@@ -67,13 +69,21 @@ if (File.Exists(filePathData))
             string demographics = csv.GetField("demographics");
             string authors = csv.GetField("authors");
 
-            ExtractAuthors(authors, title);
+            //ExtractAuthors(authors, title);
 
             //Console.WriteLine($"{title}; {type}; {status}; {volumes}; {demographics}; {authors}");
             type = FormatType(type);
             status = FormatPublishingStatus(status);
+            string demographic = FormatDemographic(demographics);
 
-            if ("other" == type || "other" == status)
+            if (!demographicsList.Contains(demographics))
+            {
+               // Console.WriteLine(demographics);
+                demographicsList.Add(demographics);
+               
+            }
+
+            if ("other" == type || "other" == status || "other" == demographic)
             {
                 continue;
             }
@@ -94,13 +104,17 @@ if (File.Exists(filePathData))
                 PublishingStatus = status,
                 TotalVolumes = volumesInt,
             };
+            
+            Console.WriteLine($"{i}: {title}; {type}; {status}; {volumes}; {demographic};");
+
+            i++;
+            if (i == 500) break;
 
 
-            List<Author> extractedAuthors = ExtractAuthors(authors, title);
 
-            libraryComic.Authors = extractedAuthors;
+            //List<Author> extractedAuthors = ExtractAuthors(authors, title);
 
-            mangasForCsv.Add(libraryComic);
+            //mangasForCsv.Add(libraryComic);
 
             // foreach (var author in extractedAuthors)
             // {
@@ -117,7 +131,7 @@ if (File.Exists(filePathData))
         }
 
         //WriteAuthorsToCsv(authorsForCsv);
-        WriteMangaToCsv(mangasForCsv);
+        //WriteMangaToCsv(mangasForCsv);
     }
 }
 else
@@ -163,6 +177,44 @@ string FormatPublishingStatus(string status)
     else status = "other";
 
     return status;
+}
+
+string FormatDemographic(string demographic)
+{
+    string[] demographicsSplit = demographic.Replace("[", "")
+        .Replace("]","")
+        .Replace("\'","")
+        .Split(",", StringSplitOptions.RemoveEmptyEntries);
+
+    //Console.WriteLine(string.Join(" ", demographicsSplit));
+
+    if (demographicsSplit.Length == 0)
+    {  
+        //Console.WriteLine($"0: {string.Join(" ", demographicsSplit)}");
+        return "other";
+    }
+    else if (demographicsSplit.Length == 1)
+    {
+        //Console.WriteLine($"1: {string.Join(" ", demographicsSplit)}");
+        if (demographicsSplit[0] == "Kids")
+        {
+            return "other";
+        }
+        else return demographicsSplit[0];
+
+    }
+    else if (demographicsSplit.Length == 2)
+    {
+        //Console.WriteLine($"2: {string.Join(" ", demographicsSplit)}");
+        if (demographicsSplit[0] == "Kids")
+        {
+            return demographicsSplit[1];
+        }
+
+        return demographicsSplit[0];
+    }
+
+    return "";
 }
 
 void WriteAuthorsToCsv(List<Author> authors)

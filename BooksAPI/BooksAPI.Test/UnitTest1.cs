@@ -347,12 +347,14 @@ public class UnitTest1
             config.AddProfile(new AuthorProfile());
         });
         
+        
+        
         Console.WriteLine();
         
         DbContextOptionsBuilder dbContextOptionsBuilder = new DbContextOptionsBuilder()
             .UseNpgsql("Server=localhost;Database=testDbBooks;Username=postgres;Password=1234");
 
-        List<Author> authors = new List<Author>() { authorRequest, authorRequest2, authorRequest3};
+        List<Author> authors = new List<Author>() { authorRequest, authorRequest3};
 
         await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
         {
@@ -368,6 +370,21 @@ public class UnitTest1
             libraryComic.ComicType = "Seinen";
             
             libraryComic.Authors.Clear();
+            
+            IMapper mapper = mapperConfiguration.CreateMapper();
+
+            UpdateLibraryComicRequest request = new UpdateLibraryComicRequest
+            {
+                Title = "title",
+                DemographicType = "Shonen",
+                ComicType = "OneShot",
+                PublishingStatus = "OnHiatus",
+                TotalVolumes = 11,
+                Authors = new List<AuthorRequest>()
+            };
+
+            mapper.Map(request, libraryComic);
+            
             
             foreach (Author author in authors)
             {

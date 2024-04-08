@@ -30,6 +30,13 @@ public class AuthorRepository : IAuthorRepository
         return await _dbContext.Authors.FirstOrDefaultAsync(a => a.FirstName == firstName && a.LastName == lastName);
     }
 
+    public async Task<Author?> GetAuthor(string firstName, string lastName, string role)
+    {
+        return await _dbContext.Authors.FirstOrDefaultAsync(a => a.FirstName == firstName &&
+                                                                 a.LastName == lastName &&
+                                                                 a.Role == role);
+    }
+
     public async Task<List<Author>> GetAllAuthors()
     {
         return await _dbContext.Authors.ToListAsync();
