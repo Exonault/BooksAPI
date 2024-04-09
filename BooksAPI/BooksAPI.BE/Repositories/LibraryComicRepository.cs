@@ -22,12 +22,16 @@ public class LibraryComicRepository:ILibraryComicRepository
 
     public async Task<LibraryComic?> GetLibraryComicById(Guid id)
     {
-        return await _dbContext.LibraryComics.FirstOrDefaultAsync(lc => lc.Id == id);
+        return await _dbContext.LibraryComics
+            .Include(lc => lc.Authors)
+            .FirstOrDefaultAsync(lc => lc.Id == id);
     }
 
     public async Task<List<LibraryComic>> GetAllLibraryComics()
     {
-        return await _dbContext.LibraryComics.ToListAsync();
+        return await _dbContext.LibraryComics
+            .Include(lc => lc.Authors)
+            .ToListAsync();
     }
 
     public async Task UpdateLibraryComic(LibraryComic libraryComic)
