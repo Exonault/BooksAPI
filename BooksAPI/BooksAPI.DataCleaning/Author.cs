@@ -7,10 +7,10 @@ public class Author
     [JsonPropertyName("id")]
     public string Id { get; set; }
 
-    [JsonPropertyName("first_name")]
-    public string FirstName { get; set; }
+    [JsonPropertyName("firstName")]
+    public string? FirstName { get; set; }
 
-    [JsonPropertyName("last_name")]
+    [JsonPropertyName("lastName")]
     public string LastName { get; set; }
 
     [JsonPropertyName("role")]

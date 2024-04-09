@@ -4,11 +4,15 @@ using BooksAPI.DataCleaning;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-Console.WriteLine("Hello, World!");
+//DO NOT RUN; 
+return;
 
-string filePathData = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
+string filePathData = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
+//string filePathData = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
 string filePathAuthorsOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
+//string filePathAuthorsOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
 string filePathMangasOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
+//string filePathMangasOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
 if (File.Exists(filePathData))
 {
     var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -16,20 +20,16 @@ if (File.Exists(filePathData))
         HasHeaderRecord = true,
     };
 
-    // Open the file for reading
     using (var reader = new StreamReader(filePathData))
     using (var csv = new CsvReader(reader, csvConfig))
     {
         List<Author> authorsForCsv = new List<Author>();
         List<LibraryComic> mangasForCsv = new List<LibraryComic>();
-        List<string> demographicsList = new List<string>();
+        // List<string> demographicsList = new List<string>();
 
-        // Read the CSV records
         csv.Read();
         csv.ReadHeader();
 
-        int i = 0;
-        // Iterate over each record
         while (csv.Read())
         {
             //string mangaId = csv.GetField("manga_id");
@@ -69,21 +69,19 @@ if (File.Exists(filePathData))
             string demographics = csv.GetField("demographics");
             string authors = csv.GetField("authors");
 
-            //ExtractAuthors(authors, title);
-
             //Console.WriteLine($"{title}; {type}; {status}; {volumes}; {demographics}; {authors}");
             type = FormatType(type);
             status = FormatPublishingStatus(status);
-            string demographic = FormatDemographic(demographics);
+            demographics = FormatDemographic(demographics);
 
-            if (!demographicsList.Contains(demographics))
-            {
-               // Console.WriteLine(demographics);
-                demographicsList.Add(demographics);
-               
-            }
+            // if (!demographicsList.Contains(demographics))
+            // {
+            //     Console.WriteLine(demographics);
+            //     demographicsList.Add(demographics);
+            //    
+            // }
 
-            if ("other" == type || "other" == status || "other" == demographic)
+            if ("other" == type || "other" == status || "other" == demographics)
             {
                 continue;
             }
@@ -95,6 +93,9 @@ if (File.Exists(filePathData))
             }
             else volumesInt = null;
 
+            List<Author> extractedAuthors = FormatAuthors(authors, title);
+
+            string authorsSerialized = JsonSerializer.Serialize(extractedAuthors);
             LibraryComic libraryComic = new LibraryComic
             {
                 Id = Guid.NewGuid(),
@@ -103,35 +104,27 @@ if (File.Exists(filePathData))
                 ComicType = type,
                 PublishingStatus = status,
                 TotalVolumes = volumesInt,
+                Authors = authorsSerialized
             };
-            
-            Console.WriteLine($"{i}: {title}; {type}; {status}; {volumes}; {demographic};");
 
-            i++;
-            if (i == 500) break;
+            mangasForCsv.Add(libraryComic);
 
+            foreach (var author in extractedAuthors)
+            {
+                Author? authorSearch = authorsForCsv
+                    .FirstOrDefault(a => a.FirstName == author.FirstName
+                                         && a.LastName == author.LastName
+                                         && a.Role == author.Role);
 
-
-            //List<Author> extractedAuthors = ExtractAuthors(authors, title);
-
-            //mangasForCsv.Add(libraryComic);
-
-            // foreach (var author in extractedAuthors)
-            // {
-            //     Author? authorSearch = authorsForCsv
-            //         .FirstOrDefault(a => a.FirstName == author.FirstName
-            //                              && a.LastName == author.LastName
-            //                              && a.Role == author.Role);
-            //
-            //     if (authorSearch is null)
-            //     {
-            //         authorsForCsv.Add(author);
-            //     }
-            // }
+                if (authorSearch is null)
+                {
+                    authorsForCsv.Add(author);
+                }
+            }
         }
 
-        //WriteAuthorsToCsv(authorsForCsv);
-        //WriteMangaToCsv(mangasForCsv);
+        WriteAuthorsToCsv(authorsForCsv);
+        WriteMangaToCsv(mangasForCsv);
     }
 }
 else
@@ -182,30 +175,24 @@ string FormatPublishingStatus(string status)
 string FormatDemographic(string demographic)
 {
     string[] demographicsSplit = demographic.Replace("[", "")
-        .Replace("]","")
-        .Replace("\'","")
+        .Replace("]", "")
+        .Replace("\'", "")
         .Split(",", StringSplitOptions.RemoveEmptyEntries);
 
-    //Console.WriteLine(string.Join(" ", demographicsSplit));
-
     if (demographicsSplit.Length == 0)
-    {  
-        //Console.WriteLine($"0: {string.Join(" ", demographicsSplit)}");
+    {
         return "other";
     }
     else if (demographicsSplit.Length == 1)
     {
-        //Console.WriteLine($"1: {string.Join(" ", demographicsSplit)}");
         if (demographicsSplit[0] == "Kids")
         {
             return "other";
         }
         else return demographicsSplit[0];
-
     }
     else if (demographicsSplit.Length == 2)
     {
-        //Console.WriteLine($"2: {string.Join(" ", demographicsSplit)}");
         if (demographicsSplit[0] == "Kids")
         {
             return demographicsSplit[1];
@@ -214,7 +201,37 @@ string FormatDemographic(string demographic)
         return demographicsSplit[0];
     }
 
-    return "";
+    return "other";
+}
+
+List<Author> FormatAuthors(string authors, string title)
+{
+    List<Author> result = new List<Author>();
+    try
+    {
+        authors = authors.Replace("'", "\"");
+        IList<AuthorCSV>? authorsDeserialized = JsonSerializer.Deserialize<IList<AuthorCSV>>(authors);
+        if (authorsDeserialized is not null)
+            foreach (AuthorCSV author in authorsDeserialized)
+            {
+                author.Role = author.Role == "Story & Art" ? "StoryAndArt" : author.Role;
+
+                Author mappedAuthor = new Author
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    FirstName = string.IsNullOrEmpty(author.FirstName) ? null : author.FirstName,
+                    LastName = author.LastName,
+                    Role = author.Role,
+                };
+                result.Add(mappedAuthor);
+            }
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine($"{authors}");
+    }
+
+    return result;
 }
 
 void WriteAuthorsToCsv(List<Author> authors)
@@ -233,34 +250,4 @@ void WriteMangaToCsv(List<LibraryComic> libraryComics)
     {
         csv.WriteRecords(libraryComics);
     }
-}
-
-
-List<Author> ExtractAuthors(string authors, string title)
-{
-    List<Author> result = new List<Author>();
-    try
-    {
-        authors = authors.Replace("'", "\"");
-        IList<AuthorCSV>? authorsDeserialized = JsonSerializer.Deserialize<IList<AuthorCSV>>(authors);
-        foreach (AuthorCSV author in authorsDeserialized)
-        {
-            author.Role = author.Role == "Story & Art" ? "StoryAndArt" : author.Role;
-
-            Author mappedAuthor = new Author
-            {
-                Id = Guid.NewGuid().ToString(),
-                FirstName = author.FirstName,
-                LastName = author.LastName,
-                Role = author.Role,
-            };
-            result.Add(mappedAuthor);
-        }
-    }
-    catch (Exception e)
-    {
-        Console.WriteLine($"{title}, {authors}");
-    }
-
-    return result;
 }
