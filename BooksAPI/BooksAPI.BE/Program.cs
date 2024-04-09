@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using BooksAPI.BE.Constants;
@@ -18,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
 
 //Swagger
 builder.Services.AddSwaggerGen();
@@ -26,11 +26,14 @@ builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwa
 //DB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql(configuration.GetConnectionString("ApplicationDb1"));
+    options.UseNpgsql(configuration.GetConnectionString("ApplicationDb"));
 });
 
 //Auth
-builder.Services.AddIdentity<User, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+    {
+        options.User.RequireUniqueEmail = true;
+    })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddRoles<IdentityRole>()
     .AddSignInManager();
@@ -65,9 +68,10 @@ builder.Services.AddAuthorization(options =>
 });
 
 //CORS
+const string corsPolicy = "AllowedOrigin";
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowedOrigin",
+    options.AddPolicy(corsPolicy,
         policy => { policy.WithOrigins(configuration.GetSection("FrontEndUrl").Value!); });
 });
 
@@ -76,7 +80,7 @@ builder.Services.AddLibraryComicServices();
 builder.Services.AddUserComicServices();
 builder.Services.AddOrderServices();
 builder.Services.AddUserServices();
-
+builder.Services.AddUserServices1();
 
 //Mapping
 MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
@@ -84,6 +88,7 @@ MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
     config.AddProfile(new LibraryComicProfile());
     config.AddProfile(new UserComicProfile());
     config.AddProfile(new OrderProfile());
+    config.AddProfile(new AuthorProfile());
 });
 
 builder.Services.AddSingleton(mapperConfiguration.CreateMapper());
@@ -97,9 +102,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowedOrigin");
-
 app.UseHttpsRedirection();
+
+app.UseCors(corsPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -108,5 +113,6 @@ app.MapLibraryComicEndpoints();
 app.MapUserComicEndpoints();
 app.MapOrderEndpoints();
 app.MapUserEndpoints();
+app.MapUserEndpoints1();
 
 app.Run();

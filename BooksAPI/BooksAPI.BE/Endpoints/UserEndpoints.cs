@@ -8,13 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BooksAPI.BE.Endpoints;
 
-using static UserResponses;
 
 public static class UserEndpoints
 {
     public static void MapUserEndpoints(this WebApplication app)
     {
-        app.MapPost("user/register/", RegisterUser)
+        app.MapPost("user/register/", Register)
             .Produces(StatusCodes.Status200OK, typeof(RegisterResponse), "application/json")
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status409Conflict)
@@ -25,6 +24,10 @@ public static class UserEndpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
+
+        app.MapPost("user/refresh/", Refresh);
+
+        app.MapDelete("user/revoke", Revoke);
     }
 
 
@@ -34,7 +37,7 @@ public static class UserEndpoints
         services.AddScoped<IUserService, UserService>();
     }
 
-    private static async Task<IResult> RegisterUser([FromBody]RegisterRequest request, IUserService service)
+    private static async Task<IResult> Register([FromBody]RegisterRequest request, IUserService service)
     {
         try
         {
@@ -78,5 +81,15 @@ public static class UserEndpoints
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
+    }
+
+    private static async Task<IResult> Refresh()
+    {
+        return Results.Ok();
+    }
+
+    private static async Task<IResult> Revoke()
+    {
+        return Results.Ok();
     }
 }

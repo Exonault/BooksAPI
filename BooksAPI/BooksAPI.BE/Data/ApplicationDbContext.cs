@@ -11,6 +11,8 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<UserComic> UserComics { get; set; }
     public DbSet<Order> Orders { get; set; }
 
+    public DbSet<Author> Authors { get; set; }
+
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {
     }
@@ -44,7 +46,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     private void SeedAspNetRolesTable(ModelBuilder builder)
     {
         builder.Entity<IdentityRole>()
-            .HasData(new IdentityRole("Admin") { NormalizedName = "ADMIN" },
-                new IdentityRole("User") { NormalizedName = "USER" });
+            .HasData(new IdentityRole("Admin") {Id = "3187bce0-f9a9-48fb-adb6-36cea86dfb16", NormalizedName = "ADMIN" },
+                new IdentityRole("User") {Id = "284b3a5c-4235-4b01-ba23-09f2f6f9737c", NormalizedName = "USER" });
     }
 }

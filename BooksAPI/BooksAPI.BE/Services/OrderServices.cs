@@ -7,7 +7,6 @@ using BooksAPI.BE.Interfaces.Services;
 using BooksAPI.BE.Messages;
 using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Identity;
 
 namespace BooksAPI.BE.Services;
 
@@ -16,25 +15,23 @@ public class OrderServices : IOrderService
     private readonly IOrderRepository _orderRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<Order> _validator;
-    private readonly UserManager<User> _userManager;
+    private readonly IUserRepository1 _userRepository;
 
-
-    public OrderServices(IOrderRepository orderRepository, IMapper mapper, IValidator<Order> validator,
-        UserManager<User> userManager)
+    public OrderServices(IOrderRepository orderRepository, IMapper mapper, IValidator<Order> validator, IUserRepository1 userRepository)
     {
         _orderRepository = orderRepository;
         _mapper = mapper;
         _validator = validator;
-        _userManager = userManager;
+        _userRepository = userRepository;
     }
 
     public async Task CreateOrder(CreateOrderRequest request)
     {
-        User? user = await _userManager.FindByIdAsync(request.UserId);
+        User? user = await _userRepository.GetById(request.UserId);
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         Order order = _mapper.Map<Order>(request);
@@ -76,11 +73,10 @@ public class OrderServices : IOrderService
 
     public async Task<List<OrderResponse>> GetAllOrdersByUserId(string userId)
     {
-        User? user = await _userManager.FindByIdAsync(userId);
-
+        User? user = await _userRepository.GetById(userId);
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         List<Order> orders = await _orderRepository.GetAllOrdersByUserId(userId);
@@ -92,11 +88,11 @@ public class OrderServices : IOrderService
 
     public async Task UpdateOrder(Guid id, UpdateOrderRequest request)
     {
-        User? user = await _userManager.FindByIdAsync(request.UserId);
-
+        User? user = await _userRepository.GetById(request.UserId);
+        
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         Order? order = await _orderRepository.GetOrderById(id);
@@ -105,7 +101,7 @@ public class OrderServices : IOrderService
         {
             throw new ResourceNotFoundException(OrderMessages.NoOrderWithId);
         }
-        
+
         Order updatedOrder = _mapper.Map<Order>(request);
 
         updatedOrder.User = user;
@@ -120,17 +116,14 @@ public class OrderServices : IOrderService
         _mapper.Map(request, order);
 
         await _orderRepository.UpdateOrder(order);
-
-        throw new NotImplementedException();
     }
 
     public async Task DeleteOrder(Guid id, string userId)
     {
-        User? user = await _userManager.FindByIdAsync(userId);
-
+        User? user = await _userRepository.GetById(userId);
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         Order? order = await _orderRepository.GetOrderById(id);

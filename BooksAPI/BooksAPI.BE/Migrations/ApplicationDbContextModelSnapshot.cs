@@ -22,15 +22,48 @@ namespace BooksAPI.BE.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BooksAPI.BE.Entities.LibraryComic", b =>
+            modelBuilder.Entity("AuthorLibraryComic", b =>
+                {
+                    b.Property<Guid>("AuthorsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LibraryComicsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("AuthorsId", "LibraryComicsId");
+
+                    b.HasIndex("LibraryComicsId");
+
+                    b.ToTable("AuthorLibraryComic");
+                });
+
+            modelBuilder.Entity("BooksAPI.BE.Entities.Author", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Author")
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Authors");
+                });
+
+            modelBuilder.Entity("BooksAPI.BE.Entities.LibraryComic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ComicType")
                         .IsRequired()
@@ -48,10 +81,7 @@ namespace BooksAPI.BE.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("TotalChapters")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TotalVolumes")
+                    b.Property<int?>("TotalVolumes")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -135,6 +165,12 @@ namespace BooksAPI.BE.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("RefreshTokenExpiry")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -175,9 +211,6 @@ namespace BooksAPI.BE.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
-
-                    b.Property<int>("ReadChapters")
-                        .HasColumnType("integer");
 
                     b.Property<int>("ReadVolumes")
                         .HasColumnType("integer");
@@ -227,13 +260,13 @@ namespace BooksAPI.BE.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a21f7916-a1fc-4e62-9c28-5486acc02acd",
+                            Id = "3187bce0-f9a9-48fb-adb6-36cea86dfb16",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "2f3efb60-b8e9-4d14-9b7b-6aa9dbb0f543",
+                            Id = "284b3a5c-4235-4b01-ba23-09f2f6f9737c",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -343,6 +376,21 @@ namespace BooksAPI.BE.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("AuthorLibraryComic", b =>
+                {
+                    b.HasOne("BooksAPI.BE.Entities.Author", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BooksAPI.BE.Entities.LibraryComic", null)
+                        .WithMany()
+                        .HasForeignKey("LibraryComicsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BooksAPI.BE.Entities.Order", b =>

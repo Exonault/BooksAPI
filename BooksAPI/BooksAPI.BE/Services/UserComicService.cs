@@ -8,7 +8,6 @@ using BooksAPI.BE.Interfaces.Services;
 using BooksAPI.BE.Messages;
 using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Identity;
 
 namespace BooksAPI.BE.Services;
 
@@ -17,27 +16,27 @@ public class UserComicService : IUserComicService
     private readonly IUserComicRepository _userComicRepository;
     private readonly IValidator<UserComic> _validator;
     private readonly IMapper _mapper;
-    private readonly UserManager<User> _userManager;
+    private readonly IUserRepository1 _userRepository;
     private readonly ILibraryComicRepository _libraryComicRepository;
 
 
     public UserComicService(IUserComicRepository userComicRepository, IValidator<UserComic> validator, IMapper mapper,
-        UserManager<User> userManager, ILibraryComicRepository libraryComicRepository)
+        ILibraryComicRepository libraryComicRepository, IUserRepository1 userRepository)
     {
         _userComicRepository = userComicRepository;
         _validator = validator;
         _mapper = mapper;
-        _userManager = userManager;
         _libraryComicRepository = libraryComicRepository;
+        _userRepository = userRepository;
     }
 
     public async Task CreateUserComic(CreateUserComicRequest request)
     {
-        User? user = await _userManager.FindByIdAsync(request.UserId);
+        User? user = await _userRepository.GetById(request.UserId);
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         LibraryComic? libraryComic = await _libraryComicRepository.GetLibraryComicById(request.LibraryComicId);
@@ -91,11 +90,11 @@ public class UserComicService : IUserComicService
 
     public async Task<List<UserComicResponse>> GetAllUserComicsByUserId(string id)
     {
-        User? user = await _userManager.FindByIdAsync(id);
+        User? user = await _userRepository.GetById(id);
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         List<UserComic> userComics = await _userComicRepository.GetUserComicsByUserId(id);
@@ -107,11 +106,11 @@ public class UserComicService : IUserComicService
 
     public async Task UpdateUserComic(Guid id, UpdateUserComicRequest request)
     {
-        User? user = await _userManager.FindByIdAsync(request.UserId);
+        User? user = await _userRepository.GetById(request.UserId);
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         LibraryComic? libraryComic = await _libraryComicRepository.GetLibraryComicById(request.LibraryComicId);
@@ -141,11 +140,11 @@ public class UserComicService : IUserComicService
 
     public async Task DeleteUserComic(Guid id, string userId)
     {
-        User? user = await _userManager.FindByIdAsync(userId);
+        User? user = await _userRepository.GetById(userId);
 
         if (user is null)
         {
-            throw new UserNotFoundException(UserMessages.UserNotFound);
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
         }
 
         UserComic? userComic = await _userComicRepository.GetUserComicById(id);

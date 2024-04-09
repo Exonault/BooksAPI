@@ -8,10 +8,10 @@ public class LibraryComicProfile:Profile
 {
     public LibraryComicProfile()
     {
-        CreateMap<CreateLibraryComicRequest, LibraryComic>();
+        CreateMap<CreateLibraryComicRequest, LibraryComic>(); // Doesn't map authors
 
-        CreateMap<LibraryComic, LibraryComicResponse>();
+        CreateMap<LibraryComic, LibraryComicResponse>(); //Doesn't map authors
 
-        CreateMap<UpdateLibraryComicRequest, LibraryComic>();
+        CreateMap<UpdateLibraryComicRequest, LibraryComic>(); //Doens't map authors
     }
 }

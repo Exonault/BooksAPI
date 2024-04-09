@@ -61,6 +61,9 @@ public static class LibraryComicEndpoints
         services.AddScoped<ILibraryComicRepository, LibraryComicRepository>();
         services.AddScoped<ILibraryComicService, LibraryComicService>();
         services.AddScoped<IValidator<LibraryComic>, LibraryComicValidator>();
+
+        services.AddScoped<IAuthorRepository, AuthorRepository>();
+        services.AddScoped<IValidator<Author>, AuthorValidator>();
     }
 
     private static async Task<IResult> CreateLibraryComic([FromBody] CreateLibraryComicRequest request,
