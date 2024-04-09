@@ -13,6 +13,8 @@ string filePathAuthorsOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\Bo
 //string filePathAuthorsOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
 string filePathMangasOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
 //string filePathMangasOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
+string filePathRelations = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authorMangaRelation.csv";
+//string filePathRelations = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authorMangaRelation.csv"";
 if (File.Exists(filePathData))
 {
     var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -27,9 +29,12 @@ if (File.Exists(filePathData))
         List<LibraryComic> mangasForCsv = new List<LibraryComic>();
         // List<string> demographicsList = new List<string>();
 
+        List<(string authorId, string libraryComicId)> authorIdLibraryComicIdForCsv = new List<(string, string)>();
+
         csv.Read();
         csv.ReadHeader();
 
+        int i = 0;
         while (csv.Read())
         {
             //string mangaId = csv.GetField("manga_id");
@@ -95,7 +100,7 @@ if (File.Exists(filePathData))
 
             List<Author> extractedAuthors = FormatAuthors(authors, title);
 
-            string authorsSerialized = JsonSerializer.Serialize(extractedAuthors);
+            //string authorsSerialized = JsonSerializer.Serialize(extractedAuthors);
             LibraryComic libraryComic = new LibraryComic
             {
                 Id = Guid.NewGuid(),
@@ -104,7 +109,7 @@ if (File.Exists(filePathData))
                 ComicType = type,
                 PublishingStatus = status,
                 TotalVolumes = volumesInt,
-                Authors = authorsSerialized
+                //Authors = authorsSerialized
             };
 
             mangasForCsv.Add(libraryComic);
@@ -119,12 +124,20 @@ if (File.Exists(filePathData))
                 if (authorSearch is null)
                 {
                     authorsForCsv.Add(author);
+                    authorIdLibraryComicIdForCsv.Add((author.Id, libraryComic.Id.ToString()));
+                }
+                else
+                {
+                    authorIdLibraryComicIdForCsv.Add((authorSearch.Id, libraryComic.Id.ToString()));
                 }
             }
         }
 
         WriteAuthorsToCsv(authorsForCsv);
         WriteMangaToCsv(mangasForCsv);
+        WriteRelationsToCsv(authorIdLibraryComicIdForCsv);
+
+        
     }
 }
 else
@@ -249,5 +262,16 @@ void WriteMangaToCsv(List<LibraryComic> libraryComics)
     using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
     {
         csv.WriteRecords(libraryComics);
+    }
+}
+
+void WriteRelationsToCsv(List<(string authorId, string libraryComicId)> relations)
+{
+    using (var writer = new StreamWriter(filePathRelations))
+    using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+    {
+        csv.Context.RegisterClassMap<RelationMap>();
+        
+        csv.WriteRecords(relations);
     }
 }
