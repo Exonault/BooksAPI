@@ -76,16 +76,16 @@ builder.Services.AddCors(options =>
 });
 
 //Entity Services
-builder.Services.AddLibraryComicServices();
-builder.Services.AddUserComicServices();
+builder.Services.AddLibraryMangaServices();
+builder.Services.AddUserMangaServices();
 builder.Services.AddOrderServices();
 builder.Services.AddUserServices();
 
 //Mapping
 MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
 {
-    config.AddProfile(new LibraryComicProfile());
-    config.AddProfile(new UserComicProfile());
+    config.AddProfile(new LibraryMangaProfile());
+    config.AddProfile(new UserMangaProfile());
     config.AddProfile(new OrderProfile());
     config.AddProfile(new AuthorProfile());
 });
@@ -108,8 +108,8 @@ app.UseCors(corsPolicy);
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapLibraryComicEndpoints();
-app.MapUserComicEndpoints();
+app.MapLibraryMangaEndpoints();
+app.MapUserMangaEndpoints();
 app.MapOrderEndpoints();
 app.MapUserEndpoints();
 

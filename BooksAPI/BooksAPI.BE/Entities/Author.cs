@@ -10,5 +10,5 @@ public class Author
     
     public string Role { get; set; } = string.Empty;
 
-    public List<LibraryComic> LibraryComics { get; set; }
+    public List<LibraryManga> LibraryMangas { get; set; }
 }

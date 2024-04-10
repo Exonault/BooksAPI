@@ -7,8 +7,8 @@ namespace BooksAPI.BE.Data;
 
 public class ApplicationDbContext : IdentityDbContext<User>
 {
-    public DbSet<LibraryComic> LibraryComics { get; set; }
-    public DbSet<UserComic> UserComics { get; set; }
+    public DbSet<LibraryManga> LibraryMangas { get; set; }
+    public DbSet<UserManga> UserMangas { get; set; }
     public DbSet<Order> Orders { get; set; }
 
     public DbSet<Author> Authors { get; set; }
@@ -26,14 +26,14 @@ public class ApplicationDbContext : IdentityDbContext<User>
 
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-        builder.Entity<LibraryComic>()
-            .HasMany(x => x.UserComics)
-            .WithOne(uc => uc.LibraryComic)
+        builder.Entity<LibraryManga>()
+            .HasMany(x => x.UserMangas)
+            .WithOne(uc => uc.LibraryManga)
             .OnDelete(DeleteBehavior.Cascade);
 
 
         builder.Entity<User>()
-            .HasMany(u => u.UserComics)
+            .HasMany(u => u.UserMangas)
             .WithOne(uc => uc.User)
             .OnDelete(DeleteBehavior.Cascade);
 

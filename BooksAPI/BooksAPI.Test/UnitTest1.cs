@@ -28,13 +28,13 @@ public class UnitTest1
     {
         MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
         {
-            config.AddProfile(new UserComicProfile());
-            config.AddProfile(new LibraryComicProfile());
+            config.AddProfile(new UserMangaProfile());
+            config.AddProfile(new LibraryMangaProfile());
         });
 
         IMapper mapper = mapperConfiguration.CreateMapper();
 
-        CreateUserComicRequest request = new CreateUserComicRequest
+        CreateUserMangaRequest request = new CreateUserMangaRequest
         {
             ReadingStatus = "Reading",
             ReadVolumes = 12,
@@ -42,10 +42,10 @@ public class UnitTest1
             Price = 0,
             CollectionStatus = "Collecting",
             UserId = "2f9f94b0-2b87-4892-b95e-5377df0cc42b",
-            LibraryComicId = Guid.Parse("323c9333-c943-41c8-932e-3dc295eda791")
+            LibraryMangaId = Guid.Parse("323c9333-c943-41c8-932e-3dc295eda791")
         };
 
-        UserComic userComic = mapper.Map<UserComic>(request);
+        UserManga userManga = mapper.Map<UserManga>(request);
         //Doesnt map user and libraryComic (manual mapping needs to be done)
 
         Console.WriteLine();
@@ -56,7 +56,7 @@ public class UnitTest1
     {
         MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
         {
-            config.AddProfile(new UserComicProfile());
+            config.AddProfile(new UserMangaProfile());
         });
 
         IMapper mapper = mapperConfiguration.CreateMapper();
@@ -64,13 +64,13 @@ public class UnitTest1
         DbContextOptionsBuilder dbContextOptionsBuilder = new DbContextOptionsBuilder()
             .UseNpgsql("Server=localhost;Database=testDbBooks;Username=postgres;Password=1234");
 
-        UserComic userComic;
+        UserManga userManga;
         await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
         {
             User user = db.Users.FirstOrDefault(x => true)!;
-            LibraryComic libraryComic = db.LibraryComics.FirstOrDefault(x => true)!;
+            LibraryManga libraryManga = db.LibraryMangas.FirstOrDefault(x => true)!;
 
-            userComic = new UserComic
+            userManga = new UserManga
             {
                 Id = Guid.NewGuid(),
                 ReadingStatus = "Reading",
@@ -79,11 +79,11 @@ public class UnitTest1
                 Price = 18,
                 CollectionStatus = "Collecting",
                 User = user,
-                LibraryComic = libraryComic
+                LibraryManga = libraryManga
             };
         }
 
-        UserComicResponse userComicResponse = mapper.Map<UserComicResponse>(userComic);
+        UserMangaResponse userMangaResponse = mapper.Map<UserMangaResponse>(userManga);
         //Maps UserId but not the LibraryComicResponse
         Console.WriteLine();
     }
@@ -91,18 +91,18 @@ public class UnitTest1
     [Fact]
     public async void TestValidation()
     {
-        UserComicValidator userComicValidator = new UserComicValidator();
+        UserMangaValidator userMangaValidator = new UserMangaValidator();
 
         DbContextOptionsBuilder dbContextOptionsBuilder = new DbContextOptionsBuilder()
             .UseNpgsql("Server=localhost;Database=testDbBooks;Username=postgres;Password=1234");
-        UserComic userComic;
+        UserManga userManga;
 
         await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
         {
             User user = db.Users.FirstOrDefault(x => true)!;
             //LibraryComic libraryComic = db.LibraryComics.FirstOrDefault(x => true)!;
 
-            LibraryComic libraryComic = new LibraryComic()
+            LibraryManga libraryManga = new LibraryManga()
             {
                 Id = Guid.NewGuid(),
                 Title = "null",
@@ -114,7 +114,7 @@ public class UnitTest1
             };
 
 
-            userComic = new UserComic
+            userManga = new UserManga
             {
                 Id = Guid.NewGuid(),
                 ReadingStatus = "Reading",
@@ -123,11 +123,11 @@ public class UnitTest1
                 Price = 18,
                 CollectionStatus = "Collecting",
                 User = user,
-                LibraryComic = libraryComic
+                LibraryManga = libraryManga
             };
         }
 
-        ValidationResult validationResult = await userComicValidator.ValidateAsync(userComic);
+        ValidationResult validationResult = await userMangaValidator.ValidateAsync(userManga);
 
         Console.WriteLine(validationResult.Errors);
     }
@@ -140,9 +140,9 @@ public class UnitTest1
 
         await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
         {
-            UserComic? firstOrDefaultAsync = await db.UserComics
+            UserManga? firstOrDefaultAsync = await db.UserMangas
                 .Include(x => x.User)
-                .Include(x => x.LibraryComic)
+                .Include(x => x.LibraryManga)
                 .FirstOrDefaultAsync();
 
             Console.WriteLine();
@@ -154,7 +154,7 @@ public class UnitTest1
     {
         MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
         {
-            config.AddProfile(new UserComicProfile());
+            config.AddProfile(new UserMangaProfile());
         });
 
         IMapper mapper = mapperConfiguration.CreateMapper();
@@ -163,8 +163,8 @@ public class UnitTest1
         DbContextOptionsBuilder dbContextOptionsBuilder = new DbContextOptionsBuilder()
             .UseNpgsql("Server=localhost;Database=testDbBooks;Username=postgres;Password=1234");
 
-        UserComic userComic;
-        UpdateUserComicRequest updateUserComicRequest = new UpdateUserComicRequest
+        UserManga userManga;
+        UpdateUserMangaRequest updateUserMangaRequest = new UpdateUserMangaRequest
         {
             ReadingStatus = "Reading",
             ReadVolumes = 1211,
@@ -172,17 +172,17 @@ public class UnitTest1
             Price = 112.11m,
             CollectionStatus = "Finished",
             UserId = "",
-            LibraryComicId = Guid.NewGuid()
+            LibraryMangaId = Guid.NewGuid()
         };
 
         await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
         {
-            UserComic? uc = await db.UserComics
+            UserManga? uc = await db.UserMangas
                 .Include(x => x.User)
-                .Include(x => x.LibraryComic)
+                .Include(x => x.LibraryManga)
                 .FirstOrDefaultAsync();
 
-            mapper.Map(updateUserComicRequest, uc);
+            mapper.Map(updateUserMangaRequest, uc);
 
             Console.WriteLine();
         }
@@ -219,7 +219,7 @@ public class UnitTest1
 
         await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
         {
-            LibraryComic? firstOrDefault = db.LibraryComics
+            LibraryManga? firstOrDefault = db.LibraryMangas
                 .Include(x => x.Authors)
                 .FirstOrDefault(x => x.Id == Guid.Parse("ac63855c-7ac5-4a12-bfb0-49ac35def588"));
 
@@ -258,7 +258,7 @@ public class UnitTest1
             Role = "art"
         };
 
-        CreateLibraryComicRequest request = new CreateLibraryComicRequest
+        CreateLibraryMangaRequest request = new CreateLibraryMangaRequest
         {
             Title = "string",
             DemographicType = "Seinen",
@@ -274,13 +274,13 @@ public class UnitTest1
 
         MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
         {
-            config.AddProfile(new LibraryComicProfile());
+            config.AddProfile(new LibraryMangaProfile());
             config.AddProfile(new AuthorProfile());
         });
 
         IMapper mapper = mapperConfiguration.CreateMapper();
 
-        LibraryComic libraryComic = mapper.Map<LibraryComic>(request);
+        LibraryManga libraryManga = mapper.Map<LibraryManga>(request);
 
         Console.WriteLine();
 
@@ -300,15 +300,15 @@ public class UnitTest1
 
                 if (searchedAuthor == null)
                 {
-                    libraryComic.Authors.Add(author);
+                    libraryManga.Authors.Add(author);
                 }
                 else
                 {
-                    libraryComic.Authors.Add(searchedAuthor);
+                    libraryManga.Authors.Add(searchedAuthor);
                 }
             }
 
-            db.LibraryComics.Add(libraryComic);
+            db.LibraryMangas.Add(libraryManga);
             await db.SaveChangesAsync();
             
         }
@@ -343,7 +343,7 @@ public class UnitTest1
 
         MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
         {
-            config.AddProfile(new LibraryComicProfile());
+            config.AddProfile(new LibraryMangaProfile());
             config.AddProfile(new AuthorProfile());
         });
         
@@ -358,9 +358,9 @@ public class UnitTest1
 
         await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
         {
-            LibraryComic? libraryComic = await db.LibraryComics
+            LibraryManga? libraryComic = await db.LibraryMangas
                 .Include(x => x.Authors)
-                .Include(x => x.UserComics)
+                .Include(x => x.UserMangas)
                 .FirstOrDefaultAsync(x => x.Id == Guid.Parse("a1d27d10-8d31-4479-acc4-b35919b0c1d7"));
             if (libraryComic == null)
             {
@@ -373,7 +373,7 @@ public class UnitTest1
             
             IMapper mapper = mapperConfiguration.CreateMapper();
 
-            UpdateLibraryComicRequest request = new UpdateLibraryComicRequest
+            UpdateLibraryMangaRequest request = new UpdateLibraryMangaRequest
             {
                 Title = "title",
                 DemographicType = "Shonen",
