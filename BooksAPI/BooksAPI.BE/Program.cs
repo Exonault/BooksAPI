@@ -92,6 +92,9 @@ MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
 
 builder.Services.AddSingleton(mapperConfiguration.CreateMapper());
 
+//Cache
+//builder.Services.AddOutputCache();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -107,6 +110,8 @@ app.UseCors(corsPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+//app.UseOutputCache();
 
 app.MapLibraryMangaEndpoints();
 app.MapUserMangaEndpoints();
