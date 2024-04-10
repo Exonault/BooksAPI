@@ -15,9 +15,9 @@ public class OrderServices : IOrderService
     private readonly IOrderRepository _orderRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<Order> _validator;
-    private readonly IUserRepository1 _userRepository;
+    private readonly IUserRepository _userRepository;
 
-    public OrderServices(IOrderRepository orderRepository, IMapper mapper, IValidator<Order> validator, IUserRepository1 userRepository)
+    public OrderServices(IOrderRepository orderRepository, IMapper mapper, IValidator<Order> validator, IUserRepository userRepository)
     {
         _orderRepository = orderRepository;
         _mapper = mapper;

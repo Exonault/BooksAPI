@@ -1,124 +1,81 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using BooksAPI.BE.Constants;
-using BooksAPI.BE.Entities;
-using BooksAPI.BE.Exception;
+﻿using BooksAPI.BE.Entities;
 using BooksAPI.BE.Interfaces.Repositories;
-using BooksAPI.BE.Messages;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BooksAPI.BE.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository:IUserRepository
 {
     private readonly UserManager<User> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly IConfiguration _config;
 
-    private static readonly TimeSpan TokenDuration = TimeSpan.FromHours(1);
-    
-    public UserRepository(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration config)
+    public UserRepository(UserManager<User> userManager)
     {
         _userManager = userManager;
-        _roleManager = roleManager;
-        _config = config;
     }
 
-    public async Task Register(User newUser, bool admin)
+    public async Task<User?> GetByEmail(string email)
     {
-        User? user = await _userManager.FindByEmailAsync(newUser.Email);
-
-        if (user is not null)
-        {
-            throw new UserAlreadyRegisteredException(UserMessages.ValidationMessages.AlreadyRegistered);
-        }
-
-        IdentityResult createdUser = await _userManager.CreateAsync(newUser, newUser.PasswordHash);
-
-        if (!createdUser.Succeeded)
-        {
-            throw new System.Exception(UserMessages.ValidationMessages.ErrorOccured);
-        }
-
-        if (admin)
-        {
-            await _userManager.AddToRoleAsync(newUser, "Admin");
-        }
-
-        await _userManager.AddToRoleAsync(newUser, "User");
+        return await _userManager.FindByEmailAsync(email);
     }
 
-    public async Task<string> Login(string name, string password)
+    public async Task<User?> GetByName(string userName)
     {
-        User? getUser = await _userManager.FindByNameAsync(name);
-
-        if (getUser is null)
-        {
-            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
-        }
-
-        bool checkUserPassword = await _userManager.CheckPasswordAsync(getUser, password);
-
-        if (!checkUserPassword)
-        {
-            throw new InvalidEmailPasswordException(UserMessages.ValidationMessages.InvalidEmailPassword);
-        }
-
-        IList<string> roles = await _userManager.GetRolesAsync(getUser);
-
-        UserSession userSession = new UserSession(getUser.Id, getUser.UserName!, roles);
-        
-        string token = GenerateToken(userSession);
-
-        return token;
+        return await _userManager.FindByNameAsync(userName);
     }
 
-    public Task<string> Refresh(string token, string refreshToken)
+    public async Task<User?> GetById(string id)
     {
-        throw new NotImplementedException();
+        return await _userManager.FindByIdAsync(id);
     }
 
-    public Task Revoke()
+    public async Task<bool> CheckPassword(User user, string password)
     {
-        throw new NotImplementedException();
+       return await _userManager.CheckPasswordAsync(user, password);
     }
 
-    private string GenerateToken(UserSession user)
+    public async Task<IdentityResult> Create(User user, string password)
     {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]!);
+        IdentityResult identityResult = await _userManager.CreateAsync(user, password);
 
-        List<Claim> claims =
-        [
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Name, user.UserName),
-            new Claim(AppConstants.ClaimTypes.ClaimUserIdType, user.Id),
-        ];
-        
-        foreach (string role in user.Roles)
-        {
-            claims.Add(new Claim(AppConstants.ClaimTypes.ClaimRoleType, role));
-        }
-
-        SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.Add(TokenDuration),
-            Issuer = _config["Jwt:Issuer"],
-            IssuedAt = DateTime.UtcNow,
-            NotBefore = DateTime.UtcNow,
-            Audience = _config["Jwt:Audience"],
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
-        };
-
-        SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-
-        string jwt = tokenHandler.WriteToken(token);
-
-        return jwt;
+        return identityResult;
     }
-    
-    private record UserSession(string Id, string UserName, IEnumerable<string> Roles);
+
+    public async Task AddToRole(User user, string role)
+    {
+        await _userManager.AddToRoleAsync(user, role);
+    }
+
+    public async Task<List<string>> GetAllRoles(User user)
+    {
+        IList<string> rolesAsync = await _userManager.GetRolesAsync(user);
+
+        return rolesAsync.ToList();
+
+    }
+
+    public async Task UpdateUser(User user)
+    {
+        await _userManager.UpdateAsync(user);
+    }
+
+    // public Task Register(User newUser, bool admin)
+    // {
+    //     throw new NotImplementedException();
+    // }
+    //
+    // public Task<string> Login(string userName, string password)
+    // {
+    //     throw new NotImplementedException();
+    // }
+    //
+    // public Task<string> Refresh(string token, string refreshToken)
+    // {
+    //     throw new NotImplementedException();
+    // }
+    //
+    // public Task Revoke()
+    // {
+    //     throw new NotImplementedException();
+    // }
+
 }

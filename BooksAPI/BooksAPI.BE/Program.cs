@@ -80,7 +80,6 @@ builder.Services.AddLibraryComicServices();
 builder.Services.AddUserComicServices();
 builder.Services.AddOrderServices();
 builder.Services.AddUserServices();
-builder.Services.AddUserServices1();
 
 //Mapping
 MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
@@ -113,6 +112,5 @@ app.MapLibraryComicEndpoints();
 app.MapUserComicEndpoints();
 app.MapOrderEndpoints();
 app.MapUserEndpoints();
-app.MapUserEndpoints1();
 
 app.Run();

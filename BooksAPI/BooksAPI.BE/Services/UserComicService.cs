@@ -16,12 +16,12 @@ public class UserComicService : IUserComicService
     private readonly IUserComicRepository _userComicRepository;
     private readonly IValidator<UserComic> _validator;
     private readonly IMapper _mapper;
-    private readonly IUserRepository1 _userRepository;
+    private readonly IUserRepository _userRepository;
     private readonly ILibraryComicRepository _libraryComicRepository;
 
 
     public UserComicService(IUserComicRepository userComicRepository, IValidator<UserComic> validator, IMapper mapper,
-        ILibraryComicRepository libraryComicRepository, IUserRepository1 userRepository)
+        ILibraryComicRepository libraryComicRepository, IUserRepository userRepository)
     {
         _userComicRepository = userComicRepository;
         _validator = validator;
