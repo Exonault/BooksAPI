@@ -9,6 +9,8 @@ public interface ILibraryMangaRepository
     public Task<LibraryManga?> GetLibraryMangaById(Guid id);
 
     public Task<List<LibraryManga>> GetAllLibraryMangas();
+
+    public Task<List<LibraryManga>> GetLibraryMangasForPage(int pageIndex, int pageEntriesCount);
     
     public Task UpdateLibraryManga(LibraryManga libraryManga);
 

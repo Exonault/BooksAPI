@@ -27,13 +27,23 @@ public static class LibraryMangaEndpoints
 
         app.MapGet("/libraryManga/{id:guid}", GetLibraryMangaById)
             .AllowAnonymous()
+            .CacheOutput(x =>
+                x.Expire(TimeSpan.FromMinutes(5))
+                    .Tag("libraryMangaWithId"))
             .Produces(StatusCodes.Status200OK, typeof(LibraryMangaResponse), "application/json")
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
-
-        app.MapGet("/libraryMangas/", GetAllLibraryMangas)
+        app.MapGet("/libraryMangas/", GetLibraryMangasForPage)
             .AllowAnonymous()
+            .CacheOutput(x =>
+                x.Expire(TimeSpan.FromMinutes(5))
+                    .Tag("libraryMangasForPage"))
+            .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaResponse>), "application/json")
+            .Produces(StatusCodes.Status500InternalServerError);
+
+        app.MapGet("/libraryMangas/all", GetAllLibraryMangas)
+            .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaResponse>), "application/json")
             .Produces(StatusCodes.Status500InternalServerError);
 
@@ -103,11 +113,19 @@ public static class LibraryMangaEndpoints
 
     private static async Task<IResult> GetAllLibraryMangas(ILibraryMangaService service)
     {
-        List<LibraryMangaResponse> libraryComicResponses = await service.GetAllLibraryMangas();
+        List<LibraryMangaResponse> libraryMangaResponses = await service.GetAllLibraryMangas();
 
-        return Results.Ok(libraryComicResponses);
+        return Results.Ok(libraryMangaResponses);
     }
 
+    private static async Task<IResult> GetLibraryMangasForPage([FromQuery] int pageIndex,
+        [FromQuery] int pageEntriesCount, ILibraryMangaService service)
+    {
+        List<LibraryMangaResponse> libraryMangaResponses =
+            await service.GetLibraryMangasForPage(pageIndex, pageEntriesCount);
+
+        return Results.Ok(libraryMangaResponses);
+    }
 
     private static async Task<IResult> UpdateLibraryMangas([FromQuery] Guid id,
         [FromBody] UpdateLibraryMangaRequest request, ILibraryMangaService service)

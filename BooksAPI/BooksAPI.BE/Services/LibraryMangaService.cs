@@ -41,7 +41,8 @@ public class LibraryMangaService : ILibraryMangaService
 
         foreach (AuthorRequest authorRequest in request.Authors)
         {
-            Author? searchedAuthor = await _authorRepository.GetAuthor(authorRequest.FirstName, authorRequest.LastName, authorRequest.Role);
+            Author? searchedAuthor =
+                await _authorRepository.GetAuthor(authorRequest.FirstName, authorRequest.LastName, authorRequest.Role);
 
             if (searchedAuthor is null)
             {
@@ -50,9 +51,8 @@ public class LibraryMangaService : ILibraryMangaService
             }
             else
             {
-               libraryManga.Authors.Add(searchedAuthor); 
+                libraryManga.Authors.Add(searchedAuthor);
             }
-            
         }
 
         await _libraryMangaRepository.CreateLibraryManga(libraryManga);
@@ -76,6 +76,14 @@ public class LibraryMangaService : ILibraryMangaService
         return _mapper.Map<List<LibraryMangaResponse>>(allLibraryMangas);
     }
 
+    public async Task<List<LibraryMangaResponse>> GetLibraryMangasForPage(int pageIndex, int pageEntriesCount)
+    {
+        List<LibraryManga> libraryMangasForPage = await _libraryMangaRepository
+            .GetLibraryMangasForPage(pageIndex - 1, pageEntriesCount);//page 1 = pageIndex 0
+
+        return _mapper.Map<List<LibraryMangaResponse>>(libraryMangasForPage);
+    }
+
     public async Task UpdateLibraryManga(Guid id, UpdateLibraryMangaRequest request)
     {
         LibraryManga? libraryManga = await _libraryMangaRepository.GetLibraryMangaById(id);
@@ -95,10 +103,11 @@ public class LibraryMangaService : ILibraryMangaService
         }
 
         LibraryManga updatedManga = _mapper.Map(request, libraryManga);
-        
+
         foreach (AuthorRequest authorRequest in request.Authors)
         {
-            Author? searchAuthor = await _authorRepository.GetAuthor(authorRequest.FirstName, authorRequest.LastName, authorRequest.Role);
+            Author? searchAuthor =
+                await _authorRepository.GetAuthor(authorRequest.FirstName, authorRequest.LastName, authorRequest.Role);
 
             if (searchAuthor is null)
             {
@@ -110,9 +119,8 @@ public class LibraryMangaService : ILibraryMangaService
             {
                 updatedManga.Authors.Add(searchAuthor);
             }
-            
         }
-        
+
         await _libraryMangaRepository.UpdateLibraryManga(updatedManga);
     }
 

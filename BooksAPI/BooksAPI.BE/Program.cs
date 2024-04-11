@@ -30,10 +30,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 //Auth
-builder.Services.AddIdentity<User, IdentityRole>(options =>
-    {
-        options.User.RequireUniqueEmail = true;
-    })
+builder.Services.AddIdentity<User, IdentityRole>(options => { options.User.RequireUniqueEmail = true; })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddRoles<IdentityRole>()
     .AddSignInManager();
@@ -93,7 +90,13 @@ MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
 builder.Services.AddSingleton(mapperConfiguration.CreateMapper());
 
 //Cache
-//builder.Services.AddOutputCache();
+builder.Services.AddOutputCache()
+    .AddStackExchangeRedisOutputCache(options =>
+    {
+        options.InstanceName = "localRedis";
+        options.Configuration = "localhost:6379";
+    });
+
 
 var app = builder.Build();
 
@@ -111,7 +114,7 @@ app.UseCors(corsPolicy);
 app.UseAuthentication();
 app.UseAuthorization();
 
-//app.UseOutputCache();
+app.UseOutputCache();
 
 app.MapLibraryMangaEndpoints();
 app.MapUserMangaEndpoints();
