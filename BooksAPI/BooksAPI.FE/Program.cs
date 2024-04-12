@@ -1,10 +1,22 @@
-using BooksAPI.FE.Components;
+using AutoMapper;using BooksAPI.FE.Components;
+using BooksAPI.FE.Interfaces;
+using BooksAPI.FE.Mapping;
+using BooksAPI.FE.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddSingleton<IUserService, UserService>();
+
+MapperConfiguration mapperConfig = new MapperConfiguration(config =>
+{
+    config.AddProfile(new UserProfile());
+});
+
+builder.Services.AddSingleton(mapperConfig.CreateMapper());
 
 var app = builder.Build();
 

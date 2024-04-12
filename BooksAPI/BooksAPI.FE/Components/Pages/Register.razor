@@ -1,65 +1,45 @@
 ﻿@page "/register"
+@using BooksAPI.FE.Data
 
 <PageTitle>Register</PageTitle>
 
-<h3>Register</h3>
+<h3 class="text-center">Register</h3>
+<div class="d-flex justify-content-center align-items-center mt-4" id="register-container">
+    <EditForm Model="@_model" class="shadow-sm rounded bg-white" id="register-form">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
 
-<div class="row justify-content-center">
-    <div class="col-md-10">
-        <div class="card mt-3 mb-3">
-            <div class="card-body">
-                @* @if (isRegistrationSuccess) *@
-                @* { *@
-                @*     <div class="alert alert-success" role="alert">Registration successful</div> *@
-                @* } *@
-
-                @* <EditForm Model="@registration" OnValidSubmit="RegisterStudent"> *@
-                @*     <DataAnnotationsValidator /> *@
-                @*     <CustomFormValidator @ref="customFormValidator" /> *@
-
-                <div class="form-group row">
-                    <label class="control-label col-md-12">Username</label>
-                    <div class="col">
-                        @* <InputText class="form-control" @bind-Value="registration.FirstName" /> *@
-                        @* <ValidationMessage For="@(() => registration.FirstName)" /> *@
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="control-label col-md-12">Email</label>
-                    <div class="col">
-                        @* <InputText class="form-control" @bind-Value="registration.Email"/> *@
-                        @* <ValidationMessage For="@(() => registration.Email)"/> *@
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="control-label col-md-12">Password</label>
-                    <div class="col">
-                        @* <InputText type="password" class="form-control" @bind-Value="registration.Password"></InputText> *@
-                        @* <ValidationMessage For="@(() => registration.Password)"/> *@
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="control-label col-md-12">Confirm Password</label>
-                    <div class="col">
-                        @* <InputText type="password" class="form-control" @bind-Value="registration.ConfirmPassword"></InputText> *@
-                        @* <ValidationMessage For="@(() => registration.ConfirmPassword)"/> *@
-                    </div>
-                </div>
-
-                <div class="form-group" align="right">
-                    <button type="submit" class="btn btn-primary">Register</button>
-                </div>
-
-
-                @* </EditForm> *@
-            </div>
+        <div class="mb-3">
+            <label for="inputUsername" class="form-label">Username</label>
+            <InputText id="inputUsername" class="form-control" @bind-Value="_model.Username"/>
+            <ValidationMessage For="@(() => _model.Username)"></ValidationMessage>
         </div>
-    </div>
+        <div class="mb-3">
+            <label for="inputEmail" class="form-label">Email</label>
+            <InputText id="inputEmail" class="form-control" @bind-Value="_model.Email"/>
+            <ValidationMessage For="@(() => _model.Email)"></ValidationMessage>
+        </div>
+        <div class="mb-3">
+            <label for="inputPassword" class="form-label">Password</label>
+            <InputText id="inputPassword" type="password" class="form-control" @bind-Value="_model.Password"/>
+        </div>
+        <div class="mb-3">
+            <label for="inputConfirmPassword" class="form-label">Confirm Password</label>
+            <InputText id="inputConfirmPassword" type="password" class="form-control" @bind-Value="_model.Password"/>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary" @onclick="ButtonHandler">Register</button>
+        </div>
+    </EditForm>
 </div>
 
+
 @code {
+    private RegisterModel _model = new();
+
+    private async Task ButtonHandler()
+    {
+    }
 
 }
