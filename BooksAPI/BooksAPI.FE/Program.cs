@@ -2,6 +2,7 @@ using AutoMapper;using BooksAPI.FE.Components;
 using BooksAPI.FE.Interfaces;
 using BooksAPI.FE.Mapping;
 using BooksAPI.FE.Services;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddMudServices();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddHttpClient();
 
 MapperConfiguration mapperConfig = new MapperConfiguration(config =>
 {
