@@ -1,12 +1,13 @@
-﻿using BooksAPI.FE.Data;
+﻿using BooksAPI.FE.Contracts.User;
+using BooksAPI.FE.Model;
 
 namespace BooksAPI.FE.Interfaces;
 
 public interface IUserService
 {
-    public Task<HttpResponseMessage> Register(RegisterModel model);
+    public Task<RegisterResponse?> Register(RegisterModel model);
 
-    // public Task Login();
-    //
+    public Task<LoginResponse?> Login(LoginModel model);
+    
     // public Task Refresh();
 }

@@ -34,7 +34,7 @@ public static class UserMangaEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapGet("/userMangas/", GetAllUserManga)
+        app.MapGet("/userMangas/all", GetAllUserManga)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(List<UserMangaResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)

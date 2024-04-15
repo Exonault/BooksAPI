@@ -42,7 +42,7 @@ public static class OrderEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapGet("/orders/", GetAllOrders)
+        app.MapGet("/orders/all", GetAllOrders)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(List<OrderResponse>),"application/json")
             .Produces(StatusCodes.Status401Unauthorized)
