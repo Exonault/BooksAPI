@@ -12,7 +12,7 @@ public interface IStatisticsService
     Task<List<UserMangaTypeResponse>> GetUserMangaBreakdownByType(string userId);
 
     Task<List<UserMangaPublishingStatusResponse>> GetUserMangaBreakdownByPublishingStatus(string userId);
-    Task<List<UserMangaReadingStatusReponse>> GetUserMangaBreakdownByReadingStatus(string userId);
+    Task<List<UserMangaReadingStatusResponse>> GetUserMangaBreakdownByReadingStatus(string userId);
 
     Task<List<UserMangaCollectionStatusResponse>> GetUserMangaBreakdownByCollectionStatus(string userId);
 

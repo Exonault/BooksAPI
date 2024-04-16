@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BooksAPI.BE.Contracts.Statistics.Order;
+namespace BooksAPI.FE.Contracts.Statistics.Order;
 
 public class OrdersByYearResponse
 {

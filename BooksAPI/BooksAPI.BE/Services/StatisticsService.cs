@@ -60,12 +60,12 @@ public class StatisticsService : IStatisticsService
         return response;
     }
 
-    public async Task<List<UserMangaReadingStatusReponse>> GetUserMangaBreakdownByReadingStatus(string userId)
+    public async Task<List<UserMangaReadingStatusResponse>> GetUserMangaBreakdownByReadingStatus(string userId)
     {
         List<UserManga> userMangas = await _userMangaRepository.GetUserMangaByUserId(userId);
         
-        List<UserMangaReadingStatusReponse> response = userMangas.GroupBy(x => x.ReadingStatus)
-            .Select(x => new UserMangaReadingStatusReponse()
+        List<UserMangaReadingStatusResponse> response = userMangas.GroupBy(x => x.ReadingStatus)
+            .Select(x => new UserMangaReadingStatusResponse()
             {
                 ReadingStatus = x.Key,
                 Count = x.Count(),

@@ -1,11 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BooksAPI.BE.Contracts.Statistics.Order;
+namespace BooksAPI.FE.Contracts.Statistics.Order;
 
-public class OrdersByYearResponse
+public class OrdersForMonthByYearResponse
 {
-    [JsonPropertyName("year")]
-    public int Year { get; set; }
+    [JsonPropertyName("month")]
+    public int Month { get; set; }
 
     [JsonPropertyName("items")]
     public int Items { get; set; }

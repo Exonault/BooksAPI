@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BooksAPI.BE.Contracts.Statistics.UserManga;
+namespace BooksAPI.FE.Contracts.Statistics.UserManga;
 
 public class UserMangaTypeResponse
 {

@@ -2,12 +2,11 @@
 
 namespace BooksAPI.BE.Contracts.Statistics.UserManga;
 
-public class UserMangaPublishingStatusResponse
+public class UserMangaReadingStatusResponse
 {
-    [JsonPropertyName("publishingStatus")]
-    public string PublishingStatus { get; set; } = string.Empty;
-    
+    [JsonPropertyName("readingStatus")]
+    public string ReadingStatus { get; set; } = string.Empty;
+
     [JsonPropertyName("count")]
     public int Count { get; set; }
-    
 }
