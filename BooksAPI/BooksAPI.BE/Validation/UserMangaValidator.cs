@@ -27,9 +27,9 @@ public class UserMangaValidator : AbstractValidator<UserManga>
             .Must(x => UserMangaConstants.CollectingStatus.CollectingStatuses.Contains(x))
             .WithMessage(UserMangaMessages.CollectionStatusValidationMessage);
 
-        RuleFor(x => x.Price)
+        RuleFor(x => x.PricePerVolume)
             .GreaterThan(0)
-            .WithMessage(UserMangaMessages.PriceValidationMessage);
+            .WithMessage(UserMangaMessages.PricePerVolumeValidationMessage);
 
         RuleFor(x => new { x.CollectedVolumes, x.LibraryManga.TotalVolumes })
             .NotEmpty()

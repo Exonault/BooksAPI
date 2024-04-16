@@ -15,7 +15,7 @@ public class LibraryMangaConfiguration:IEntityTypeConfiguration<LibraryManga>
        
         builder.Property(x => x.DemographicType).IsRequired();
         
-        builder.Property(x => x.ComicType).IsRequired();
+        builder.Property(x => x.Type).IsRequired();
         
         builder.Property(x=> x.PublishingStatus).IsRequired();
 

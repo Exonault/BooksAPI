@@ -19,9 +19,9 @@ public class LibraryMangaValidator : AbstractValidator<LibraryManga>
             .Must(x => LibraryMangaConstants.DemographicType.DemographicTypes.Contains(x))
             .WithMessage(LibraryMangaMessages.DemographicTypeMessage);
 
-        RuleFor(x => x.ComicType)
+        RuleFor(x => x.Type)
             .NotEmpty()
-            .WithMessage(LibraryMangaMessages.ComicTypeRequiredMessage)
+            .WithMessage(LibraryMangaMessages.TypeRequiredMessage)
             .Must(x => LibraryMangaConstants.ComicType.ComicTypes.Contains(x))
             .WithMessage(LibraryMangaMessages.ComicTypeValidationMessage);
 

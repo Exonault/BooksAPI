@@ -17,7 +17,7 @@ public class UserMangaConfiguration:IEntityTypeConfiguration<UserManga>
         
         builder.Property(x => x.CollectedVolumes).IsRequired();
         
-        builder.Property(x => x.Price).IsRequired();
+        builder.Property(x => x.PricePerVolume).IsRequired();
         
         builder.Property(x => x.CollectionStatus).IsRequired();
 

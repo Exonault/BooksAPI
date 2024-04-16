@@ -77,6 +77,7 @@ builder.Services.AddLibraryMangaServices();
 builder.Services.AddUserMangaServices();
 builder.Services.AddOrderServices();
 builder.Services.AddUserServices();
+builder.Services.AddStatisticsServices();
 
 //Mapping
 MapperConfiguration mapperConfiguration = new MapperConfiguration(config =>
@@ -120,5 +121,6 @@ app.MapLibraryMangaEndpoints();
 app.MapUserMangaEndpoints();
 app.MapOrderEndpoints();
 app.MapUserEndpoints();
+app.MapStatisticsEndpoints();
 
 app.Run();

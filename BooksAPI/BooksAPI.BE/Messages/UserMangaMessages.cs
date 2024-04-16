@@ -24,7 +24,7 @@ public static class UserMangaMessages
     public const string CollectedVolumesLowerThanTotalVolumes =
         "Collected volumes must be less than or equal to the Total volumes";
 
-    public const string PriceValidationMessage = "Price is required and must be greater than 0";
+    public const string PricePerVolumeValidationMessage = "Price per volume is required and must be greater than 0";
 
     public const string NoUserComicWithId = "No user manga with id";
 

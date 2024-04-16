@@ -76,7 +76,7 @@ public class UnitTest1
                 ReadingStatus = "Reading",
                 ReadVolumes = 11,
                 CollectedVolumes = 10,
-                Price = 18,
+                PricePerVolume = 18,
                 CollectionStatus = "Collecting",
                 User = user,
                 LibraryManga = libraryManga
@@ -108,7 +108,7 @@ public class UnitTest1
                 Title = "null",
                 //Author = "null",
                 DemographicType = "null",
-                ComicType = "null",
+                Type = "null",
                 PublishingStatus = "null",
                 TotalVolumes = 0,
             };
@@ -120,7 +120,7 @@ public class UnitTest1
                 ReadingStatus = "Reading",
                 ReadVolumes = 11,
                 CollectedVolumes = 10,
-                Price = 18,
+                PricePerVolume = 18,
                 CollectionStatus = "Collecting",
                 User = user,
                 LibraryManga = libraryManga
@@ -262,7 +262,7 @@ public class UnitTest1
         {
             Title = "string",
             DemographicType = "Seinen",
-            ComicType = "Manga",
+            Type = "Manga",
             PublishingStatus = "Publishing",
             TotalVolumes = 121,
             // Authors = new List<AuthorRequest>()
@@ -367,7 +367,7 @@ public class UnitTest1
                 return;
             }
 
-            libraryComic.ComicType = "Seinen";
+            libraryComic.Type = "Seinen";
             
             libraryComic.Authors.Clear();
             
@@ -377,7 +377,7 @@ public class UnitTest1
             {
                 Title = "title",
                 DemographicType = "Shonen",
-                ComicType = "OneShot",
+                Type = "OneShot",
                 PublishingStatus = "OnHiatus",
                 TotalVolumes = 11,
                 Authors = new List<AuthorRequest>()

@@ -10,7 +10,7 @@ public class UserManga
 
     public int CollectedVolumes { get; set; }
     
-    public decimal Price { get; set; }
+    public decimal PricePerVolume { get; set; }
 
     public string CollectionStatus { get; set; } = string.Empty;
 

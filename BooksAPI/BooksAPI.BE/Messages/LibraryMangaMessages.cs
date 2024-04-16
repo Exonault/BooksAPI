@@ -13,7 +13,7 @@ public static class LibraryMangaMessages
     public static readonly string DemographicTypeMessage =
         $"Demographic type must be one of the following: {string.Join(", ", LibraryMangaConstants.DemographicType.DemographicTypes)}";
 
-    public const string ComicTypeRequiredMessage = "Comic type is required";
+    public const string TypeRequiredMessage = "Type is required";
     
     public static readonly string ComicTypeValidationMessage =
         $"Comic type must be one of the following: " + String.Join(", ", LibraryMangaConstants.ComicType.ComicTypes);
