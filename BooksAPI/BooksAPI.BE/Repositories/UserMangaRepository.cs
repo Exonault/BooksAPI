@@ -24,6 +24,7 @@ public class UserMangaRepository : IUserMangaRepository
     {
         return await _dbContext.UserMangas
             .Include(um => um.LibraryManga)
+            .Include(um => um.LibraryManga.Authors)
             .Include(um => um.User)
             .FirstOrDefaultAsync(um => um.Id == id);
     }
@@ -32,6 +33,7 @@ public class UserMangaRepository : IUserMangaRepository
     {
         return await _dbContext.UserMangas
             .Include(um => um.LibraryManga)
+            .Include(um => um.LibraryManga.Authors)
             .Include(um => um.User)
             .Where(um => um.User.Id == userId)
             .ToListAsync();
@@ -41,6 +43,7 @@ public class UserMangaRepository : IUserMangaRepository
     {
         return await _dbContext.UserMangas
             .Include(um => um.LibraryManga)
+            .Include(um => um.LibraryManga.Authors)
             .Include(um => um.User)
             .ToListAsync();
     }

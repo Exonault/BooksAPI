@@ -15,10 +15,10 @@ public class UserMangaValidator : AbstractValidator<UserManga>
             .Must(x => UserMangaConstants.ReadingStatus.ReadingStatuses.Contains(x))
             .WithMessage(UserMangaMessages.ReadingStatusValidationMessage);
 
-        RuleFor(x => new { x.ReadVolumes, x.LibraryManga.TotalVolumes })
+        RuleFor(x => new { x.ReadVolumes, x.CollectedVolumes })
             .Must(x => x.ReadVolumes >= 1)
             .WithMessage(UserMangaMessages.ReadVolumesRequiredMessage)
-            .Must(x => x.ReadVolumes <= x.TotalVolumes)
+            .Must(x => x.ReadVolumes <= x.CollectedVolumes)
             .WithMessage(UserMangaMessages.ReadVolumesLowerThanTotalVolumes);
 
         RuleFor(x => x.CollectionStatus)

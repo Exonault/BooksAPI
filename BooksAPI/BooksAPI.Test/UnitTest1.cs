@@ -408,4 +408,23 @@ public class UnitTest1
             
         }
     }
+    
+    [Fact]
+    public async void TestDb2()
+    {
+        DbContextOptionsBuilder dbContextOptionsBuilder = new DbContextOptionsBuilder()
+            .UseNpgsql("Server=localhost;Database=booksApi;Username=postgres;Password=1234");
+
+        await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
+        {
+            UserManga? firstOrDefaultAsync = await db.UserMangas.FirstOrDefaultAsync();
+
+            if (firstOrDefaultAsync is not null)
+            {
+                _testOutputHelper.WriteLine(firstOrDefaultAsync.PricePerVolume.ToString());    
+            }
+            
+        }
+    }
+
 }

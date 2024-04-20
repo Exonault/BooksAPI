@@ -7,7 +7,7 @@ public static class UserMangaMessages
     public const string ReadVolumesRequiredMessage = "Read volumes is required and must be at least 1.";
 
     public const string ReadVolumesLowerThanTotalVolumes =
-        "Read volumes must be less than or equal to the Total volumes";
+        "Read volumes must be less than or equal to the collected volumes";
 
     public const string ReadingStatusRequiredMessage = "Reading status is required.";
 

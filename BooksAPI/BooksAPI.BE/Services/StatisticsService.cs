@@ -1,8 +1,10 @@
 ﻿using BooksAPI.BE.Contracts.Statistics.Order;
 using BooksAPI.BE.Contracts.Statistics.UserManga;
 using BooksAPI.BE.Entities;
+using BooksAPI.BE.Exception;
 using BooksAPI.BE.Interfaces.Repositories;
 using BooksAPI.BE.Interfaces.Services;
+using BooksAPI.BE.Messages;
 
 namespace BooksAPI.BE.Services;
 
@@ -10,15 +12,19 @@ public class StatisticsService : IStatisticsService
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IUserMangaRepository _userMangaRepository;
+    private readonly IUserRepository _userRepository;
 
-    public StatisticsService(IOrderRepository orderRepository, IUserMangaRepository userMangaRepository)
+    public StatisticsService(IOrderRepository orderRepository, IUserMangaRepository userMangaRepository, IUserRepository userRepository)
     {
         _orderRepository = orderRepository;
         _userMangaRepository = userMangaRepository;
+        _userRepository = userRepository;
     }
 
     public async Task<List<UserMangaDemographicResponse>> GetUserMangaBreakdownByDemographic(string userId)
     {
+        await ValidateUser(userId);
+
         List<UserManga> userMangas = await _userMangaRepository.GetUserMangaByUserId(userId);
 
         List<UserMangaDemographicResponse> response = userMangas.GroupBy(x => x.LibraryManga.DemographicType)
@@ -31,8 +37,12 @@ public class StatisticsService : IStatisticsService
         return response;
     }
 
+   
+
     public async Task<List<UserMangaTypeResponse>> GetUserMangaBreakdownByType(string userId)
     {
+        await ValidateUser(userId);
+        
         List<UserManga> userMangas = await _userMangaRepository.GetUserMangaByUserId(userId);
 
         List<UserMangaTypeResponse> response = userMangas.GroupBy(x => x.LibraryManga.Type)
@@ -47,6 +57,8 @@ public class StatisticsService : IStatisticsService
 
     public async Task<List<UserMangaPublishingStatusResponse>> GetUserMangaBreakdownByPublishingStatus(string userId)
     {
+        await ValidateUser(userId);
+        
         List<UserManga> userMangas = await _userMangaRepository.GetUserMangaByUserId(userId);
 
         List<UserMangaPublishingStatusResponse> response = userMangas.GroupBy(x => x.LibraryManga.PublishingStatus)
@@ -62,6 +74,8 @@ public class StatisticsService : IStatisticsService
 
     public async Task<List<UserMangaReadingStatusResponse>> GetUserMangaBreakdownByReadingStatus(string userId)
     {
+        await ValidateUser(userId);
+        
         List<UserManga> userMangas = await _userMangaRepository.GetUserMangaByUserId(userId);
         
         List<UserMangaReadingStatusResponse> response = userMangas.GroupBy(x => x.ReadingStatus)
@@ -77,6 +91,8 @@ public class StatisticsService : IStatisticsService
 
     public async Task<List<UserMangaCollectionStatusResponse>> GetUserMangaBreakdownByCollectionStatus(string userId)
     {
+        await ValidateUser(userId);
+        
         List<UserManga> userMangas = await _userMangaRepository.GetUserMangaByUserId(userId);
         
         List<UserMangaCollectionStatusResponse> response = userMangas.GroupBy(x => x.CollectionStatus)
@@ -92,6 +108,8 @@ public class StatisticsService : IStatisticsService
 
     public async Task<UserMangaTotalSpendingResponse> GetUserMangaBreakdownFromTotalSpending(string userId)
     {
+        await ValidateUser(userId);
+        
         List<UserManga> userMangas = await _userMangaRepository.GetUserMangaByUserId(userId);
 
         decimal totalPrice = 0.0m;
@@ -122,6 +140,8 @@ public class StatisticsService : IStatisticsService
 
     public async Task<List<OrdersByYearResponse>> GetOrderBreakdownByYear(string userId)
     {
+        
+        await ValidateUser(userId);
         List<Order> orders = await _orderRepository.GetAllOrdersByUserId(userId);
 
         List<OrdersByYearResponse> response = orders.GroupBy(x => x.Date.Year)
@@ -138,6 +158,8 @@ public class StatisticsService : IStatisticsService
 
     public async Task<List<OrdersForMonthByYearResponse>> GetOrderBreakdownForMonthsByYear(string userId, int year)
     {
+        await ValidateUser(userId);
+        
         List<Order> orders = await _orderRepository.GetAllOrdersByUserId(userId);
 
         List<Order> ordersFromYear = orders.Where(x => x.Date.Year == year).ToList();
@@ -153,5 +175,14 @@ public class StatisticsService : IStatisticsService
 
         return response;
 
+    }
+    
+    private async Task ValidateUser(string userId)
+    {
+        User? user = await _userRepository.GetById(userId);
+        if (user is null)
+        {
+            throw new UserNotFoundException(UserMessages.ValidationMessages.UserNotFound);
+        }
     }
 }
