@@ -1,4 +1,6 @@
-using AutoMapper;using BooksAPI.FE.Components;
+using AutoMapper;
+using Blazored.SessionStorage;
+using BooksAPI.FE.Components;
 using BooksAPI.FE.Interfaces;
 using BooksAPI.FE.Mapping;
 using BooksAPI.FE.Services;
@@ -12,7 +14,10 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddMudServices();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<ILibraryMangaService, LibraryMangaService>();
 builder.Services.AddHttpClient();
+
+builder.Services.AddBlazoredSessionStorage();
 
 MapperConfiguration mapperConfig = new MapperConfiguration(config =>
 {

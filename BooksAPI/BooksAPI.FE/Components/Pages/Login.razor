@@ -1,5 +1,10 @@
 ﻿@page "/login"
+@using Blazored.SessionStorage
+@using BooksAPI.FE.Contracts.User
+@using BooksAPI.FE.Interfaces
 @using BooksAPI.FE.Model
+@inject ISessionStorageService SessionStorageService;
+@inject IUserService UserService;
 
 <PageTitle>Login</PageTitle>
 <h3 class="text-center mb-4">Login</h3>
@@ -42,5 +47,10 @@
 
     private async void OnValidSubmit()
     {
+        LoginResponse? loginResponse = await UserService.Login(_model);
+
+       // await SessionStorageService.SetItemAsync("kitka", "kurwa");
+        await SessionStorageService.SetItemAsync("JWT_KEY", loginResponse.Token);
+        await SessionStorageService.SetItemAsync("REFRESH_KEY", loginResponse.RefreshToken);
     }
 }

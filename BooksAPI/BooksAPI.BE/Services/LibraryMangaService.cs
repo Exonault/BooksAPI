@@ -58,7 +58,7 @@ public class LibraryMangaService : ILibraryMangaService
         await _libraryMangaRepository.CreateLibraryManga(libraryManga);
     }
 
-    public async Task<LibraryMangaResponse> GetLibraryManga(Guid id)
+    public async Task<LibraryMangaResponse> GetLibraryManga(int id)
     {
         LibraryManga? libraryManga = await _libraryMangaRepository.GetLibraryMangaById(id);
         if (libraryManga is null)
@@ -84,7 +84,7 @@ public class LibraryMangaService : ILibraryMangaService
         return _mapper.Map<List<LibraryMangaResponse>>(libraryMangasForPage);
     }
 
-    public async Task UpdateLibraryManga(Guid id, UpdateLibraryMangaRequest request)
+    public async Task UpdateLibraryManga(int id, UpdateLibraryMangaRequest request)
     {
         LibraryManga? libraryManga = await _libraryMangaRepository.GetLibraryMangaById(id);
 
@@ -124,7 +124,7 @@ public class LibraryMangaService : ILibraryMangaService
         await _libraryMangaRepository.UpdateLibraryManga(updatedManga);
     }
 
-    public async Task DeleteLibraryManga(Guid id)
+    public async Task DeleteLibraryManga(int id)
     {
         LibraryManga? libraryManga = await _libraryMangaRepository.GetLibraryMangaById(id);
 

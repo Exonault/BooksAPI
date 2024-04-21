@@ -7,14 +7,14 @@ using CsvHelper.Configuration;
 //DO NOT RUN; 
 return;
 
-string filePathData = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
-//string filePathData = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
-string filePathAuthorsOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
-//string filePathAuthorsOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
-string filePathMangasOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
-//string filePathMangasOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
-string filePathRelations = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authorMangaRelation.csv";
-//string filePathRelations = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authorMangaRelation.csv"";
+//string filePathData = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
+string filePathData = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
+//string filePathAuthorsOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
+string filePathAuthorsOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
+// string filePathMangasOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
+ string filePathMangasOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
+// string filePathRelations = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authorMangaRelation.csv";
+string filePathRelations = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authorMangaRelation.csv";
 if (File.Exists(filePathData))
 {
     var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -34,7 +34,7 @@ if (File.Exists(filePathData))
         csv.Read();
         csv.ReadHeader();
 
-        int i = 0;
+        int i = 1;
         while (csv.Read())
         {
             //string mangaId = csv.GetField("manga_id");
@@ -103,10 +103,10 @@ if (File.Exists(filePathData))
             //string authorsSerialized = JsonSerializer.Serialize(extractedAuthors);
             LibraryComic libraryComic = new LibraryComic
             {
-                Id = Guid.NewGuid(),
+                Id = i,
                 Title = title,
                 DemographicType = demographics,
-                ComicType = type,
+                Type = type,
                 PublishingStatus = status,
                 TotalVolumes = volumesInt,
                 //Authors = authorsSerialized
@@ -131,13 +131,13 @@ if (File.Exists(filePathData))
                     authorIdLibraryComicIdForCsv.Add((authorSearch.Id, libraryComic.Id.ToString()));
                 }
             }
+
+            i++;
         }
 
         WriteAuthorsToCsv(authorsForCsv);
         WriteMangaToCsv(mangasForCsv);
         WriteRelationsToCsv(authorIdLibraryComicIdForCsv);
-
-        
     }
 }
 else
@@ -271,7 +271,7 @@ void WriteRelationsToCsv(List<(string authorId, string libraryComicId)> relation
     using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
     {
         csv.Context.RegisterClassMap<RelationMap>();
-        
+
         csv.WriteRecords(relations);
     }
 }

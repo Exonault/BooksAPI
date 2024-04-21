@@ -17,7 +17,7 @@ public class LibraryMangaResponse
     [JsonPropertyName("demographicType")]
     public string DemographicType { get; set; } = string.Empty;
     
-    [JsonPropertyName("Type")]
+    [JsonPropertyName("type")]
     public string Type { get; set; } = string.Empty;
     
     [JsonPropertyName("publishingStatus")]

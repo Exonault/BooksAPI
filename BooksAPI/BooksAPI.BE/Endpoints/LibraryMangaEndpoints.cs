@@ -94,7 +94,7 @@ public static class LibraryMangaEndpoints
         }
     }
 
-    private static async Task<IResult> GetLibraryMangaById([FromRoute] Guid id, ILibraryMangaService service)
+    private static async Task<IResult> GetLibraryMangaById([FromRoute] int id, ILibraryMangaService service)
     {
         try
         {
@@ -127,7 +127,7 @@ public static class LibraryMangaEndpoints
         return Results.Ok(libraryMangaResponses);
     }
 
-    private static async Task<IResult> UpdateLibraryMangas([FromQuery] Guid id,
+    private static async Task<IResult> UpdateLibraryMangas([FromQuery] int id,
         [FromBody] UpdateLibraryMangaRequest request, ILibraryMangaService service)
     {
         try
@@ -149,7 +149,7 @@ public static class LibraryMangaEndpoints
         }
     }
 
-    private static async Task<IResult> DeleteLibraryMangas([FromQuery] Guid id, ILibraryMangaService service)
+    private static async Task<IResult> DeleteLibraryMangas([FromQuery] int id, ILibraryMangaService service)
     {
         try
         {

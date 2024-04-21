@@ -1,0 +1,156 @@
+﻿@page "/libraryManga"
+@using BooksAPI.FE.Contracts.LibraryComic
+@using BooksAPI.FE.Interfaces
+@inject ILibraryMangaService LibraryMangaService;
+<h3>LibraryComic</h3>
+@if (_error)
+{
+    <h3>Unable to get mangas. Please try again later.</h3>
+}
+else
+{
+    <div class="row">
+        @foreach (var manga in _mangas)
+        {
+            <div class="col-3">
+                <MudCard Class="mb-5 mud-card-small" Outlined="true">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h5">@manga.Title</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        @* <MudText Typo="Typo.h5">Total volumes: @manga.Title</MudText> *@
+                        <MudText Typo="Typo.h5">Publishing status: @manga.Title</MudText>
+                        <MudText Typo="Typo.h5">Demographic type: @manga.Title</MudText>
+                        <MudText Typo="Typo.h5">Type: @manga.Title</MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Learn More</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add to collection</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </div>
+        }
+    </div>
+    <div class="d-flex justify-content-center flex-row mt-2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2">Load previous 20</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary">Load next 20</MudButton>
+    </div>
+}
+
+@code {
+
+    private IEnumerable<LibraryMangaResponse>? _mangas = Array.Empty<LibraryMangaResponse>();
+    // private IEnumerable<LibraryMangaResponse>? _mangas = new[]
+    // {
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    //     new LibraryMangaResponse()
+    //     {
+    //         Title = "Test"
+    //     },
+    // };
+
+    private int _selected;
+    private bool _shouldRender = false;
+    private bool _error = false;
+
+    protected override bool ShouldRender() => _shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _selected = 1;
+        await GetMangas(_selected);
+    }
+
+
+    private async Task GetMangas(int page)
+    {
+        //List<LibraryMangaResponse> libraryMangaResponse = await LibraryMangaService.GetMangasForPage(page);
+        try
+        {
+            _mangas = await LibraryMangaService.GetMangasForPage(page);
+            _shouldRender = true;
+        }
+        catch (Exception e)
+        {
+            _shouldRender = true;
+            _error = true;
+        }
+
+
+        // HttpResponseMessage response = await ComicsService.GetAllComics();
+        //
+        // if (response.IsSuccessStatusCode)
+        // {
+        //     using var responseStream = await response.Content.ReadAsStreamAsync();
+        //
+        //     IEnumerable<GetComicResponse>? comics =
+        //         await JsonSerializer.DeserializeAsync<IEnumerable<GetComicResponse>>(responseStream);
+        //
+        //     if (comics is not null)
+        //     {
+        //         _comics = Mapper.Map<IEnumerable<ComicsListElementModel>>(comics);
+        //     }
+        //
+        //     _shouldRender = true;
+        // }
+        // else
+        // {
+        //     _error = true;
+        //     _shouldRender = true;
+        // }
+    }
+
+}

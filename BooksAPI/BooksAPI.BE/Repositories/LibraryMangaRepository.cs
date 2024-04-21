@@ -20,7 +20,7 @@ public class LibraryMangaRepository:ILibraryMangaRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<LibraryManga?> GetLibraryMangaById(Guid id)
+    public async Task<LibraryManga?> GetLibraryMangaById(int id)
     {
         return await _dbContext.LibraryMangas
             .Include(lm => lm.Authors)

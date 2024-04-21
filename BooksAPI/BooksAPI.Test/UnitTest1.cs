@@ -42,7 +42,7 @@ public class UnitTest1
             Price = 0,
             CollectionStatus = "Collecting",
             UserId = "2f9f94b0-2b87-4892-b95e-5377df0cc42b",
-            LibraryMangaId = Guid.Parse("323c9333-c943-41c8-932e-3dc295eda791")
+            // LibraryMangaId = Guid.Parse("323c9333-c943-41c8-932e-3dc295eda791")
         };
 
         UserManga userManga = mapper.Map<UserManga>(request);
@@ -104,7 +104,7 @@ public class UnitTest1
 
             LibraryManga libraryManga = new LibraryManga()
             {
-                Id = Guid.NewGuid(),
+                // Id = Guid.NewGuid(),
                 Title = "null",
                 //Author = "null",
                 DemographicType = "null",
@@ -172,7 +172,7 @@ public class UnitTest1
             Price = 112.11m,
             CollectionStatus = "Finished",
             UserId = "",
-            LibraryMangaId = Guid.NewGuid()
+            // LibraryMangaId = Guid.NewGuid()
         };
 
         await using (var db = new ApplicationDbContext(dbContextOptionsBuilder.Options))
@@ -221,7 +221,8 @@ public class UnitTest1
         {
             LibraryManga? firstOrDefault = db.LibraryMangas
                 .Include(x => x.Authors)
-                .FirstOrDefault(x => x.Id == Guid.Parse("ac63855c-7ac5-4a12-bfb0-49ac35def588"));
+                .FirstOrDefault();
+                // .FirstOrDefault(x => x.Id == Guid.Parse("ac63855c-7ac5-4a12-bfb0-49ac35def588"));
 
             Console.WriteLine();
         }
@@ -361,7 +362,8 @@ public class UnitTest1
             LibraryManga? libraryComic = await db.LibraryMangas
                 .Include(x => x.Authors)
                 .Include(x => x.UserMangas)
-                .FirstOrDefaultAsync(x => x.Id == Guid.Parse("a1d27d10-8d31-4479-acc4-b35919b0c1d7"));
+                .FirstOrDefaultAsync();
+               // .FirstOrDefaultAsync(x => x.Id == Guid.Parse("a1d27d10-8d31-4479-acc4-b35919b0c1d7"));
             if (libraryComic == null)
             {
                 return;
