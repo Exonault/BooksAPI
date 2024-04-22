@@ -32,6 +32,7 @@ public class OrderRepository:IOrderRepository
         return await _dbContext.Orders
             .Include(o => o.User)
             .Where(o => o.User.Id == userId)
+            .OrderBy(o => o.Id)
             .ToListAsync();
     }
 
@@ -39,6 +40,7 @@ public class OrderRepository:IOrderRepository
     {
         return await _dbContext.Orders
             .Include(o=> o.User)
+            .OrderBy(o => o.Id)
             .ToListAsync();
     }
 

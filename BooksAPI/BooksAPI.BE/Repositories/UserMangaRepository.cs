@@ -36,6 +36,7 @@ public class UserMangaRepository : IUserMangaRepository
             .Include(um => um.LibraryManga.Authors)
             .Include(um => um.User)
             .Where(um => um.User.Id == userId)
+            .OrderBy(um => um.Id)
             .ToListAsync();
     }
 
@@ -45,6 +46,7 @@ public class UserMangaRepository : IUserMangaRepository
             .Include(um => um.LibraryManga)
             .Include(um => um.LibraryManga.Authors)
             .Include(um => um.User)
+            .OrderBy(um => um.Id)
             .ToListAsync();
     }
 

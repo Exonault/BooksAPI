@@ -31,12 +31,14 @@ public class LibraryMangaRepository:ILibraryMangaRepository
     {
         return await _dbContext.LibraryMangas
             .Include(lm => lm.Authors)
+            .OrderBy(lm => lm.Id)
             .ToListAsync();
     }
 
     public async Task<List<LibraryManga>> GetLibraryMangasForPage(int pageIndex, int pageEntriesCount)
     {
         return await _dbContext.LibraryMangas
+            .OrderBy(lm => lm.Id)
             .Include(lm => lm.Authors)
             .Skip(pageIndex * pageEntriesCount)
             .Take(pageEntriesCount)

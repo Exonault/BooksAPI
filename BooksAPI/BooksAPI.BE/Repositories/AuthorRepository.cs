@@ -39,7 +39,9 @@ public class AuthorRepository : IAuthorRepository
 
     public async Task<List<Author>> GetAllAuthors()
     {
-        return await _dbContext.Authors.ToListAsync();
+        return await _dbContext.Authors
+            .OrderBy(a => a.Id)
+            .ToListAsync();
     }
 
     public async Task UpdateAuthor(Author author)

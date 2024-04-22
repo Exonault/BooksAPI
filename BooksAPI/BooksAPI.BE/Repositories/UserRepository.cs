@@ -58,24 +58,4 @@ public class UserRepository:IUserRepository
         await _userManager.UpdateAsync(user);
     }
 
-    // public Task Register(User newUser, bool admin)
-    // {
-    //     throw new NotImplementedException();
-    // }
-    //
-    // public Task<string> Login(string userName, string password)
-    // {
-    //     throw new NotImplementedException();
-    // }
-    //
-    // public Task<string> Refresh(string token, string refreshToken)
-    // {
-    //     throw new NotImplementedException();
-    // }
-    //
-    // public Task Revoke()
-    // {
-    //     throw new NotImplementedException();
-    // }
-
 }
