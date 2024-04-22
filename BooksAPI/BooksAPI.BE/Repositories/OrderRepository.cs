@@ -20,7 +20,7 @@ public class OrderRepository:IOrderRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<Order?> GetOrderById(Guid id)
+    public async Task<Order?> GetOrderById(int id)
     {
         return await _dbContext.Orders
             .Include(o=> o.User)

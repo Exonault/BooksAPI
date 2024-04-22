@@ -2,11 +2,11 @@
 
 namespace BooksAPI.DataCleaning;
 
-public sealed class RelationMap:ClassMap<(string authorId, string libraryComicId)>
+public sealed class RelationMap:ClassMap<(int authorId, int libraryMangaId)>
 {
     public RelationMap()
     {
-        Map(m => m.authorId).Name("authorId");
-        Map(m => m.libraryComicId).Name("libraryComicId");
+        Map(m => m.authorId).Name("AuthorsId");
+        Map(m => m.libraryMangaId).Name("LibraryMangasId");
     }
 }

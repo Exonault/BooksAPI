@@ -61,7 +61,7 @@ public class UserMangaService : IUserMangaService
         await _userMangaRepository.CreateUserManga(userManga);
     }
 
-    public async Task<UserMangaResponse> GetUserManga(Guid id)
+    public async Task<UserMangaResponse> GetUserManga(int id)
     {
         UserManga? userManga = await _userMangaRepository.GetUserMangaById(id);
 
@@ -104,7 +104,7 @@ public class UserMangaService : IUserMangaService
         return response;
     }
 
-    public async Task UpdateUserManga(Guid id, UpdateUserMangaRequest request)
+    public async Task UpdateUserManga(int id, UpdateUserMangaRequest request)
     {
         User? user = await _userRepository.GetById(request.UserId);
 
@@ -138,7 +138,7 @@ public class UserMangaService : IUserMangaService
         await _userMangaRepository.UpdateUserManga(userManga);
     }
 
-    public async Task DeleteUserManga(Guid id, string userId)
+    public async Task DeleteUserManga(int id, string userId)
     {
         User? user = await _userRepository.GetById(userId);
 

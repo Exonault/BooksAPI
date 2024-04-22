@@ -24,8 +24,8 @@ namespace BooksAPI.BE.Migrations
 
             modelBuilder.Entity("AuthorLibraryManga", b =>
                 {
-                    b.Property<Guid>("AuthorsId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("AuthorsId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("LibraryMangasId")
                         .HasColumnType("integer");
@@ -39,9 +39,11 @@ namespace BooksAPI.BE.Migrations
 
             modelBuilder.Entity("BooksAPI.BE.Entities.Author", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
@@ -93,9 +95,11 @@ namespace BooksAPI.BE.Migrations
 
             modelBuilder.Entity("BooksAPI.BE.Entities.Order", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
@@ -197,9 +201,11 @@ namespace BooksAPI.BE.Migrations
 
             modelBuilder.Entity("BooksAPI.BE.Entities.UserManga", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CollectedVolumes")
                         .HasColumnType("integer");

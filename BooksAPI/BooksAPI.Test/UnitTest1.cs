@@ -72,7 +72,7 @@ public class UnitTest1
 
             userManga = new UserManga
             {
-                Id = Guid.NewGuid(),
+                //Id = Guid.NewGuid(),
                 ReadingStatus = "Reading",
                 ReadVolumes = 11,
                 CollectedVolumes = 10,
@@ -116,7 +116,7 @@ public class UnitTest1
 
             userManga = new UserManga
             {
-                Id = Guid.NewGuid(),
+                //Id = Guid.NewGuid(),
                 ReadingStatus = "Reading",
                 ReadVolumes = 11,
                 CollectedVolumes = 10,
@@ -197,7 +197,7 @@ public class UnitTest1
 
         Order order = new Order
         {
-            Id = Guid.NewGuid(),
+            //Id = Guid.NewGuid(),
             Date = DateOnly.FromDateTime(dateTime),
             Description = "something",
             Place = "somewhere",
@@ -246,14 +246,14 @@ public class UnitTest1
 
         Author authorRequest = new Author
         {
-            Id = Guid.Parse("83c48659-4ded-49cd-96d7-09ee8ba60739"),
+           // Id = Guid.Parse("83c48659-4ded-49cd-96d7-09ee8ba60739"),
             FirstName = "firstName",
             LastName = "lastName",
             Role = "story",
         };
         Author authorRequest2 = new Author
         {
-            Id = Guid.Parse("cec19186-48a6-487c-a1cc-d43e9c22d86c"),
+           // Id = Guid.Parse("cec19186-48a6-487c-a1cc-d43e9c22d86c"),
             FirstName = "firstName2",
             LastName = "lastName2",
             Role = "art"
@@ -321,21 +321,21 @@ public class UnitTest1
 
         Author authorRequest = new Author
         {
-            Id = Guid.Parse("83c48659-4ded-49cd-96d7-09ee8ba60739"),
+           // Id = Guid.Parse("83c48659-4ded-49cd-96d7-09ee8ba60739"),
             FirstName = "firstName",
             LastName = "lastName",
             Role = "story",
         };
         Author authorRequest2 = new Author
         {
-            Id = Guid.Parse("cec19186-48a6-487c-a1cc-d43e9c22d86c"),
+            //Id = Guid.Parse("cec19186-48a6-487c-a1cc-d43e9c22d86c"),
             FirstName = "firstName2",
             LastName = "lastName2",
             Role = "art"
         };
         Author authorRequest3 = new Author
         {
-            Id = Guid.Parse("039e9297-3d31-44a2-b899-79f3f164eb62"),
+           // Id = Guid.Parse("039e9297-3d31-44a2-b899-79f3f164eb62"),
             FirstName = "firstName3",
             LastName = "lastName3",
             Role = "storyAndArt"

@@ -25,7 +25,7 @@ public static class LibraryMangaEndpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapGet("/libraryManga/{id:guid}", GetLibraryMangaById)
+        app.MapGet("/libraryManga/{id:int}", GetLibraryMangaById)
             .AllowAnonymous()
             .CacheOutput(x =>
                 x.Expire(TimeSpan.FromMinutes(5))
@@ -47,7 +47,7 @@ public static class LibraryMangaEndpoints
             .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaResponse>), "application/json")
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapPut("/libraryManga/", UpdateLibraryMangas)
+        app.MapPut("/libraryManga/{id:int}", UpdateLibraryMangas)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
@@ -56,7 +56,7 @@ public static class LibraryMangaEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapDelete("/libraryManga/", DeleteLibraryMangas)
+        app.MapDelete("/libraryManga/{id:int}", DeleteLibraryMangas)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
@@ -127,7 +127,7 @@ public static class LibraryMangaEndpoints
         return Results.Ok(libraryMangaResponses);
     }
 
-    private static async Task<IResult> UpdateLibraryMangas([FromQuery] int id,
+    private static async Task<IResult> UpdateLibraryMangas([FromRoute] int id,
         [FromBody] UpdateLibraryMangaRequest request, ILibraryMangaService service)
     {
         try
@@ -149,7 +149,7 @@ public static class LibraryMangaEndpoints
         }
     }
 
-    private static async Task<IResult> DeleteLibraryMangas([FromQuery] int id, ILibraryMangaService service)
+    private static async Task<IResult> DeleteLibraryMangas([FromRoute] int id, ILibraryMangaService service)
     {
         try
         {

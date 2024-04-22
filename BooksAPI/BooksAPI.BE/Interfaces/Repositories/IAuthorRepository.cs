@@ -6,7 +6,7 @@ public interface IAuthorRepository
 {
     public Task CreateAuthor(Author author);
 
-    public Task<Author?> GetAuthorById(Guid id);
+    public Task<Author?> GetAuthorById(int id);
     
     public Task<Author?> GetAuthorByName(string firstName, string lastName);
 

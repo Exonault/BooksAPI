@@ -2,7 +2,7 @@
 
 public class Order
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     
     public DateOnly Date { get; set; }
     

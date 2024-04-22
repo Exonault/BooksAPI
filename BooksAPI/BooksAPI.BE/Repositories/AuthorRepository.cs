@@ -20,7 +20,7 @@ public class AuthorRepository : IAuthorRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<Author?> GetAuthorById(Guid id)
+    public async Task<Author?> GetAuthorById(int id)
     {
         return await _dbContext.Authors.FirstOrDefaultAsync(a => a.Id == id);
     }

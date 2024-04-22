@@ -6,7 +6,7 @@ public interface IOrderRepository
 {
     public Task CreateOrder(Order order);
 
-    public Task<Order?> GetOrderById(Guid id);
+    public Task<Order?> GetOrderById(int id);
 
     public Task<List<Order>> GetAllOrdersByUserId(String userId);
 

@@ -2,9 +2,9 @@
 
 namespace BooksAPI.DataCleaning;
 
-public sealed class LibraryComicMap:ClassMap<LibraryComic>
+public sealed class LibraryMangaMap:ClassMap<LibraryManga>
 {
-    public LibraryComicMap()
+    public LibraryMangaMap()
     {
         Map(m => m.Id);
         Map(m => m.Title);

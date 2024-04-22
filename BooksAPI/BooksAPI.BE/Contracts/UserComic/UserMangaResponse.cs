@@ -6,7 +6,7 @@ namespace BooksAPI.BE.Contracts.UserComic;
 public class UserMangaResponse
 {
     [JsonPropertyName("id")]
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     [JsonPropertyName("readingStatus")]
     public string ReadingStatus { get; set; } = string.Empty;

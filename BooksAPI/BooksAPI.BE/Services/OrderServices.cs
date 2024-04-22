@@ -48,7 +48,7 @@ public class OrderServices : IOrderService
         await _orderRepository.CreateOrder(order);
     }
 
-    public async Task<OrderResponse> GetOrder(Guid id)
+    public async Task<OrderResponse> GetOrder(int id)
     {
         Order? order = await _orderRepository.GetOrderById(id);
 
@@ -86,7 +86,7 @@ public class OrderServices : IOrderService
     }
 
 
-    public async Task UpdateOrder(Guid id, UpdateOrderRequest request)
+    public async Task UpdateOrder(int id, UpdateOrderRequest request)
     {
         User? user = await _userRepository.GetById(request.UserId);
         
@@ -118,7 +118,7 @@ public class OrderServices : IOrderService
         await _orderRepository.UpdateOrder(order);
     }
 
-    public async Task DeleteOrder(Guid id, string userId)
+    public async Task DeleteOrder(int id, string userId)
     {
         User? user = await _userRepository.GetById(userId);
         if (user is null)

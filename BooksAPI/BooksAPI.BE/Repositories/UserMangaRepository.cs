@@ -20,7 +20,7 @@ public class UserMangaRepository : IUserMangaRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<UserManga?> GetUserMangaById(Guid id)
+    public async Task<UserManga?> GetUserMangaById(int id)
     {
         return await _dbContext.UserMangas
             .Include(um => um.LibraryManga)

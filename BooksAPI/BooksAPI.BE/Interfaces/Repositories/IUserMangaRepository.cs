@@ -6,7 +6,7 @@ public interface IUserMangaRepository
 {
     public Task CreateUserManga(UserManga libraryManga);
 
-    public Task<UserManga?> GetUserMangaById(Guid id);
+    public Task<UserManga?> GetUserMangaById(int id);
 
     public Task<List<UserManga>> GetUserMangaByUserId(string userId);
 

@@ -5,7 +5,7 @@ namespace BooksAPI.DataCleaning;
 public class Author
 {
     [JsonPropertyName("id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [JsonPropertyName("firstName")]
     public string? FirstName { get; set; }

@@ -26,7 +26,7 @@ public static class OrderEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapGet("/order/{id:guid}", GetOrderById)
+        app.MapGet("/order/{id:int}", GetOrderById)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(OrderResponse),"application/json")
             .Produces(StatusCodes.Status401Unauthorized)
@@ -49,7 +49,7 @@ public static class OrderEndpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapPut("/order/{id:guid}", UpdateOrder)
+        app.MapPut("/order/{id:int}", UpdateOrder)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
@@ -58,7 +58,7 @@ public static class OrderEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapDelete("/order/{id:guid}", DeleteOrder)
+        app.MapDelete("/order/{id:int}", DeleteOrder)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
@@ -109,7 +109,7 @@ public static class OrderEndpoints
         }
     }
 
-    static async Task<IResult> GetOrderById([FromRoute] Guid id, IOrderService service, HttpContext httpContext)
+    static async Task<IResult> GetOrderById([FromRoute] int id, IOrderService service, HttpContext httpContext)
     {
         try
         {
@@ -182,7 +182,7 @@ public static class OrderEndpoints
         }
     }
 
-    static async Task<IResult> UpdateOrder([FromRoute] Guid id, [FromBody] UpdateOrderRequest request,
+    static async Task<IResult> UpdateOrder([FromRoute] int id, [FromBody] UpdateOrderRequest request,
         IOrderService service, HttpContext httpContext)
     {
         try
@@ -221,7 +221,7 @@ public static class OrderEndpoints
     }
 
 
-    static async Task<IResult> DeleteOrder([FromRoute] Guid id, [FromQuery] string userId,
+    static async Task<IResult> DeleteOrder([FromRoute] int id, [FromQuery] string userId,
         IOrderService service, HttpContext httpContext)
     {
         try

@@ -2,7 +2,7 @@
 
 public class UserManga
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     public string ReadingStatus { get; set; } = string.Empty;
     

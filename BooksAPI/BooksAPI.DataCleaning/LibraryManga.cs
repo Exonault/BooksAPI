@@ -1,6 +1,6 @@
 ﻿namespace BooksAPI.DataCleaning;
 
-public class LibraryComic
+public class LibraryManga
 {
     public int Id { get; set; }
     public string Title { get; set; } = string.Empty;

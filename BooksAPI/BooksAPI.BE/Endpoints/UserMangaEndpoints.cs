@@ -26,7 +26,7 @@ public static class UserMangaEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapGet("/userManga/{id:guid}", GetUserMangaById)
+        app.MapGet("/userManga/{id:int}", GetUserMangaById)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(UserMangaResponse), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
@@ -49,7 +49,7 @@ public static class UserMangaEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapPut("/userManga/{id:guid}", UpdateUserManga)
+        app.MapPut("/userManga/{id:int}", UpdateUserManga)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
@@ -58,7 +58,7 @@ public static class UserMangaEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        app.MapDelete("/userManga/{id:guid}", DeleteUserManga)
+        app.MapDelete("/userManga/{id:int}", DeleteUserManga)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
@@ -112,7 +112,7 @@ public static class UserMangaEndpoints
         }
     }
 
-    private static async Task<IResult> GetUserMangaById([FromRoute] Guid id, IUserMangaService service,
+    private static async Task<IResult> GetUserMangaById([FromRoute] int id, IUserMangaService service,
         HttpContext httpContext)
     {
         try
@@ -185,7 +185,7 @@ public static class UserMangaEndpoints
         }
     }
 
-    static async Task<IResult> UpdateUserManga([FromRoute] Guid id, [FromBody] UpdateUserMangaRequest request,
+    static async Task<IResult> UpdateUserManga([FromRoute] int id, [FromBody] UpdateUserMangaRequest request,
         IUserMangaService service, HttpContext httpContext)
     {
         try
@@ -223,7 +223,7 @@ public static class UserMangaEndpoints
         }
     }
 
-    static async Task<IResult> DeleteUserManga([FromRoute] Guid id, [FromQuery] string userId,
+    static async Task<IResult> DeleteUserManga([FromRoute] int id, [FromQuery] string userId,
         IUserMangaService service, HttpContext httpContext)
     {
         try

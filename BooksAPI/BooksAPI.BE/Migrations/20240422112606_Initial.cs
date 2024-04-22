@@ -59,7 +59,8 @@ namespace BooksAPI.BE.Migrations
                 name: "Authors",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FirstName = table.Column<string>(type: "text", nullable: true),
                     LastName = table.Column<string>(type: "text", nullable: false),
                     Role = table.Column<string>(type: "text", nullable: false)
@@ -196,7 +197,8 @@ namespace BooksAPI.BE.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Place = table.Column<string>(type: "text", nullable: false),
@@ -219,7 +221,7 @@ namespace BooksAPI.BE.Migrations
                 name: "AuthorLibraryManga",
                 columns: table => new
                 {
-                    AuthorsId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorsId = table.Column<int>(type: "integer", nullable: false),
                     LibraryMangasId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -243,7 +245,8 @@ namespace BooksAPI.BE.Migrations
                 name: "UserMangas",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ReadingStatus = table.Column<string>(type: "text", nullable: false),
                     ReadVolumes = table.Column<int>(type: "integer", nullable: false),
                     CollectedVolumes = table.Column<int>(type: "integer", nullable: false),
