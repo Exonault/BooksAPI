@@ -9,6 +9,7 @@ using BooksAPI.BE.Services;
 using BooksAPI.BE.Validation;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 
 namespace BooksAPI.BE.Endpoints;
@@ -27,23 +28,22 @@ public static class LibraryMangaEndpoints
 
         app.MapGet("/libraryManga/{id:int}", GetLibraryMangaById)
             .AllowAnonymous()
-            .CacheOutput(x =>
-                x.Expire(TimeSpan.FromMinutes(5))
-                    .Tag("libraryMangaWithId"))
+            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(15)))
             .Produces(StatusCodes.Status200OK, typeof(LibraryMangaResponse), "application/json")
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("/libraryMangas/", GetLibraryMangasForPage)
             .AllowAnonymous()
-            .CacheOutput(x =>
-                x.Expire(TimeSpan.FromMinutes(5))
-                    .Tag("libraryMangasForPage"))
+            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(30))
+                .Tag(CacheConstants.LibraryMangaForPageTag))
             .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaResponse>), "application/json")
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("/libraryMangas/all", GetAllLibraryMangas)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
+            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(30))
+                .Tag(CacheConstants.AllLibraryMangasTag))
             .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaResponse>), "application/json")
             .Produces(StatusCodes.Status500InternalServerError);
 
@@ -77,11 +77,13 @@ public static class LibraryMangaEndpoints
     }
 
     private static async Task<IResult> CreateLibraryManga([FromBody] CreateLibraryMangaRequest request,
-        ILibraryMangaService service)
+        ILibraryMangaService service, IOutputCacheStore cacheStore)
     {
         try
         {
             await service.CreateLibraryManga(request);
+            await cacheStore.EvictByTagAsync(CacheConstants.LibraryMangaForPageTag, CancellationToken.None);
+            await cacheStore.EvictByTagAsync(CacheConstants.AllLibraryMangasTag, CancellationToken.None);
             return Results.Ok();
         }
         catch (ValidationException ex)
@@ -128,11 +130,13 @@ public static class LibraryMangaEndpoints
     }
 
     private static async Task<IResult> UpdateLibraryMangas([FromRoute] int id,
-        [FromBody] UpdateLibraryMangaRequest request, ILibraryMangaService service)
+        [FromBody] UpdateLibraryMangaRequest request, ILibraryMangaService service, IOutputCacheStore cacheStore)
     {
         try
         {
             await service.UpdateLibraryManga(id, request);
+            await cacheStore.EvictByTagAsync(CacheConstants.LibraryMangaForPageTag, CancellationToken.None);
+            await cacheStore.EvictByTagAsync(CacheConstants.AllLibraryMangasTag, CancellationToken.None);
             return Results.Ok();
         }
         catch (ResourceNotFoundException ex)
@@ -149,11 +153,13 @@ public static class LibraryMangaEndpoints
         }
     }
 
-    private static async Task<IResult> DeleteLibraryMangas([FromRoute] int id, ILibraryMangaService service)
+    private static async Task<IResult> DeleteLibraryMangas([FromRoute] int id, ILibraryMangaService service, IOutputCacheStore cacheStore)
     {
         try
         {
             await service.DeleteLibraryManga(id);
+            await cacheStore.EvictByTagAsync(CacheConstants.LibraryMangaForPageTag, CancellationToken.None);
+            await cacheStore.EvictByTagAsync(CacheConstants.AllLibraryMangasTag, CancellationToken.None);
             return Results.Ok();
         }
         catch (ResourceNotFoundException ex)

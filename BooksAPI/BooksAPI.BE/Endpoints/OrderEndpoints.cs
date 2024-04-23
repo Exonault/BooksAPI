@@ -28,7 +28,8 @@ public static class OrderEndpoints
 
         app.MapGet("/order/{id:int}", GetOrderById)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK, typeof(OrderResponse),"application/json")
+            // .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5)))
+            .Produces(StatusCodes.Status200OK, typeof(OrderResponse), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
@@ -36,7 +37,9 @@ public static class OrderEndpoints
 
         app.MapGet("/order/", GetAllOrdersByUserId)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK, typeof(List<OrderResponse>),"application/json")
+            // .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5))
+            //     .Tag(CacheConstants.OrdersWithUserIdTag))
+            .Produces(StatusCodes.Status200OK, typeof(List<OrderResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
@@ -44,7 +47,7 @@ public static class OrderEndpoints
 
         app.MapGet("/orders/all", GetAllOrders)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
-            .Produces(StatusCodes.Status200OK, typeof(List<OrderResponse>),"application/json")
+            .Produces(StatusCodes.Status200OK, typeof(List<OrderResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status500InternalServerError);

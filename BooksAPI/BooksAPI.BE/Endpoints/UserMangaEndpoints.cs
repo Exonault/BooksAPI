@@ -28,7 +28,18 @@ public static class UserMangaEndpoints
 
         app.MapGet("/userManga/{id:int}", GetUserMangaById)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            // .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5)))
             .Produces(StatusCodes.Status200OK, typeof(UserMangaResponse), "application/json")
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
+
+        app.MapGet("/userManga/", GetAllUserMangasByUserId)
+            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            // .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5))
+            //     .Tag(CacheConstants.UserMangasWithUserIdTag))
+            .Produces(StatusCodes.Status200OK, typeof(List<UserMangaResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
@@ -39,14 +50,6 @@ public static class UserMangaEndpoints
             .Produces(StatusCodes.Status200OK, typeof(List<UserMangaResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status500InternalServerError);
-
-        app.MapGet("/userManga/", GetAllUserMangasByUserId)
-            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK, typeof(List<UserMangaResponse>), "application/json")
-            .Produces(StatusCodes.Status401Unauthorized)
-            .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapPut("/userManga/{id:int}", UpdateUserManga)
