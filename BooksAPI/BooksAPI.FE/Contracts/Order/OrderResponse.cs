@@ -4,6 +4,9 @@ namespace BooksAPI.FE.Contracts.Order;
 
 public class OrderResponse
 {
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+    
     [JsonPropertyName("date")]
     public DateOnly Date { get; set; }
     

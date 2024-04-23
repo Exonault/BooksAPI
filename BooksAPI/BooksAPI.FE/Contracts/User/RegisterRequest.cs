@@ -18,5 +18,5 @@ public class RegisterRequest
     [DataType(DataType.Password)]
     public string Password { get; set; } = string.Empty;
 
-    public bool Admin { get; set; } = false;
+    public bool Admin { get; set; }
 }

@@ -14,64 +14,64 @@ public static class StatisticsEndpoints
     public static void MapStatisticsEndpoints(this WebApplication app)
     {
         app.MapGet("statistic/userManga/demographic/{userId}", GetUserMangaBreakdownByDemographic)
-            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+            // .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .Produces(StatusCodes.Status200OK, typeof(List<UserMangaDemographicResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/userManga/type/{userId}", GetUserMangaBreakdownByType)
-            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+           // .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .Produces(StatusCodes.Status200OK,typeof(List<UserMangaTypeResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/userManga/publishingStatus/{userId}", GetUserMangaBreakdownByPublishingStatus)
-            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+            //.RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .Produces(StatusCodes.Status200OK,typeof(List<UserMangaPublishingStatusResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/userManga/readingStatus/{userId}", GetUserMangaBreakdownByReadingStatus)
-            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+           // .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .Produces(StatusCodes.Status200OK, typeof(List<UserMangaReadingStatusResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/userManga/collectionStatus/{userId}", GetUserMangaBreakdownByCollectionStatus)
-            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+            //.RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .Produces(StatusCodes.Status200OK,typeof(List<UserMangaCollectionStatusResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/userManga/totalSpending/{userId}", GetUserMangaBreakdownFromTotalSpending)
-            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+           // .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .Produces(StatusCodes.Status200OK, typeof(UserMangaTotalSpendingResponse), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/order/year/{userId}", GetOrderBreakdownByYear)
-            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+            //.RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .Produces(StatusCodes.Status200OK, typeof(List<OrdersByYearResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/order/monthsByYear/{userId}", GetOrderBreakdownForMonthsByYear)
-            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .Produces(StatusCodes.Status200OK)
+            //.RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .Produces(StatusCodes.Status200OK, typeof(List<OrdersForMonthByYearResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)

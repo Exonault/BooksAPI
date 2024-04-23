@@ -14,5 +14,5 @@ public class UpdateUserMangaRequest
 
     public string UserId { get; set; } = string.Empty;
 
-    public Guid LibraryMangaId { get; set; }
+    public int LibraryMangaId { get; set; }
 }

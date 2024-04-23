@@ -6,7 +6,7 @@ namespace BooksAPI.FE.Contracts.UserComic;
 public class UserMangaResponse
 {
     [JsonPropertyName("id")]
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     [JsonPropertyName("readingStatus")]
     public string ReadingStatus { get; set; } = string.Empty;
@@ -17,8 +17,8 @@ public class UserMangaResponse
     [JsonPropertyName("collectedVolumes")]
     public int CollectedVolumes { get; set; }
     
-    [JsonPropertyName("price")]
-    public decimal Price { get; set; }
+    [JsonPropertyName("pricePerVolume")]
+    public decimal PricePerVolume { get; set; }
 
     [JsonPropertyName("collectionStatus")]
     public string CollectionStatus { get; set; } = string.Empty;

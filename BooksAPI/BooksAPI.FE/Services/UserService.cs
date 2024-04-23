@@ -47,7 +47,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            throw;
+            return null;
         }
     }
 
@@ -70,14 +70,13 @@ public class UserService : IUserService
             }
 
             await using Stream responseStream = await responseMessage.Content.ReadAsStreamAsync();
-
-            //Add token to session storage
+            
             LoginResponse? loginResponse = await JsonSerializer.DeserializeAsync<LoginResponse>(responseStream);
             return loginResponse;
         }
         catch (Exception e)
         {
-            throw;
+            return null;
         }
     }
 }
