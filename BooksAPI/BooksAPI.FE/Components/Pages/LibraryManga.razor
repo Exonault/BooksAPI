@@ -9,21 +9,46 @@
 }
 else
 {
+    @* <MudGrid Justify="Justify.FlexStart"> *@
+    @*     @foreach (var manga in _mangas) *@
+    @*     { *@
+    @*         <MudItem xs="4"> *@
+    @*             <MudCard xs="4" Class="mb-4 mud-card-small" Outlined="true"> *@
+    @*                 <MudCardHeader> *@
+    @*                     <CardHeaderContent> *@
+    @*                         <MudText Typo="Typo.h5">@manga.Title</MudText> *@
+    @*                     </CardHeaderContent> *@
+    @*                 </MudCardHeader> *@
+    @*                 <MudCardContent> *@
+    @*                     $1$ <MudText Typo="Typo.h5">Total volumes: @manga.Title</MudText> #1# *@
+    @*                     <MudText Typo="Typo.h5">Publishing status: @manga.PublishingStatus</MudText> *@
+    @*                     <MudText Typo="Typo.h5">Demographic type: @manga.DemographicType</MudText> *@
+    @*                     <MudText Typo="Typo.h5">Type: @manga.Type</MudText> *@
+    @*                 </MudCardContent> *@
+    @*                 <MudCardActions> *@
+    @*                     <MudButton Variant="Variant.Filled" Color="Color.Primary">Learn More</MudButton> *@
+    @*                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add to collection</MudButton> *@
+    @*                 </MudCardActions> *@
+    @*             </MudCard> *@
+    @*         </MudItem> *@
+    @*     } *@
+    @* </MudGrid> *@
+
+
     <div class="row">
-        @foreach (var manga in _mangas)
+        @foreach (var manga in _mangas) // 3 rows by 4 cols => 12 entries
         {
             <div class="col-3">
                 <MudCard Class="mb-5 mud-card-small" Outlined="true">
                     <MudCardHeader>
                         <CardHeaderContent>
-                            <MudText Typo="Typo.h5">@manga.Title</MudText>
+                            <MudText Typo="Typo.h6">@manga.Title</MudText>
                         </CardHeaderContent>
                     </MudCardHeader>
                     <MudCardContent>
-                        @* <MudText Typo="Typo.h5">Total volumes: @manga.Title</MudText> *@
-                        <MudText Typo="Typo.h5">Publishing status: @manga.Title</MudText>
-                        <MudText Typo="Typo.h5">Demographic type: @manga.Title</MudText>
-                        <MudText Typo="Typo.h5">Type: @manga.Title</MudText>
+                        <MudText Typo="Typo.h6">Publishing status: @manga.PublishingStatus</MudText>
+                        <MudText Typo="Typo.h6">Demographic type: @manga.DemographicType</MudText>
+                        <MudText Typo="Typo.h6">Type: @manga.Type</MudText>
                     </MudCardContent>
                     <MudCardActions>
                         <MudButton Variant="Variant.Filled" Color="Color.Primary">Learn More</MudButton>
@@ -92,19 +117,12 @@ else
     //     {
     //         Title = "Test"
     //     },
-    //     new LibraryMangaResponse()
-    //     {
-    //         Title = "Test"
-    //     },
-    //     new LibraryMangaResponse()
-    //     {
-    //         Title = "Test"
-    //     },
     // };
 
     private int _selected;
     private bool _shouldRender = false;
     private bool _error = false;
+    private const int Entries = 12;
 
     protected override bool ShouldRender() => _shouldRender;
 
@@ -117,40 +135,16 @@ else
 
     private async Task GetMangas(int page)
     {
-        //List<LibraryMangaResponse> libraryMangaResponse = await LibraryMangaService.GetMangasForPage(page);
         try
         {
-            _mangas = await LibraryMangaService.GetMangasForPage(page);
+            _mangas = await LibraryMangaService.GetMangasForPage(page, Entries);
             _shouldRender = true;
         }
         catch (Exception e)
         {
-            _shouldRender = true;
             _error = true;
+            _shouldRender = true;
         }
-
-
-        // HttpResponseMessage response = await ComicsService.GetAllComics();
-        //
-        // if (response.IsSuccessStatusCode)
-        // {
-        //     using var responseStream = await response.Content.ReadAsStreamAsync();
-        //
-        //     IEnumerable<GetComicResponse>? comics =
-        //         await JsonSerializer.DeserializeAsync<IEnumerable<GetComicResponse>>(responseStream);
-        //
-        //     if (comics is not null)
-        //     {
-        //         _comics = Mapper.Map<IEnumerable<ComicsListElementModel>>(comics);
-        //     }
-        //
-        //     _shouldRender = true;
-        // }
-        // else
-        // {
-        //     _error = true;
-        //     _shouldRender = true;
-        // }
     }
 
 }

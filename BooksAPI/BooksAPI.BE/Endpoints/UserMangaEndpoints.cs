@@ -28,7 +28,7 @@ public static class UserMangaEndpoints
 
         app.MapGet("/userManga/{id:int}", GetUserMangaById)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            // .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5)))
+            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5)).Tag(CacheConstants.UserMangaWithIdTag))
             .Produces(StatusCodes.Status200OK, typeof(UserMangaResponse), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
@@ -37,8 +37,6 @@ public static class UserMangaEndpoints
 
         app.MapGet("/userManga/", GetAllUserMangasByUserId)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            // .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5))
-            //     .Tag(CacheConstants.UserMangasWithUserIdTag))
             .Produces(StatusCodes.Status200OK, typeof(List<UserMangaResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)

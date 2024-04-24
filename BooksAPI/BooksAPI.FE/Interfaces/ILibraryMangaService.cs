@@ -4,5 +4,5 @@ namespace BooksAPI.FE.Interfaces;
 
 public interface ILibraryMangaService
 {
-    public Task<List<LibraryMangaResponse>> GetMangasForPage(int page);
+    public Task<IEnumerable<LibraryMangaResponse>> GetMangasForPage(int page, int entries);
 }

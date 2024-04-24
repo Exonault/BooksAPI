@@ -28,7 +28,7 @@ public static class OrderEndpoints
 
         app.MapGet("/order/{id:int}", GetOrderById)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            // .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5)))
+            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5)))
             .Produces(StatusCodes.Status200OK, typeof(OrderResponse), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
@@ -37,8 +37,6 @@ public static class OrderEndpoints
 
         app.MapGet("/order/", GetAllOrdersByUserId)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            // .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5))
-            //     .Tag(CacheConstants.OrdersWithUserIdTag))
             .Produces(StatusCodes.Status200OK, typeof(List<OrderResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
