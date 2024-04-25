@@ -1,0 +1,154 @@
+﻿@page "/libraryManga/{pageNumber:int}"
+@using BooksAPI.FE.Contracts.LibraryComic
+@using BooksAPI.FE.Interfaces
+@inject ILibraryMangaService LibraryMangaService;
+@inject IJSRuntime JsRuntime;
+@inject NavigationManager NavigationManager;
+
+<h3>LibraryComic</h3>
+@if (_error)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem md="4" xs="4">
+            <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
+                Unable to get mangas. Please try again later.
+            </MudAlert>
+        </MudItem>
+    </MudGrid>
+}
+else
+{
+    <MudGrid Justify="Justify.Center" Class="mt-4">
+        @foreach (var manga in _mangas)
+        {
+            <MudItem xs="6">
+                <MudCard Outlined="true" Square="true" Tag="@manga.Id">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">@manga.Title</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <div style="display: flex;  flex-direction: column;">
+                            <div style="display: flex;  justify-content: space-between;">
+                                <MudText Typo="Typo.body1">Total volumes: @FormatTotalVolumes(manga.TotalVolumes)</MudText>
+                                <MudText Typo="Typo.body1">Publishing status: @FormatPublishingStatus(manga.PublishingStatus)</MudText>
+                            </div>
+                            <div style="display: flex;  justify-content: space-between;">
+                                <MudText Typo="Typo.body1">Demographic type: @manga.DemographicType</MudText>
+                                <MudText Typo="Typo.body1">Type: @FormatType(manga.Type)</MudText>
+                            </div>
+                        </div>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                   OnClick="@(() => NavigationManager.NavigateTo($"libraryMangaInfo/{manga.Id}/{FormatTitleForUrl(manga.Title)}"))">
+                            Learn More
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"
+                                   OnClick="@(() => NavigationManager.NavigateTo("/"))">
+                            Add to collection
+                        </MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+
+    <div class="d-flex justify-content-center flex-row mt-5">
+        @if (PageNumber != 1)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="@(() => PageButtons(PageNumber - 1))">Load previous 20</MudButton>
+        }
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(PageNumber + 1))">Load next 20</MudButton>
+    </div>
+}
+
+@code {
+
+    [Parameter] public int PageNumber { get; set; }
+
+    private IEnumerable<LibraryMangaResponse>? _mangas = Array.Empty<LibraryMangaResponse>();
+
+    private bool _shouldRender = false;
+    private bool _error = false;
+    private const int Entries = 12;
+
+    protected override bool ShouldRender() => _shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetMangas(PageNumber);
+    }
+
+
+    private async Task GetMangas(int page)
+    {
+        try
+        {
+            _mangas = await LibraryMangaService.GetMangasForPage(page, Entries);
+            _shouldRender = true;
+            NavigationManager.NavigateTo($"/libraryManga/{page}");
+        }
+        catch (Exception e)
+        {
+            _error = true;
+            _shouldRender = true;
+        }
+    }
+
+    private async Task PageButtons(int page)
+    {
+        PageNumber = page;
+        await GetMangas(page);
+        await JsRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
+        StateHasChanged();
+    }
+
+    private void CloseAlert()
+    {
+        _error = false;
+        StateHasChanged();
+    }
+
+    private string FormatPublishingStatus(string status)
+    {
+        if ("OnHiatus" == status)
+        {
+            return "On Hiatus";
+        }
+
+        return status;
+    }
+
+    private string FormatType(string type)
+    {
+        if ("LightNovel" == type)
+        {
+            return "Light novel";
+        }
+
+        if ("OneShot" == type)
+        {
+            return "One shot";
+        }
+
+        return type;
+    }
+
+    private string FormatTotalVolumes(int? totalVolumes)
+    {
+        if (totalVolumes is null)
+        {
+            return "(?) volumes";
+        }
+
+        return $"{totalVolumes} volumes";
+    }
+
+    private string FormatTitleForUrl(string title)
+    {
+        return title.Replace(' ', '_');
+    }
+    
+
+
+}

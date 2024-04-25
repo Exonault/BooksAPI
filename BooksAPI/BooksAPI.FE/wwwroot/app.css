@@ -50,17 +50,3 @@ h1:focus {
     border-color: #929292;
 }
 
-#login-container, #register-container {
-    height: 45vh;
-}
-
-#login-form, #register-form{
-    padding: 2em;
-    border: 1px solid #b3d4fc;
-    background-color: white;
-    width: 35%;
-}
-
-.password-icon {
-    z-index: 999 !important;
-}
