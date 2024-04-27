@@ -1,65 +1,116 @@
 ﻿@page "/libraryManga/{pageNumber:int}"
+@using BooksAPI.FE.Contracts.Author
 @using BooksAPI.FE.Contracts.LibraryComic
 @using BooksAPI.FE.Interfaces
 @inject ILibraryMangaService LibraryMangaService;
 @inject IJSRuntime JsRuntime;
 @inject NavigationManager NavigationManager;
 
-<h3>LibraryComic</h3>
-@if (_error)
+<h3 style="text-align: center">All Mangas</h3>
+@if (_isDataFetched)
 {
-    <MudGrid Justify="Justify.Center">
-        <MudItem md="4" xs="4">
-            <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
-                Unable to get mangas. Please try again later.
-            </MudAlert>
-        </MudItem>
-    </MudGrid>
+    @if (_error)
+    {
+        <MudGrid Justify="Justify.Center">
+            <MudItem md="4" xs="4">
+                <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
+                    Unable to get mangas. Please try again later.
+                </MudAlert>
+            </MudItem>
+        </MudGrid>
+    }
+    else
+    {
+        <MudTable Items="_mangas">
+            <HeaderContent>
+                <MudTh>Cover</MudTh>
+                <MudTh>Title</MudTh>
+                <MudTh>Authors</MudTh>
+                <MudTh>Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Cover" Style="width: 200px; height: 280px;">
+                    <MudImage Src="@context.MainImageUrl" Width="200" Height="280"></MudImage>
+                </MudTd>
+                <MudTd DataLabel="Info" Class="w-50">
+                    <MudText Typo="Typo.h6">@context.Title</MudText>
+                    <MudText Typo="Typo.body1">Total volumes: @FormatTotalVolumes(context.TotalVolumes)</MudText>
+                    <MudText Typo="Typo.body1">Publishing status: @FormatPublishingStatus(context.PublishingStatus)</MudText>
+                    <MudText Typo="Typo.body1">Demographic type: @context.DemographicType</MudText>
+                    <MudText Typo="Typo.body1">Type: @FormatType(context.Type)</MudText>
+                </MudTd>
+                <MudTd DataLabel="Authors">
+                    @foreach (AuthorResponse author in context.Authors)
+                    {
+                        <MudText Typo="Typo.body1" Class="mt-1"> @FormatAuthor(author)</MudText>
+                    }
+                </MudTd>
+                <MudTd DataLabel="Actions" Style="width: 15% !important">
+                    @* <div style="display: flex; flex-direction: column;"> *@
+                    @* <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" *@
+                    @*            OnClick="@(() => NavigationManager.NavigateTo($"libraryMangaInfo/{context.Id}/{FormatTitleForUrl(context.Title)}"))"> *@
+                    @*     Learn More *@
+                    @* </MudButton> *@
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                               OnClick="@(() => NavigationManager.NavigateTo("/"))">
+                        Add to collection
+                    </MudButton>
+                    @* </div> *@
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+
+
+        <MudGrid Justify="Justify.Center" Class="mt-4">
+            @foreach (var manga in _mangas)
+            {
+                @* <MudItem xs="6"> *@
+                @*     <MudCard Outlined="true" Square="true" Tag="@manga.Id" Class="h-100"> *@
+                @*         <div class="d-flex h-100"> *@
+                @*             <div> *@
+                @*                 <MudImage Src="@manga.MainImageUrl" Style="max-width: 100%; height: 100%"></MudImage> *@
+                @*             </div> *@
+                @*             <div class="w-100"> *@
+                @*                 $1$ <MudCardHeader Style="padding-bottom: 0 !important;"> #1# *@
+                @*                 <MudCardHeader> *@
+                @*                     <MudText Typo="Typo.h6">@manga.Title</MudText> *@
+                @*                 </MudCardHeader> *@
+                @*                 $1$ <MudCardContent Style="padding-top: 0 !important;"> #1# *@
+                @*                 <MudCardContent> *@
+                @*                     <MudText Typo="Typo.body1">Total volumes: @FormatTotalVolumes(manga.TotalVolumes)</MudText> *@
+                @*                     <MudText Typo="Typo.body1">Publishing status: @FormatPublishingStatus(manga.PublishingStatus)</MudText> *@
+                @*                     <MudText Typo="Typo.body1">Demographic type: @manga.DemographicType</MudText> *@
+                @*                     <MudText Typo="Typo.body1">Type: @FormatType(manga.Type)</MudText> *@
+                @*                 </MudCardContent> *@
+                @*             </div> *@
+                @*             <MudCardActions Class="justify-content-center" Style="display: flex; flex-direction: column;"> *@
+                @*                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Medium" *@
+                @*                            OnClick="@(() => NavigationManager.NavigateTo($"libraryMangaInfo/{manga.Id}/{FormatTitleForUrl(manga.Title)}"))"> *@
+                @*                     Learn More *@
+                @*                 </MudButton> *@
+                @*                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-5" *@
+                @*                            OnClick="@(() => NavigationManager.NavigateTo("/"))"> *@
+                @*                     Add to collection *@
+                @*                 </MudButton> *@
+                @*             </MudCardActions> *@
+                @*         </div> *@
+                @*     </MudCard> *@
+                @* </MudItem> *@
+            }
+        </MudGrid>
+
+        <div class="d-flex justify-content-center flex-row mt-5">
+            @if (PageNumber != 1)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="@(() => PageButtons(PageNumber - 1))">Load previous 20</MudButton>
+            }
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(PageNumber + 1))">Load next 20</MudButton>
+        </div>
+    }
 }
 else
 {
-    <MudGrid Justify="Justify.Center" Class="mt-4">
-        @foreach (var manga in _mangas)
-        {
-            <MudItem xs="6">
-                <MudCard Outlined="true" Square="true" Tag="@manga.Id">
-                    <MudCardHeader>
-                        <MudText Typo="Typo.h6">@manga.Title</MudText>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <div style="display: flex;  flex-direction: column;">
-                            <div style="display: flex;  justify-content: space-between;">
-                                <MudText Typo="Typo.body1">Total volumes: @FormatTotalVolumes(manga.TotalVolumes)</MudText>
-                                <MudText Typo="Typo.body1">Publishing status: @FormatPublishingStatus(manga.PublishingStatus)</MudText>
-                            </div>
-                            <div style="display: flex;  justify-content: space-between;">
-                                <MudText Typo="Typo.body1">Demographic type: @manga.DemographicType</MudText>
-                                <MudText Typo="Typo.body1">Type: @FormatType(manga.Type)</MudText>
-                            </div>
-                        </div>
-                    </MudCardContent>
-                    <MudCardActions>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                                   OnClick="@(() => NavigationManager.NavigateTo($"libraryMangaInfo/{manga.Id}/{FormatTitleForUrl(manga.Title)}"))">
-                            Learn More
-                        </MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"
-                                   OnClick="@(() => NavigationManager.NavigateTo("/"))">
-                            Add to collection
-                        </MudButton>
-                    </MudCardActions>
-                </MudCard>
-            </MudItem>
-        }
-    </MudGrid>
-
-    <div class="d-flex justify-content-center flex-row mt-5">
-        @if (PageNumber != 1)
-        {
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="@(() => PageButtons(PageNumber - 1))">Load previous 20</MudButton>
-        }
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(PageNumber + 1))">Load next 20</MudButton>
-    </div>
+    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true"/>
 }
 
 @code {
@@ -71,12 +122,14 @@ else
     private bool _shouldRender = false;
     private bool _error = false;
     private const int Entries = 12;
+    private bool _isDataFetched = false;
 
     protected override bool ShouldRender() => _shouldRender;
 
     protected override async Task OnInitializedAsync()
     {
         await GetMangas(PageNumber);
+        _isDataFetched = true;
     }
 
 
@@ -144,11 +197,17 @@ else
         return $"{totalVolumes} volumes";
     }
 
-    private string FormatTitleForUrl(string title)
+    private string FormatAuthor(AuthorResponse author)
     {
-        return title.Replace(' ', '_');
+        string role = "";
+        if (author.Role == "StoryAndArt")
+        {
+            role = "Story & Art";
+        }
+        else role = author.Role;
+        
+        string result = $"{author.FirstName} {author.LastName}: {role}";
+        return result;
     }
-    
-
 
 }

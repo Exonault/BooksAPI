@@ -5,16 +5,16 @@ using CsvHelper;
 using CsvHelper.Configuration;
 
 //DO NOT RUN; 
-return;
+// return;
 
-string filePathData = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
-// string filePathData = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
-string filePathAuthorsOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
-// string filePathAuthorsOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
-string filePathMangasOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
-// string filePathMangasOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
-string filePathRelations = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authorMangaRelation.csv";
-// string filePathRelations = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authorMangaRelation.csv";
+// string filePathData = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
+string filePathData = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
+// string filePathAuthorsOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
+string filePathAuthorsOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
+// string filePathMangasOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
+string filePathMangasOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
+// string filePathRelations = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authorMangaRelation.csv";
+string filePathRelations = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authorMangaRelation.csv";
 if (File.Exists(filePathData))
 {
     var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -56,7 +56,7 @@ if (File.Exists(filePathData))
             // string themes = csv.GetField("themes");
             //string synopsis = csv.GetField("synopsis");
             //string background = csv.GetField("background");
-            // string mainPicture = csv.GetField("main_picture");
+           
             //string url = csv.GetField("url");
             // string titleEnglish = csv.GetField("title_english");
             // string titleJapanese = csv.GetField("title_japanese");
@@ -74,6 +74,7 @@ if (File.Exists(filePathData))
             string volumes = csv.GetField("volumes");
             string demographics = csv.GetField("demographics");
             string authors = csv.GetField("authors");
+            string mainPicture = csv.GetField("main_picture");
 
             //Console.WriteLine($"{title}; {type}; {status}; {volumes}; {demographics}; {authors}");
             type = FormatType(type);
@@ -110,6 +111,7 @@ if (File.Exists(filePathData))
                 Type = type,
                 PublishingStatus = status,
                 TotalVolumes = volumesInt,
+                MainImageUrl = mainPicture,
                 //Authors = authorsSerialized
             };
 

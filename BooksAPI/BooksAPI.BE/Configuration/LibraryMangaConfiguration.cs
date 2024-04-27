@@ -21,5 +21,7 @@ public class LibraryMangaConfiguration:IEntityTypeConfiguration<LibraryManga>
 
         builder.Property(x => x.TotalVolumes).IsRequired(false);
 
+        builder.Property(x => x.MainImageUrl).IsRequired(false);
+
     }
 }

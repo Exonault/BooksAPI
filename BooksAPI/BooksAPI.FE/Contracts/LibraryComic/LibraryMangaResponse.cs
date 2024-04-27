@@ -25,4 +25,7 @@ public class LibraryMangaResponse
     
     [JsonPropertyName("totalVolumes")]
     public int? TotalVolumes { get; set; }
+    
+    [JsonPropertyName("mainImageUrl")]
+    public string? MainImageUrl { get; set; } = string.Empty;
 }
