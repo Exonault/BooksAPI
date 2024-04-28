@@ -1,4 +1,9 @@
 ﻿@page "/userManga"
+@attribute [Authorize(Roles = "User")]
+
+@using Microsoft.AspNetCore.Authorization
+
+
 <h3>UserManga</h3>
 
 @code {

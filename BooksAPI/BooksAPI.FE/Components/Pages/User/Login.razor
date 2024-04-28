@@ -1,11 +1,21 @@
 ﻿@page "/login"
+@attribute [AllowAnonymous]
+
+
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
 @using Blazored.SessionStorage
 @using BooksAPI.FE.Contracts.User
 @using BooksAPI.FE.Interfaces
 @using BooksAPI.FE.Model
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Components.Authorization
+
 @inject ISessionStorageService SessionStorageService;
 @inject IUserService UserService;
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IAuthorizationService AuthorizationService
 
 <PageTitle>Login</PageTitle>
 <h3 class="text-center mb-4">Login</h3>
@@ -45,6 +55,9 @@
 
     protected override bool ShouldRender() => _shouldRender;
 
+    [CascadingParameter]
+    public HttpContext HttpContext { get; set; }
+    
 
     private async void OnValidSubmit()
     {
@@ -60,14 +73,21 @@
             //await SessionStorageService.SetItemAsync("kitka", "kurwa");
             await SessionStorageService.SetItemAsync("JWT_KEY", loginResponse.Token);
             await SessionStorageService.SetItemAsync("REFRESH_KEY", loginResponse.RefreshToken);
-
+            
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(loginResponse.Token);
+            
+            //TODO try with this for auth state
+            // HttpContext.SignInAsync()
+            
             NavigationManager.NavigateTo("/");
         }
     }
-
+    
     private void CloseAlert()
     {
         _error = false;
         StateHasChanged();
     }
+    
 }

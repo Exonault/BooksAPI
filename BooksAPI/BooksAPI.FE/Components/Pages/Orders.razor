@@ -1,4 +1,8 @@
 ﻿@page "/orders"
+
+@attribute [Authorize(Roles = "User")]
+
+
 <h3>Orders</h3>
 
 @code {

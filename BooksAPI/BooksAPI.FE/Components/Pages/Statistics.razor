@@ -1,4 +1,10 @@
 ﻿@page "/statistics"
+
+@attribute [Authorize(Roles = "User")]
+
+@using Microsoft.AspNetCore.Authorization
+
+
 <h3>Statistics</h3>
 
 @code {

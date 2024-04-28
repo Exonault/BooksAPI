@@ -17,6 +17,7 @@ builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<ILibraryMangaService, LibraryMangaService>();
 builder.Services.AddHttpClient();
 
+builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddBlazoredSessionStorage();
 
 MapperConfiguration mapperConfig = new MapperConfiguration(config =>

@@ -1,6 +1,5 @@
 ﻿@inherits LayoutComponentBase
 
-
 <MudThemeProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
@@ -11,10 +10,19 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="/login">Login</a>
-            <a href="/register">Register</a>
-        </div>
+        <AuthorizeView>
+            <Authorized>
+                <div class="top-row px-4">
+                    <h3>Test auth message</h3>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="top-row px-4">
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
 
         <article class="content px-4">
             @Body
@@ -27,4 +35,3 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
-
