@@ -1,30 +1,26 @@
 ﻿@page "/login"
 @attribute [AllowAnonymous]
 
-
-@using System.IdentityModel.Tokens.Jwt
-@using System.Security.Claims
 @using Blazored.SessionStorage
+@using BooksAPI.FE.Authentication
+@using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.User
 @using BooksAPI.FE.Interfaces
 @using BooksAPI.FE.Model
-@using Microsoft.AspNetCore.Authentication
-@using Microsoft.AspNetCore.Components.Authorization
 
 @inject ISessionStorageService SessionStorageService;
 @inject IUserService UserService;
 @inject NavigationManager NavigationManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject IAuthorizationService AuthorizationService
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 
 <PageTitle>Login</PageTitle>
 <h3 class="text-center mb-4">Login</h3>
-@if (true)
+@if (_error)
 {
     <MudGrid Justify="Justify.Center">
         <MudItem md="4" xs="4">
             <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
-                Login failed
+               Login failed!
             </MudAlert>
         </MudItem>
     </MudGrid>
@@ -55,10 +51,6 @@
 
     protected override bool ShouldRender() => _shouldRender;
 
-    [CascadingParameter]
-    public HttpContext HttpContext { get; set; }
-    
-
     private async void OnValidSubmit()
     {
         LoginResponse? loginResponse = await UserService.Login(_model);
@@ -71,23 +63,19 @@
         else
         {
             //await SessionStorageService.SetItemAsync("kitka", "kurwa");
-            await SessionStorageService.SetItemAsync("JWT_KEY", loginResponse.Token);
-            await SessionStorageService.SetItemAsync("REFRESH_KEY", loginResponse.RefreshToken);
-            
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.ReadJwtToken(loginResponse.Token);
-            
-            //TODO try with this for auth state
-            // HttpContext.SignInAsync()
-            
+            await SessionStorageService.SetItemAsync(ApplicationConstants.JwtKey, loginResponse.Token);
+            await SessionStorageService.SetItemAsync(ApplicationConstants.RefreshKey, loginResponse.RefreshToken);
+
+            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).UpdateUserState(loginResponse.Token);
+
             NavigationManager.NavigateTo("/");
         }
     }
-    
+
     private void CloseAlert()
     {
         _error = false;
         StateHasChanged();
     }
-    
+
 }

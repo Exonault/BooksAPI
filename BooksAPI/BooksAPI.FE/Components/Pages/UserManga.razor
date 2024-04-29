@@ -1,7 +1,5 @@
 ﻿@page "/userManga"
-@attribute [Authorize(Roles = "User")]
-
-@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "UserPolicy")]
 
 
 <h3>UserManga</h3>

@@ -8,6 +8,7 @@ public interface IUserService
     public Task<RegisterResponse?> Register(RegisterModel model);
 
     public Task<LoginResponse?> Login(LoginModel model);
-    
-    // public Task Refresh();
+
+    public Task Logout(string token);
+    public Task<bool> Refresh();
 }

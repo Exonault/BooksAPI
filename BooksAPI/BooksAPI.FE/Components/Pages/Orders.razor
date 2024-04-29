@@ -1,10 +1,51 @@
 ﻿@page "/orders"
+@using System.Security.Claims
 
-@attribute [Authorize(Roles = "User")]
+@inject NavigationManager NavigationManager;
 
+@attribute [Authorize(Policy = "UserPolicy")]
 
 <h3>Orders</h3>
 
+<AuthorizeView Policy="UserPolicy">
+    <Authorized>
+        kitka user <br/>
+        kitka userName: @userName; <br/>
+    </Authorized>
+    <NotAuthorized>
+        kikta not user <br/>
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Policy="AdminPolicy">
+    <Authorized>
+        kitka admin <br/>
+        kitka userName: @userName;<br/>
+    </Authorized>
+    <NotAuthorized>
+        kitka not admin <br/>
+    </NotAuthorized>
+</AuthorizeView>
+
+
 @code {
-    
+    [CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+
+    private string userName = "noName";
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState authenticationStateAsync = await authenticationState;
+        
+        Claim? claim = authenticationStateAsync.User.Claims.FirstOrDefault(c => c.Type == "unique_name");
+
+        if (claim is null)
+        {
+            userName = "no name";
+        }
+        else userName = claim.Value;
+
+        await base.OnInitializedAsync();
+    }
+
 }

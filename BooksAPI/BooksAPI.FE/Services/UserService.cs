@@ -1,6 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Headers;
+using System.Text.Json;
 using AutoMapper;
-using Blazored.SessionStorage;
 using BooksAPI.FE.Contracts.User;
 using BooksAPI.FE.Interfaces;
 using BooksAPI.FE.Model;
@@ -78,5 +78,28 @@ public class UserService : IUserService
         {
             return null;
         }
+    }
+
+    public async Task Logout(string token)
+    {
+        HttpClient httpClient = _clientFactory.CreateClient();
+        
+        string uri = string.Format(_userUrl, "revoke");
+        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, uri);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        
+        try
+        {
+            HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
+        }
+        catch (Exception e)
+        {
+            // return null;
+        }
+    }
+
+    public Task<bool> Refresh()
+    {
+        throw new NotImplementedException();
     }
 }

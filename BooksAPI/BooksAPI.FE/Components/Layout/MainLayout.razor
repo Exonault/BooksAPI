@@ -1,4 +1,14 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Security.Claims
+@using Blazored.SessionStorage
+@using BooksAPI.FE.Authentication
+@using BooksAPI.FE.Constants
+@using BooksAPI.FE.Interfaces
+@inherits LayoutComponentBase
+
+@inject ISessionStorageService SessionStorageService;
+@inject IUserService UserService;
+@inject NavigationManager NavigationManager;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 
 <MudThemeProvider/>
 <MudDialogProvider/>
@@ -11,19 +21,21 @@
 
     <main>
         <AuthorizeView>
-            <Authorized>
-                <div class="top-row px-4">
-                    <h3>Test auth message</h3>
-                </div>
-            </Authorized>
             <NotAuthorized>
                 <div class="top-row px-4">
                     <a href="/login">Login</a>
                     <a href="/register">Register</a>
                 </div>
             </NotAuthorized>
+            <Authorized>
+                <div class="top-row px-4">
+                    <h3>Kitka @GetUserName(context.User)</h3>
+                    <a @onclick="Logout"> Logout</a>
+                </div>
+            </Authorized>
         </AuthorizeView>
 
+        <button class="btn btn-primary" @onclick="GetClaimsPrincipalData">Test</button>
         <article class="content px-4">
             @Body
         </article>
@@ -35,3 +47,48 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code
+{
+    private async Task Logout()
+    {
+        string token = await SessionStorageService.GetItemAsync<string>(ApplicationConstants.JwtKey);
+
+        await UserService.Logout(token);
+
+        await SessionStorageService.RemoveItemAsync(ApplicationConstants.JwtKey);
+        await SessionStorageService.RemoveItemAsync(ApplicationConstants.RefreshKey);
+        
+        ((CustomAuthenticationStateProvider)AuthenticationStateProvider).UpdateUserState("");
+        
+        NavigationManager.NavigateTo("/", true);
+    }
+
+    private string GetUserName(ClaimsPrincipal user)
+    {
+        Claim? claim = user.Claims.FirstOrDefault(c => c.Type == "unique_name");
+
+        if (claim is null)
+        {
+            return "no name";
+        }
+        
+        return claim.Value;
+    }
+    
+    private async Task GetClaimsPrincipalData()
+    {
+        var authState = await AuthenticationStateProvider
+            .GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            Console.WriteLine($"{user.Identity.Name} is authenticated.");
+        }
+        else
+        {
+            Console.WriteLine("The user is NOT authenticated.");
+        }
+    }
+}
