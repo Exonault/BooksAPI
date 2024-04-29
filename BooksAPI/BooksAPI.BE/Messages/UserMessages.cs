@@ -24,7 +24,7 @@ public static class UserMessages
         
         public const string UserNotFound = "User not found.";
 
-        public const string InvalidEmailPassword = "Invalid email/password.";
+        public const string InvalidUsernamePassword = "Invalid username/password.";
     }
     
 }

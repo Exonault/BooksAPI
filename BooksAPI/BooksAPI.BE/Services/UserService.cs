@@ -98,7 +98,7 @@ public class UserService : IUserService
 
         if (!checkPassword)
         {
-            throw new InvalidEmailPasswordException(UserMessages.ValidationMessages.InvalidEmailPassword);
+            throw new InvalidEmailPasswordException(UserMessages.ValidationMessages.InvalidUsernamePassword);
         }
 
         List<string> roles = await _repository.GetAllRoles(user);
