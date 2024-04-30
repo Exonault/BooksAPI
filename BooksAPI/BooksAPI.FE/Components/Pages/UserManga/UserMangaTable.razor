@@ -1,0 +1,67 @@
+﻿@using BooksAPI.FE.Contracts.UserManga
+
+<MudTable Items="Mangas">
+    <HeaderContent>
+        <MudTh>Cover</MudTh>
+        <MudTh>Title</MudTh>
+        <MudTh>Reading status</MudTh>
+        <MudTh>Collection status</MudTh>
+        <MudTh>Collected volumes</MudTh>
+        <MudTh>Read volumes</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Cover" Style="width: 200px; height: 280px;">
+            <MudImage Src="@context.LibraryMangaResponse.MainImageUrl" Width="200" Height="280"></MudImage>
+        </MudTd>
+        <MudTd DataLabel="Title">
+            <MudText Typo="Typo.h6">@context.LibraryMangaResponse.Title</MudText>
+        </MudTd>
+        <MudTd DataLabel="Reading status">
+            <MudText Typo="Typo.body1">@FormatReadingStatus(context.ReadingStatus)</MudText>
+        </MudTd>
+        <MudTd DataLabel="Collection status">
+            <MudText Typo="Typo.body1">@FormatCollectionStatus(context.CollectionStatus)</MudText>
+        </MudTd>
+        <MudTd DataLabel="Collected volumes">
+            <MudText Typo="Typo.body1">@context.CollectedVolumes</MudText>
+        </MudTd>
+        <MudTd DataLabel="Read volumes">
+            <MudText Typo="Typo.body1">@context.ReadVolumes</MudText>
+        </MudTd>
+        <MudTd DataLabel="Actions"></MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+
+    [Parameter]
+    public IEnumerable<UserMangaResponse> Mangas { get; set; }
+    
+    private string FormatCollectionStatus(string collectionStatus)
+    {
+        if (collectionStatus == "InProgress")
+        {
+            return "In progress";
+        }
+        else if (collectionStatus == "PlanToCollect")
+        {
+            return "Plan to collect";
+        }
+        else return collectionStatus;
+    }
+
+    private string FormatReadingStatus(string readingStatus)
+    {
+        if (readingStatus == "OnHold")
+        {
+            return "On hold";
+        }
+        else if (readingStatus == "PlanToRead")
+        {
+            return "Plan to read";
+        }
+        else return readingStatus;
+    }
+    
+}

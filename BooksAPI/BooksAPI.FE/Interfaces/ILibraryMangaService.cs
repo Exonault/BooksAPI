@@ -1,4 +1,4 @@
-﻿using BooksAPI.FE.Contracts.LibraryComic;
+﻿using BooksAPI.FE.Contracts.LibraryManga;
 
 namespace BooksAPI.FE.Interfaces;
 

@@ -10,5 +10,5 @@ public interface IUserService
     public Task<LoginResponse?> Login(LoginModel model);
 
     public Task Logout(string token);
-    public Task<bool> Refresh();
+    public Task<bool> Refresh(string token, string refreshToken);
 }

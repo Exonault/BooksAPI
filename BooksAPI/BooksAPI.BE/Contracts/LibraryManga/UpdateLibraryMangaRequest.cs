@@ -1,6 +1,6 @@
-﻿using BooksAPI.FE.Contracts.Author;
+﻿using BooksAPI.BE.Contracts.Author;
 
-namespace BooksAPI.FE.Contracts.LibraryComic;
+namespace BooksAPI.BE.Contracts.LibraryManga;
 
 public class UpdateLibraryMangaRequest
 {

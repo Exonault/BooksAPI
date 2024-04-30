@@ -1,4 +1,4 @@
-﻿namespace BooksAPI.FE.Contracts.UserComic;
+﻿namespace BooksAPI.BE.Contracts.UserManga;
 
 public class UpdateUserMangaRequest
 {

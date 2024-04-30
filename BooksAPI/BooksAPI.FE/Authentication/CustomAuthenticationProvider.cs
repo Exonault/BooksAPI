@@ -1,27 +1,26 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.JSInterop;
 
 namespace BooksAPI.FE.Authentication;
 
 public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 {
-    private readonly ISessionStorageService _sessionStorageService;
     private readonly ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public CustomAuthenticationStateProvider(ISessionStorageService sessionStorageService, IJSRuntime jsRuntime)
+    public CustomAuthenticationStateProvider(IHttpContextAccessor httpContextAccessor)
     {
-        _sessionStorageService = sessionStorageService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         try
         {
-            var token = await _sessionStorageService.GetItemAsync<string>("JWT_KEY");
+            _httpContextAccessor.HttpContext.Request.Cookies.TryGetValue("token", out string token);
+            
             if (string.IsNullOrEmpty(token))
             {
                 return new AuthenticationState(_anonymous);

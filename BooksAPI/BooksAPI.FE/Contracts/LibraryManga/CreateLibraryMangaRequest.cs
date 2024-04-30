@@ -1,15 +1,14 @@
-﻿using BooksAPI.BE.Contracts.Author;
+﻿using BooksAPI.FE.Contracts.Author;
 
-namespace BooksAPI.BE.Contracts.LibraryComic;
+namespace BooksAPI.FE.Contracts.LibraryManga;
 
-public class UpdateLibraryMangaRequest
+public class CreateLibraryMangaRequest
 {
     public string Title { get; set; } = string.Empty;
     public string DemographicType { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
     public string PublishingStatus { get; set; } = string.Empty;
-    public int? TotalVolumes { get; set; }
-    
     public string? MainImageUrl { get; set; } = string.Empty;
+    public int? TotalVolumes { get; set; }
     public List<AuthorRequest> Authors { get; set; } = new List<AuthorRequest>();
 }

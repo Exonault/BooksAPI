@@ -1,14 +1,10 @@
 ﻿@using System.Security.Claims
-@using Blazored.SessionStorage
-@using BooksAPI.FE.Authentication
-@using BooksAPI.FE.Constants
 @using BooksAPI.FE.Interfaces
 @inherits LayoutComponentBase
 
-@inject ISessionStorageService SessionStorageService;
 @inject IUserService UserService;
 @inject NavigationManager NavigationManager;
-@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject IJSRuntime JsRuntime;
 
 <MudThemeProvider/>
 <MudDialogProvider/>
@@ -35,7 +31,6 @@
             </Authorized>
         </AuthorizeView>
 
-        <button class="btn btn-primary" @onclick="GetClaimsPrincipalData">Test</button>
         <article class="content px-4">
             @Body
         </article>
@@ -52,15 +47,12 @@
 {
     private async Task Logout()
     {
-        string token = await SessionStorageService.GetItemAsync<string>(ApplicationConstants.JwtKey);
+        string[] tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
 
-        await UserService.Logout(token);
+        await UserService.Logout(tokens[0]);
 
-        await SessionStorageService.RemoveItemAsync(ApplicationConstants.JwtKey);
-        await SessionStorageService.RemoveItemAsync(ApplicationConstants.RefreshKey);
-        
-        ((CustomAuthenticationStateProvider)AuthenticationStateProvider).UpdateUserState("");
-        
+        await JsRuntime.InvokeVoidAsync("deleteCookie", $"{tokens[0]}", $"{tokens[1]}");
+
         NavigationManager.NavigateTo("/", true);
     }
 
@@ -72,23 +64,7 @@
         {
             return "no name";
         }
-        
-        return claim.Value;
-    }
-    
-    private async Task GetClaimsPrincipalData()
-    {
-        var authState = await AuthenticationStateProvider
-            .GetAuthenticationStateAsync();
-        var user = authState.User;
 
-        if (user.Identity is not null && user.Identity.IsAuthenticated)
-        {
-            Console.WriteLine($"{user.Identity.Name} is authenticated.");
-        }
-        else
-        {
-            Console.WriteLine("The user is NOT authenticated.");
-        }
+        return claim.Value;
     }
 }

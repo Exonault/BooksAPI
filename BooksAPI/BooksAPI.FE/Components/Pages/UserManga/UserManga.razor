@@ -1,0 +1,116 @@
+﻿@page "/userManga"
+@using BooksAPI.FE.Contracts.UserManga
+@using BooksAPI.FE.Interfaces
+@using BooksAPI.FE.Util
+@attribute [Authorize(Policy = "UserPolicy")]
+
+@inject IJSRuntime JsRuntime;
+@inject IUserMangaService UserMangaService;
+<PageTitle>UserManga</PageTitle>
+
+<h3 style="text-align: center">UserManga</h3>
+
+@if (_isDataFetched)
+{
+    @if (_error)
+    {
+        <MudGrid Justify="Justify.Center">
+            <MudItem md="4" xs="4">
+                <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
+                    Unable to get mangas. Please try again later.
+                </MudAlert>
+            </MudItem>
+        </MudGrid>
+    }
+    else
+    {
+        <MudTabs Elevation="2" ApplyEffectsToContainer="true" Centered="true">
+            <MudTabPanel Text="All">
+                <UserMangaTable Mangas="_mangas"/>
+            </MudTabPanel>
+            <MudTabPanel Text="Reading">
+                <UserMangaTable Mangas="@(_mangas.Where(x => x.ReadingStatus == "Reading").ToList())"></UserMangaTable>
+            </MudTabPanel>
+            <MudTabPanel Text="On hold">
+                <UserMangaTable Mangas="@(_mangas.Where(x => x.ReadingStatus == "OnHold").ToList())"></UserMangaTable>
+            </MudTabPanel>
+            <MudTabPanel Text="Dropped">
+                <UserMangaTable Mangas="@(_mangas.Where(x => x.ReadingStatus == "Dropped").ToList())"></UserMangaTable>
+            </MudTabPanel>
+            <MudTabPanel Text="Plan to read">
+                <UserMangaTable Mangas="@(_mangas.Where(x => x.ReadingStatus == "PlanToRead").ToList())"></UserMangaTable>
+            </MudTabPanel>
+            <MudTabPanel Text="Collected">
+                <UserMangaTable Mangas="@(_mangas.Where(x => x.CollectionStatus == "Collected").ToList())"></UserMangaTable>
+            </MudTabPanel>
+            <MudTabPanel Text="In progress">
+                <UserMangaTable Mangas="@(_mangas.Where(x => x.CollectionStatus == "InProgress").ToList())"></UserMangaTable>
+            </MudTabPanel>
+            <MudTabPanel Text="Plan to Collect">
+                <UserMangaTable Mangas="@(_mangas.Where(x => x.CollectionStatus == "PlanToCollect").ToList())"></UserMangaTable>
+            </MudTabPanel>
+        </MudTabs>
+    }
+}
+else
+{
+    <div class="mt-4">
+        <MudProgressLinear Color="Color.Primary" Size="Size.Large" Indeterminate="true" Class="my-7"/>
+    </div>
+}
+
+@code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    private bool _shouldRender = false;
+    private bool _error = false;
+    private bool _isDataFetched = false;
+
+    private string _userId;
+
+    private IEnumerable<UserMangaResponse> _mangas = Array.Empty<UserMangaResponse>();
+
+    protected override bool ShouldRender() => _shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState state = await authenticationState;
+
+        _userId = UserUtil.GetUserId(state.User);
+        string[] tokens;
+        try
+        {
+            tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
+            await GetUserMangas(tokens);
+            _isDataFetched = true;
+        }
+        catch (Exception e)
+        {
+            _isDataFetched = false;
+        }
+    }
+
+    private async Task GetUserMangas(string[] tokens)
+    {
+        try
+        {
+            _mangas = await UserMangaService.GetUserMangas(tokens[0], tokens[1], _userId);
+            _shouldRender = true;
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            _error = true;
+            _shouldRender = true;
+        }
+    }
+
+    private void CloseAlert()
+    {
+        _error = false;
+        StateHasChanged();
+    }
+
+}

@@ -1,5 +1,5 @@
 ﻿using BooksAPI.BE.Constants;
-using BooksAPI.BE.Contracts.UserComic;
+using BooksAPI.BE.Contracts.UserManga;
 using BooksAPI.BE.Entities;
 using BooksAPI.BE.Exception;
 using BooksAPI.BE.Interfaces.Repositories;

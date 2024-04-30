@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BooksAPI.BE.Contracts.LibraryComic;
+using BooksAPI.BE.Contracts.LibraryManga;
 using BooksAPI.BE.Entities;
 
 namespace BooksAPI.BE.Mapping;

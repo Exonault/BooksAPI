@@ -1,4 +1,4 @@
-﻿using BooksAPI.BE.Contracts.LibraryComic;
+﻿using BooksAPI.BE.Contracts.LibraryManga;
 
 namespace BooksAPI.BE.Interfaces.Services;
 

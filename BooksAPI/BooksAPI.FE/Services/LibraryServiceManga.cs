@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using AutoMapper;
-using BooksAPI.FE.Contracts.LibraryComic;
+using BooksAPI.FE.Contracts.LibraryManga;
 using BooksAPI.FE.Interfaces;
 
 namespace BooksAPI.FE.Services;
@@ -32,17 +32,18 @@ public class LibraryMangaService : ILibraryMangaService
                 throw new Exception();
             }
 
-            await using Stream responseStream = await responseMessage.Content.ReadAsStreamAsync();
-
-            List<LibraryMangaResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<LibraryMangaResponse>>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                List<LibraryMangaResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<LibraryMangaResponse>>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
         }
         catch (Exception e)
         {

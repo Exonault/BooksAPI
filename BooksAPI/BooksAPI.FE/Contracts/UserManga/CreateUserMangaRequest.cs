@@ -1,6 +1,6 @@
-﻿namespace BooksAPI.BE.Contracts.UserComic;
+﻿namespace BooksAPI.FE.Contracts.UserManga;
 
-public class UpdateUserMangaRequest
+public class CreateUserMangaRequest
 {
     public string ReadingStatus { get; set; } = string.Empty;
     

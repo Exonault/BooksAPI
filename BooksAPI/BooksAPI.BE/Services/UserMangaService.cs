@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using BooksAPI.BE.Contracts.LibraryComic;
-using BooksAPI.BE.Contracts.UserComic;
+using BooksAPI.BE.Contracts.LibraryManga;
+using BooksAPI.BE.Contracts.UserManga;
 using BooksAPI.BE.Entities;
 using BooksAPI.BE.Exception;
 using BooksAPI.BE.Interfaces.Repositories;

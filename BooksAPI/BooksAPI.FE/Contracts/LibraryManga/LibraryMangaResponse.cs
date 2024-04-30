@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using BooksAPI.FE.Contracts.Author;
 
-namespace BooksAPI.FE.Contracts.LibraryComic;
+namespace BooksAPI.FE.Contracts.LibraryManga;
 
 public class LibraryMangaResponse
 {
