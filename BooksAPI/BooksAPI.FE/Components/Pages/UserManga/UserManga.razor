@@ -1,4 +1,5 @@
 ﻿@page "/userManga"
+@using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.UserManga
 @using BooksAPI.FE.Interfaces
 @using BooksAPI.FE.Util
@@ -26,28 +27,41 @@
     {
         <MudTabs Elevation="2" ApplyEffectsToContainer="true" Centered="true">
             <MudTabPanel Text="All">
-                <UserMangaTable Mangas="_mangas"/>
+                <UserMangaTable Mangas="@(_mangas)"/>
             </MudTabPanel>
-            <MudTabPanel Text="Reading">
-                <UserMangaTable Mangas="@(_mangas.Where(x => x.ReadingStatus == "Reading").ToList())"></UserMangaTable>
+            
+            <MudTabPanel Text="Reading status">
+                <MudTabs Elevation="2" ApplyEffectsToContainer="true" Centered="true">
+                    <MudTabPanel Text="Reading">
+                        <UserMangaTable Mangas="@(_mangas.Where(x => x.ReadingStatus == UserMangaConstants.ReadingStatus.Reading).ToList())"/>
+                    </MudTabPanel>
+                    <MudTabPanel Text="Finished">
+                        <UserMangaTable Mangas="@(_mangas.Where(x => x.ReadingStatus == UserMangaConstants.ReadingStatus.Finished).ToList())"/>
+                    </MudTabPanel>
+                    <MudTabPanel Text="On hold">
+                        <UserMangaTable Mangas="@(_mangas.Where(x => x.ReadingStatus == UserMangaConstants.ReadingStatus.OnHold).ToList())"/>
+                    </MudTabPanel>
+                    <MudTabPanel Text="Dropped">
+                        <UserMangaTable Mangas="@(_mangas.Where(x => x.ReadingStatus == UserMangaConstants.ReadingStatus.Dropped).ToList())"/>
+                    </MudTabPanel>
+                    <MudTabPanel Text="Plan to read">
+                        <UserMangaTable Mangas="@(_mangas.Where(x => x.ReadingStatus == UserMangaConstants.ReadingStatus.PlanToRead).ToList())"/>
+                    </MudTabPanel>
+                </MudTabs>
             </MudTabPanel>
-            <MudTabPanel Text="On hold">
-                <UserMangaTable Mangas="@(_mangas.Where(x => x.ReadingStatus == "OnHold").ToList())"></UserMangaTable>
-            </MudTabPanel>
-            <MudTabPanel Text="Dropped">
-                <UserMangaTable Mangas="@(_mangas.Where(x => x.ReadingStatus == "Dropped").ToList())"></UserMangaTable>
-            </MudTabPanel>
-            <MudTabPanel Text="Plan to read">
-                <UserMangaTable Mangas="@(_mangas.Where(x => x.ReadingStatus == "PlanToRead").ToList())"></UserMangaTable>
-            </MudTabPanel>
-            <MudTabPanel Text="Collected">
-                <UserMangaTable Mangas="@(_mangas.Where(x => x.CollectionStatus == "Collected").ToList())"></UserMangaTable>
-            </MudTabPanel>
-            <MudTabPanel Text="In progress">
-                <UserMangaTable Mangas="@(_mangas.Where(x => x.CollectionStatus == "InProgress").ToList())"></UserMangaTable>
-            </MudTabPanel>
-            <MudTabPanel Text="Plan to Collect">
-                <UserMangaTable Mangas="@(_mangas.Where(x => x.CollectionStatus == "PlanToCollect").ToList())"></UserMangaTable>
+            
+            <MudTabPanel Text="Collection status">
+                <MudTabs Elevation="2" ApplyEffectsToContainer="true" Centered="true">
+                    <MudTabPanel Text="Collected">
+                        <UserMangaTable Mangas="@(_mangas.Where(x => x.CollectionStatus == UserMangaConstants.CollectingStatus.Collected).ToList())"/>
+                    </MudTabPanel>
+                    <MudTabPanel Text="In progress">
+                        <UserMangaTable Mangas="@(_mangas.Where(x => x.CollectionStatus == UserMangaConstants.CollectingStatus.InProgress).ToList())"/>
+                    </MudTabPanel>
+                    <MudTabPanel Text="Plan to Collect">
+                        <UserMangaTable Mangas="@(_mangas.Where(x => x.CollectionStatus == UserMangaConstants.CollectingStatus.PlanToCollect).ToList())"/>
+                    </MudTabPanel>
+                </MudTabs>
             </MudTabPanel>
         </MudTabs>
     }
@@ -63,7 +77,7 @@ else
 
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
-
+    
     private bool _shouldRender = false;
     private bool _error = false;
     private bool _isDataFetched = false;

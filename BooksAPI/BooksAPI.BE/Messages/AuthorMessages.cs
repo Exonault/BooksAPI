@@ -8,5 +8,5 @@ public class AuthorMessages
     public const string LastNameRequired = "Last name is required";
     public const string RoleRequired = "Role is required";
     public static readonly string RoleMessage =
-        $"Role must be one of the following: {string.Join(" ", AuthorConstats.AuthorRole.AuthorRoles)}";
+        $"Role must be one of the following: {string.Join(" ", AuthorConstants.AuthorRole.AuthorRoles)}";
 }

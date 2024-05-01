@@ -16,7 +16,7 @@ public static class LibraryMangaMessages
     public const string TypeRequiredMessage = "Type is required";
     
     public static readonly string ComicTypeValidationMessage =
-        $"Comic type must be one of the following: " + String.Join(", ", LibraryMangaConstants.ComicType.ComicTypes);
+        $"Comic type must be one of the following: " + String.Join(", ", LibraryMangaConstants.Type.ComicTypes);
 
     public const string PublishingStatusRequiredMessage = "Publishing status is required.";
 

@@ -20,7 +20,7 @@ public class AuthorValidator:AbstractValidator<Author>
         RuleFor(x => x.Role)
             .NotEmpty()
             .WithMessage(AuthorMessages.RoleRequired)
-            .Must(x=> AuthorConstats.AuthorRole.AuthorRoles.Contains(x))
+            .Must(x=> AuthorConstants.AuthorRole.AuthorRoles.Contains(x))
             .WithMessage(AuthorMessages.RoleMessage);
     }
 }

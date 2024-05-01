@@ -16,7 +16,7 @@ INSERT INTO public."UserMangas" ("Id","ReadingStatus","ReadVolumes","CollectedVo
 	 (2,'Reading',17,17,18,'InProgress','31643fae-cec0-4756-bf85-aa333bee61b4',118),
 	 (3,'Reading',10,10,18,'InProgress','31643fae-cec0-4756-bf85-aa333bee61b4',23),
 	 (4,'Finished',23,23,18,'Collected','31643fae-cec0-4756-bf85-aa333bee61b4',80),
-	 (5,'Reading',13,16,18,'InProgress','31643fae-cec0-4756-bf85-aa333bee61b4',8),
+	 (5,'OnHold',13,16,18,'InProgress','31643fae-cec0-4756-bf85-aa333bee61b4',8),
 	 (6,'Reading',14,14,18,'InProgress','31643fae-cec0-4756-bf85-aa333bee61b4',9),
 	 (7,'Reading',14,14,18,'InProgress','31643fae-cec0-4756-bf85-aa333bee61b4',172),
 	 (8,'Reading',21,21,18,'InProgress','31643fae-cec0-4756-bf85-aa333bee61b4',26),

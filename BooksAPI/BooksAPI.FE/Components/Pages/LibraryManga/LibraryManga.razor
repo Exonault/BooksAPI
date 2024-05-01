@@ -1,6 +1,7 @@
 ﻿@page "/libraryManga/{pageNumber:int}"
 @attribute [AllowAnonymous]
 
+@using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.Author
 @using BooksAPI.FE.Contracts.LibraryManga
 @using BooksAPI.FE.Interfaces
@@ -10,7 +11,7 @@
 
 <PageTitle>LibraryManga</PageTitle>
 
-<h3 style="text-align: center">All Mangas</h3>
+<h3 class="text-center">All Mangas</h3>
 @if (_isDataFetched)
 {
     @if (_error)
@@ -33,8 +34,8 @@
                 <MudTh>Actions</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Cover" Style="width: 200px; height: 280px;">
-                    <MudImage Src="@context.MainImageUrl" Width="200" Height="280"></MudImage>
+                <MudTd DataLabel="Cover">
+                    <MudImage Src="@context.MainImageUrl" Width="200" Height="280" Fluid="true"/>
                 </MudTd>
                 <MudTd DataLabel="Title" Class="w-50">
                     <MudText Typo="Typo.h6">@context.Title</MudText>
@@ -129,7 +130,7 @@ else
 
     private string FormatPublishingStatus(string status)
     {
-        if ("OnHiatus" == status)
+        if (LibraryMangaConstants.PublishingType.OnHiatus == status)
         {
             return "On Hiatus";
         }
@@ -139,12 +140,12 @@ else
 
     private string FormatType(string type)
     {
-        if ("LightNovel" == type)
+        if (LibraryMangaConstants.Type.LightNovel == type)
         {
             return "Light novel";
         }
 
-        if ("OneShot" == type)
+        if (LibraryMangaConstants.Type.OneShot == type)
         {
             return "One shot";
         }
@@ -165,7 +166,7 @@ else
     private string FormatAuthor(AuthorResponse author)
     {
         string role = "";
-        if (author.Role == "StoryAndArt")
+        if (author.Role == AuthorConstants.AuthorRole.StoryAndArt)
         {
             role = "Story & Art";
         }

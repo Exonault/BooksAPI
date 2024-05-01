@@ -1,4 +1,4 @@
-﻿namespace BooksAPI.BE.Constants;
+﻿namespace BooksAPI.FE.Constants;
 
 public static class UserMangaConstants
 {

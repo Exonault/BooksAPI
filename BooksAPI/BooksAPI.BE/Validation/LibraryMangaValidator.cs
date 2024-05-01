@@ -22,7 +22,7 @@ public class LibraryMangaValidator : AbstractValidator<LibraryManga>
         RuleFor(x => x.Type)
             .NotEmpty()
             .WithMessage(LibraryMangaMessages.TypeRequiredMessage)
-            .Must(x => LibraryMangaConstants.ComicType.ComicTypes.Contains(x))
+            .Must(x => LibraryMangaConstants.Type.ComicTypes.Contains(x))
             .WithMessage(LibraryMangaMessages.ComicTypeValidationMessage);
 
         RuleFor(x => x.PublishingStatus)

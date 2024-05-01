@@ -11,8 +11,8 @@
         <MudTh>Actions</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Cover" Style="width: 200px; height: 280px;">
-            <MudImage Src="@context.LibraryMangaResponse.MainImageUrl" Width="200" Height="280"></MudImage>
+        <MudTd DataLabel="Cover">
+            <MudImage Src="@context.LibraryMangaResponse.MainImageUrl" Width="150" Height="210" Fluid="true"/>
         </MudTd>
         <MudTd DataLabel="Title">
             <MudText Typo="Typo.h6">@context.LibraryMangaResponse.Title</MudText>

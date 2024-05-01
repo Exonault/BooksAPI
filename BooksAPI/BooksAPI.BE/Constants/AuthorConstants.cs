@@ -1,6 +1,6 @@
 ﻿namespace BooksAPI.BE.Constants;
 
-public class AuthorConstats
+public static class AuthorConstants
 {
     public static class AuthorRole
     {
