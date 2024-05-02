@@ -14,7 +14,8 @@ public class StatisticsService : IStatisticsService
     private readonly IUserMangaRepository _userMangaRepository;
     private readonly IUserRepository _userRepository;
 
-    public StatisticsService(IOrderRepository orderRepository, IUserMangaRepository userMangaRepository, IUserRepository userRepository)
+    public StatisticsService(IOrderRepository orderRepository, IUserMangaRepository userMangaRepository,
+        IUserRepository userRepository)
     {
         _orderRepository = orderRepository;
         _userMangaRepository = userMangaRepository;
@@ -37,12 +38,11 @@ public class StatisticsService : IStatisticsService
         return response;
     }
 
-   
 
     public async Task<List<UserMangaTypeResponse>> GetUserMangaBreakdownByType(string userId)
     {
         await ValidateUser(userId);
-        
+
         List<UserManga> userMangas = await _userMangaRepository.GetUserMangaByUserId(userId);
 
         List<UserMangaTypeResponse> response = userMangas.GroupBy(x => x.LibraryManga.Type)
@@ -58,7 +58,7 @@ public class StatisticsService : IStatisticsService
     public async Task<List<UserMangaPublishingStatusResponse>> GetUserMangaBreakdownByPublishingStatus(string userId)
     {
         await ValidateUser(userId);
-        
+
         List<UserManga> userMangas = await _userMangaRepository.GetUserMangaByUserId(userId);
 
         List<UserMangaPublishingStatusResponse> response = userMangas.GroupBy(x => x.LibraryManga.PublishingStatus)
@@ -75,9 +75,9 @@ public class StatisticsService : IStatisticsService
     public async Task<List<UserMangaReadingStatusResponse>> GetUserMangaBreakdownByReadingStatus(string userId)
     {
         await ValidateUser(userId);
-        
+
         List<UserManga> userMangas = await _userMangaRepository.GetUserMangaByUserId(userId);
-        
+
         List<UserMangaReadingStatusResponse> response = userMangas.GroupBy(x => x.ReadingStatus)
             .Select(x => new UserMangaReadingStatusResponse()
             {
@@ -92,9 +92,9 @@ public class StatisticsService : IStatisticsService
     public async Task<List<UserMangaCollectionStatusResponse>> GetUserMangaBreakdownByCollectionStatus(string userId)
     {
         await ValidateUser(userId);
-        
+
         List<UserManga> userMangas = await _userMangaRepository.GetUserMangaByUserId(userId);
-        
+
         List<UserMangaCollectionStatusResponse> response = userMangas.GroupBy(x => x.CollectionStatus)
             .Select(x => new UserMangaCollectionStatusResponse()
             {
@@ -109,7 +109,7 @@ public class StatisticsService : IStatisticsService
     public async Task<UserMangaTotalSpendingResponse> GetUserMangaBreakdownFromTotalSpending(string userId)
     {
         await ValidateUser(userId);
-        
+
         List<UserManga> userMangas = await _userMangaRepository.GetUserMangaByUserId(userId);
 
         decimal totalPrice = 0.0m;
@@ -124,7 +124,7 @@ public class StatisticsService : IStatisticsService
                 Price = priceForSeries,
                 Title = userManga.LibraryManga.Title,
             };
-            
+
             mappings.Add(mapping);
             totalPrice += priceForSeries;
         }
@@ -138,9 +138,35 @@ public class StatisticsService : IStatisticsService
         return response;
     }
 
+    public async Task<GeneralStatisticsResponse> GetGeneralStatistics(string userId)
+    {
+        await ValidateUser(userId);
+
+        List<UserManga> userMangas = await _userMangaRepository.GetUserMangaByUserId(userId);
+
+        decimal totalSpending = Decimal.Zero;
+        int totalCollectedVolumes = 0;
+        int totalReadVolumes = 0;
+
+        foreach (UserManga userManga in userMangas)
+        {
+            totalCollectedVolumes += userManga.CollectedVolumes;
+            totalReadVolumes += userManga.ReadVolumes;
+            totalSpending += userManga.CollectedVolumes * userManga.PricePerVolume;
+        }
+
+        GeneralStatisticsResponse response = new GeneralStatisticsResponse
+        {
+            TotalSpending = totalSpending,
+            TotalCollectedVolumes = totalCollectedVolumes,
+            TotalReadVolumes = totalReadVolumes
+        };
+
+        return response;
+    }
+
     public async Task<List<OrdersByYearResponse>> GetOrderBreakdownByYear(string userId)
     {
-        
         await ValidateUser(userId);
         List<Order> orders = await _orderRepository.GetAllOrdersByUserId(userId);
 
@@ -159,7 +185,7 @@ public class StatisticsService : IStatisticsService
     public async Task<List<OrdersForMonthByYearResponse>> GetOrderBreakdownForMonthsByYear(string userId, int year)
     {
         await ValidateUser(userId);
-        
+
         List<Order> orders = await _orderRepository.GetAllOrdersByUserId(userId);
 
         List<Order> ordersFromYear = orders.Where(x => x.Date.Year == year).ToList();
@@ -174,9 +200,25 @@ public class StatisticsService : IStatisticsService
             .ToList();
 
         return response;
-
     }
-    
+
+    public async Task<List<OrderByPlaceResponse>> GetOrderBreakdownByPlace(string userId)
+    {
+        await ValidateUser(userId);
+
+        List<Order> orders = await _orderRepository.GetAllOrdersByUserId(userId);
+
+        List<OrderByPlaceResponse> result = orders.GroupBy(o => o.Place).Select(x => new OrderByPlaceResponse
+            {
+                Place = x.Key,
+                TotalOrders = x.Count(),
+                TotalValueOfOrders = x.Sum(o => o.Amount)
+            })
+            .ToList();
+
+        return result;
+    }
+
     private async Task ValidateUser(string userId)
     {
         User? user = await _userRepository.GetById(userId);

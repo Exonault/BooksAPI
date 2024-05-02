@@ -8,8 +8,8 @@ public static class UserValidationUtil
 {
     public static int IsUserIdFromRequestValidWithAuthUser(HttpContext httpContext, string userId)
     {
-        //For testing
-        return 100;
+        // For testing
+       // return 100;
         
         string? userIdFromAuth = GetUserIdFromAuth(httpContext);
 

@@ -14,7 +14,7 @@ public static class StatisticsEndpoints
     public static void MapStatisticsEndpoints(this WebApplication app)
     {
         app.MapGet("statistic/userManga/demographic/{userId}", GetUserMangaBreakdownByDemographic)
-            // .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(List<UserMangaDemographicResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
@@ -22,7 +22,7 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/userManga/type/{userId}", GetUserMangaBreakdownByType)
-            // .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(List<UserMangaTypeResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
@@ -30,7 +30,7 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/userManga/publishingStatus/{userId}", GetUserMangaBreakdownByPublishingStatus)
-            //.RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(List<UserMangaPublishingStatusResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
@@ -38,7 +38,7 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/userManga/readingStatus/{userId}", GetUserMangaBreakdownByReadingStatus)
-            // .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(List<UserMangaReadingStatusResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
@@ -46,7 +46,7 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/userManga/collectionStatus/{userId}", GetUserMangaBreakdownByCollectionStatus)
-            //.RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(List<UserMangaCollectionStatusResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
@@ -54,15 +54,23 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/userManga/totalSpending/{userId}", GetUserMangaBreakdownFromTotalSpending)
-            // .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(UserMangaTotalSpendingResponse), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
+        app.MapGet("statistic/userManga/general/{userId}", GetGeneralStatistics)
+            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .Produces(StatusCodes.Status200OK, typeof(GeneralStatisticsResponse), "application/json")
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
+
         app.MapGet("statistic/order/year/{userId}", GetOrderBreakdownByYear)
-            //.RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(List<OrdersByYearResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
@@ -70,12 +78,21 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/order/monthsByYear/{userId}", GetOrderBreakdownForMonthsByYear)
-            //.RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(List<OrdersForMonthByYearResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
+        
+        app.MapGet("statistics/order/place/{userId}", GetOrderBreakdownByPlace)
+            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .Produces(StatusCodes.Status200OK, typeof(List<OrderByPlaceResponse>), "application/json")
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError);
+            
     }
 
 
@@ -264,6 +281,37 @@ public static class StatisticsEndpoints
         }
     }
 
+    private static async Task<IResult> GetGeneralStatistics([FromRoute] string userId,
+        IStatisticsService service, HttpContext httpContext)
+    {
+        try
+        {
+            int statusCode = UserValidationUtil.IsUserIdFromRequestValidWithAuthUser(httpContext, userId);
+
+            switch (statusCode)
+            {
+                case StatusCodes.Status401Unauthorized:
+                    return Results.Unauthorized();
+                case StatusCodes.Status403Forbidden:
+                    return Results.Forbid();
+                default:
+                {
+                    GeneralStatisticsResponse response = await service.GetGeneralStatistics(userId);
+                    return Results.Ok(response);
+                }
+            }
+        }
+        catch (UserNotFoundException e)
+        {
+            return Results.NotFound(e.Message);
+        }
+        catch (System.Exception e)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+
     private static async Task<IResult> GetOrderBreakdownByYear([FromRoute] string userId,
         IStatisticsService service, HttpContext httpContext)
     {
@@ -310,6 +358,35 @@ public static class StatisticsEndpoints
                 {
                     List<OrdersForMonthByYearResponse> responses =
                         await service.GetOrderBreakdownForMonthsByYear(userId, year);
+                    return Results.Ok(responses);
+                }
+            }
+        }
+        catch (UserNotFoundException e)
+        {
+            return Results.NotFound(e.Message);
+        }
+        catch (System.Exception e)
+        {
+            return Results.StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> GetOrderBreakdownByPlace([FromRoute] string userId, IStatisticsService service,
+        HttpContext httpContext)
+    {
+        try
+        {
+            int statusCode = UserValidationUtil.IsUserIdFromRequestValidWithAuthUser(httpContext, userId);
+            switch (statusCode)
+            {
+                case StatusCodes.Status401Unauthorized:
+                    return Results.Unauthorized();
+                case StatusCodes.Status403Forbidden:
+                    return Results.Forbid();
+                default:
+                {
+                    List<OrderByPlaceResponse> responses = await service.GetOrderBreakdownByPlace(userId);
                     return Results.Ok(responses);
                 }
             }

@@ -17,11 +17,14 @@ public interface IStatisticsService
     Task<List<UserMangaCollectionStatusResponse>> GetUserMangaBreakdownByCollectionStatus(string userId);
 
     Task<UserMangaTotalSpendingResponse> GetUserMangaBreakdownFromTotalSpending(string userId);
-    
-    
+
+    Task<GeneralStatisticsResponse> GetGeneralStatistics(string userId);
     
     //Orders
     Task<List<OrdersByYearResponse>> GetOrderBreakdownByYear(string userId);
 
     Task<List<OrdersForMonthByYearResponse>> GetOrderBreakdownForMonthsByYear(string userId, int year);
+
+    Task<List<OrderByPlaceResponse>> GetOrderBreakdownByPlace(string userId);
+
 }
