@@ -3,6 +3,6 @@
 namespace BooksAPI.FE.Interfaces;
 
 public interface IUserMangaService
-{
-    public Task<IEnumerable<UserMangaResponse>> GetUserMangas(string token, string refreshToken, string userId);
+{ 
+    Task<IEnumerable<UserMangaResponse>> GetUserMangas(string token, string refreshToken, string userId);
 }

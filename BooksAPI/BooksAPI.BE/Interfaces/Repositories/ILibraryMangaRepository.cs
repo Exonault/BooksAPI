@@ -4,15 +4,15 @@ namespace BooksAPI.BE.Interfaces.Repositories;
 
 public interface ILibraryMangaRepository
 {
-    public Task CreateLibraryManga(LibraryManga libraryManga);
+    Task CreateLibraryManga(LibraryManga libraryManga);
 
-    public Task<LibraryManga?> GetLibraryMangaById(int id);
+    Task<LibraryManga?> GetLibraryMangaById(int id);
 
-    public Task<List<LibraryManga>> GetAllLibraryMangas();
+    Task<List<LibraryManga>> GetAllLibraryMangas();
 
-    public Task<List<LibraryManga>> GetLibraryMangasForPage(int pageIndex, int pageEntriesCount);
-    
-    public Task UpdateLibraryManga(LibraryManga libraryManga);
+    Task<List<LibraryManga>> GetLibraryMangasForPage(int pageIndex, int pageEntriesCount);
 
-    public Task DeleteLibraryManga(LibraryManga libraryManga);
+    Task UpdateLibraryManga(LibraryManga libraryManga);
+
+    Task DeleteLibraryManga(LibraryManga libraryManga);
 }

@@ -2,7 +2,7 @@
 
 public interface IRefreshTokenService
 {
-    public Task<bool> RefreshToken(string token, string refreshToken);
+    Task<bool> RefreshToken(string token, string refreshToken);
 
-    public Task<string[]> GetTokens();
+    Task<string[]> GetTokens();
 }

@@ -3,7 +3,7 @@ using AutoMapper;
 using Blazored.SessionStorage;
 using BooksAPI.FE.Authentication;
 using BooksAPI.FE.Components;
-using BooksAPI.FE.Handlers;
+using BooksAPI.FE.Constants;
 using BooksAPI.FE.Interfaces;
 using BooksAPI.FE.Mapping;
 using BooksAPI.FE.Services;
@@ -23,12 +23,16 @@ builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
 builder.Services.AddMudServices();
+builder.Services.AddBlazorBootstrap();
+
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
 builder.Services.AddScoped<ILibraryMangaService, LibraryMangaService>();
 builder.Services.AddScoped<IUserMangaService, UserMangaService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
 
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
@@ -36,40 +40,45 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddBlazoredSessionStorage();
 
-MapperConfiguration mapperConfig = new MapperConfiguration(config =>
-{
-    config.AddProfile(new UserProfile());
-});
+MapperConfiguration mapperConfig = new MapperConfiguration(config => { config.AddProfile(new UserProfile()); });
 
 builder.Services.AddSingleton(mapperConfig.CreateMapper());
 
 builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters()
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateIssuerSigningKey = true,
-        ValidateLifetime = true,
-        ValidIssuer = configuration["Jwt:Issuer"],
-        ValidAudience = configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
-    };
-});
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            ValidIssuer = configuration["Jwt:Issuer"],
+            ValidAudience = configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
+        };
+    });
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminPolicy",
-        p => { p.RequireClaim("userRoles", "Admin"); });
+    options.AddPolicy(ApplicationConstants.PolicyNames.AdminRolePolicyName,
+        p =>
+        {
+            p.RequireClaim(ApplicationConstants.ClaimTypes.ClaimRoleType,
+                ApplicationConstants.ClaimNames.AdminRoleClaimName);
+        });
 
-    options.AddPolicy("UserPolicy",
-        p => { p.RequireClaim("userRoles", "User"); });
+    options.AddPolicy(ApplicationConstants.PolicyNames.UserRolePolicyName,
+        p =>
+        {
+            p.RequireClaim(ApplicationConstants.ClaimTypes.ClaimRoleType,
+                ApplicationConstants.ClaimNames.UserRoleClaimName);
+        });
 });
 
 var app = builder.Build();

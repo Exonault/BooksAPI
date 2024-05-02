@@ -1,0 +1,130 @@
+﻿@page "/order"
+@using BooksAPI.FE.Authentication
+@using BooksAPI.FE.Constants
+@using BooksAPI.FE.Contracts.Order
+@using BooksAPI.FE.Interfaces
+@using BooksAPI.FE.Util
+
+@inject NavigationManager NavigationManager;
+@inject IJSRuntime JsRuntime;
+@inject IOrderService OrderService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+
+@attribute [Authorize(Policy = ApplicationConstants.PolicyNames.UserRolePolicyName)]
+
+<PageTitle>Orders</PageTitle>
+<h3 class="text-center">Orders</h3>
+
+@if (_isDataFetched)
+{
+    @if (_error)
+    {
+        <MudGrid Justify="Justify.Center">
+            <MudItem md="4" xs="4">
+                <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
+                    Unable to get orders. Please try again later.
+                </MudAlert>
+            </MudItem>
+        </MudGrid>
+    }
+    else
+    {
+        <MudTable Items="_orders">
+            <HeaderContent>
+                <MudTh>Date</MudTh>
+                <MudTh>Place</MudTh>
+                <MudTh>Description</MudTh>
+                <MudTh>Price</MudTh>
+                <MudTh>Count</MudTh>
+                <MudTh>Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Date">
+                    <MudText Typo="Typo.body1"> @context.Date.ToShortDateString()</MudText>
+                </MudTd>
+                <MudTd DataLabel="Place">
+                    <MudText Typo="Typo.body1"> @context.Place</MudText>
+                </MudTd>
+                <MudTd DataLabel="Description">
+                    <MudText Typo="Typo.body1"> @context.Description</MudText>
+                </MudTd>
+                <MudTd DataLabel="Price">
+                    <MudText Typo="Typo.body1"> @context.Amount</MudText>
+                </MudTd>
+                <MudTd DataLabel="Count">
+                    <MudText Typo="Typo.body1"> @context.NumberOfItems</MudText>
+                </MudTd>
+                <MudTd DataLabel="Actions"></MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+}
+else
+{
+    <div class="mt-4">
+        <MudProgressLinear Color="Color.Primary" Size="Size.Large" Indeterminate="true" Class="my-7"/>
+    </div>
+}
+
+@code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    private bool _shouldRender = false;
+    private bool _error = false;
+    private bool _isDataFetched = false;
+
+    private string _userId;
+
+    private IEnumerable<OrderResponse> _orders = Array.Empty<OrderResponse>();
+
+    protected override bool ShouldRender() => _shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState state = await AuthenticationState;
+
+        _userId = UserUtil.GetUserId(state.User);
+
+        string[] tokens;
+        try
+        {
+            tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
+            await GetUserOrders(tokens);
+            _isDataFetched = true;
+        }
+        catch (Exception e)
+        {
+            _isDataFetched = false;
+        }
+    }
+
+    private async Task GetUserOrders(string[] tokens)
+    {
+        try
+        {
+            _orders = await OrderService.GetUserOrders(tokens[0], tokens[1], _userId);
+            _shouldRender = true;
+            StateHasChanged();
+        }
+        catch (InvalidOperationException e)
+        {
+            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).UpdateUserState("");
+
+            NavigationManager.NavigateTo("/", true);
+        }
+        catch (Exception e)
+        {
+            _error = true;
+            _shouldRender = true;
+        }
+    }
+
+    private void CloseAlert()
+    {
+        _error = false;
+        StateHasChanged();
+    }
+
+}

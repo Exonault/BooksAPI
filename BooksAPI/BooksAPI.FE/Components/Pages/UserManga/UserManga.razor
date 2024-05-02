@@ -1,15 +1,21 @@
 ﻿@page "/userManga"
+
+@attribute [Authorize(Policy = "UserPolicy")]
+
+@using BooksAPI.FE.Authentication
 @using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.UserManga
 @using BooksAPI.FE.Interfaces
-@using BooksAPI.FE.Util
-@attribute [Authorize(Policy = "UserPolicy")]
+@using BooksAPI.FE.Util;
+
 
 @inject IJSRuntime JsRuntime;
 @inject IUserMangaService UserMangaService;
+@inject NavigationManager NavigationManager;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 <PageTitle>UserManga</PageTitle>
 
-<h3 style="text-align: center">UserManga</h3>
+<h3 class="text-center">UserManga</h3>
 
 @if (_isDataFetched)
 {
@@ -29,7 +35,7 @@
             <MudTabPanel Text="All">
                 <UserMangaTable Mangas="@(_mangas)"/>
             </MudTabPanel>
-            
+
             <MudTabPanel Text="Reading status">
                 <MudTabs Elevation="2" ApplyEffectsToContainer="true" Centered="true">
                     <MudTabPanel Text="Reading">
@@ -49,7 +55,7 @@
                     </MudTabPanel>
                 </MudTabs>
             </MudTabPanel>
-            
+
             <MudTabPanel Text="Collection status">
                 <MudTabs Elevation="2" ApplyEffectsToContainer="true" Centered="true">
                     <MudTabPanel Text="Collected">
@@ -69,7 +75,7 @@
 else
 {
     <div class="mt-4">
-        <MudProgressLinear Color="Color.Primary" Size="Size.Large" Indeterminate="true" Class="my-7"/>
+        <MudProgressLinear Color="Color.Primary" Size="MudBlazor.Size.Large" Indeterminate="true" Class="my-7"/>
     </div>
 }
 
@@ -77,7 +83,7 @@ else
 
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
-    
+
     private bool _shouldRender = false;
     private bool _error = false;
     private bool _isDataFetched = false;
@@ -93,6 +99,7 @@ else
         AuthenticationState state = await authenticationState;
 
         _userId = UserUtil.GetUserId(state.User);
+
         string[] tokens;
         try
         {
@@ -113,6 +120,12 @@ else
             _mangas = await UserMangaService.GetUserMangas(tokens[0], tokens[1], _userId);
             _shouldRender = true;
             StateHasChanged();
+        }
+        catch (InvalidOperationException e)
+        {
+            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).UpdateUserState("");
+
+            NavigationManager.NavigateTo("/", true);
         }
         catch (Exception e)
         {

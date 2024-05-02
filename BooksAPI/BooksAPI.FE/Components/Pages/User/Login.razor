@@ -1,13 +1,11 @@
 ﻿@page "/login"
 @attribute [AllowAnonymous]
 
-@using Blazored.SessionStorage
 @using BooksAPI.FE.Authentication
 @using BooksAPI.FE.Contracts.User
 @using BooksAPI.FE.Interfaces
 @using BooksAPI.FE.Model
 
-@inject ISessionStorageService SessionStorageService;
 @inject IUserService UserService;
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider;

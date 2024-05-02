@@ -4,15 +4,15 @@ namespace BooksAPI.BE.Interfaces.Repositories;
 
 public interface IUserMangaRepository
 {
-    public Task CreateUserManga(UserManga libraryManga);
+    Task CreateUserManga(UserManga libraryManga);
 
-    public Task<UserManga?> GetUserMangaById(int id);
+    Task<UserManga?> GetUserMangaById(int id);
 
-    public Task<List<UserManga>> GetUserMangaByUserId(string userId);
+    Task<List<UserManga>> GetUserMangaByUserId(string userId);
 
-    public Task<List<UserManga>> GetAllUserManga();
-    
-    public Task UpdateUserManga(UserManga userManga);
+    Task<List<UserManga>> GetAllUserManga();
 
-    public Task DeleteUserManga(UserManga userManga);
+    Task UpdateUserManga(UserManga userManga);
+
+    Task DeleteUserManga(UserManga userManga);
 }

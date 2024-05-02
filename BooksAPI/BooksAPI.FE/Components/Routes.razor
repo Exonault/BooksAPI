@@ -1,5 +1,4 @@
-﻿@using BooksAPI.FE.Components.Layout
-@inject NavigationManager NavigationManager
+﻿@inject NavigationManager NavigationManager
 <CascadingAuthenticationState>
     <Router AppAssembly="typeof(Program).Assembly">
         <Found Context="routeData">
@@ -10,7 +9,6 @@
                     @* @{ NavigationManager.NavigateTo("login"); } *@
                 </NotAuthorized>
             </AuthorizeRouteView>
-            @* <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)"/> *@
             <FocusOnNavigate RouteData="routeData" Selector="h1"/>
         </Found>
     </Router>

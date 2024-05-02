@@ -71,7 +71,7 @@
 else
 {
     <div class="mt-4">
-        <MudProgressLinear Color="Color.Primary" Size="Size.Large" Indeterminate="true" Class="my-7"/>
+        <MudProgressLinear Color="Color.Primary" Size="MudBlazor.Size.Large" Indeterminate="true" Class="my-7"/>
     </div>
 }
 
@@ -180,9 +180,9 @@ else
     {
         AuthenticationState state = await authenticationState;
 
-        if (state.User.Identity.IsAuthenticated)
+        if (!state.User.Identity.IsAuthenticated)
         {
-            NavigationManager.NavigateTo("orders");
+            // NavigationManager.NavigateTo("orders");
         }
         else NavigationManager.NavigateTo("login");
     }

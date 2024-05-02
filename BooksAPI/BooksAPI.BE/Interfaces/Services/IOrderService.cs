@@ -4,17 +4,15 @@ namespace BooksAPI.BE.Interfaces.Services;
 
 public interface IOrderService
 {
-    public Task CreateOrder(CreateOrderRequest request);
+    Task CreateOrder(CreateOrderRequest request);
 
-    public Task<OrderResponse> GetOrder(int id);
+    Task<OrderResponse> GetOrder(int id);
 
-    public Task<List<OrderResponse>> GetAllOrders();
-    
-    public Task<List<OrderResponse>> GetAllOrdersByUserId(string id);
+    Task<List<OrderResponse>> GetAllOrders();
 
-    public Task UpdateOrder(int id, UpdateOrderRequest request);
-    
-    public Task DeleteOrder(int id, string userId);
+    Task<List<OrderResponse>> GetAllOrdersByUserId(string id);
 
+    Task UpdateOrder(int id, UpdateOrderRequest request);
 
+    Task DeleteOrder(int id, string userId);
 }

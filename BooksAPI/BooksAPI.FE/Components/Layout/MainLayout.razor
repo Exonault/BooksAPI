@@ -24,9 +24,9 @@
                 </div>
             </NotAuthorized>
             <Authorized>
-                <div class="top-row px-4 display-flex">
-                    <h3 class="justify-content-start">Kitka @GetUserName(context.User)</h3>
-                    <a @onclick="Logout"> Logout</a>
+                <div class="top-row px-4 d-flex justify-content-between align-items-center">
+                    <h4 class="mr-auto">Kitka @GetUserName(context.User)</h4>
+                    <a class="ml-auto" @onclick="Logout"> Logout</a>
                 </div>
             </Authorized>
         </AuthorizeView>

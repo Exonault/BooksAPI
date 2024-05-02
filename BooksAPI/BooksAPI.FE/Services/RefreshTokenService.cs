@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Headers;
+using System.Text.Json;
 using BooksAPI.FE.Contracts.User;
 using BooksAPI.FE.Interfaces;
 using Microsoft.JSInterop;
@@ -10,14 +11,12 @@ public class RefreshTokenService : IRefreshTokenService
     private readonly IHttpClientFactory _clientFactory;
     private readonly IJSRuntime _jsRuntime;
     private readonly IConfiguration _configuration;
-    private readonly string _userUrl;
 
     public RefreshTokenService(IHttpClientFactory clientFactory, IJSRuntime jsRuntime, IConfiguration configuration)
     {
         _clientFactory = clientFactory;
         _jsRuntime = jsRuntime;
         _configuration = configuration;
-        _userUrl = _configuration["Backend:User"]!;
     }
 
     public async Task<bool> RefreshToken(string token, string refreshToken)
@@ -28,7 +27,7 @@ public class RefreshTokenService : IRefreshTokenService
             RefreshToken = refreshToken
         };
 
-        string uri = string.Format(_userUrl, "refresh");
+        string uri = string.Format(_configuration["Backend:User"]!, "refresh");
 
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, uri);
         request.Content = JsonContent.Create(requestContent);
@@ -49,11 +48,15 @@ public class RefreshTokenService : IRefreshTokenService
                 LoginResponse? loginResponse = await JsonSerializer.DeserializeAsync<LoginResponse>(responseStream);
                 if (loginResponse is not null)
                 {
-                    await _jsRuntime.InvokeVoidAsync("addCookie", $"{loginResponse.Token}", $"{loginResponse.RefreshToken}");
+                    await _jsRuntime.InvokeVoidAsync("addCookie", $"{loginResponse.Token}",
+                        $"{loginResponse.RefreshToken}");
                     return true;
                 }
-                await _jsRuntime.InvokeVoidAsync("deleteCookie", $"{token}", $"{refreshToken}");
-                return false;
+                else
+                {
+                    await _jsRuntime.InvokeVoidAsync("deleteCookie", $"{token}", $"{refreshToken}");
+                    return false;
+                }
             }
         }
         catch (Exception e)
@@ -74,6 +77,5 @@ public class RefreshTokenService : IRefreshTokenService
         {
             return [];
         }
-       
     }
 }

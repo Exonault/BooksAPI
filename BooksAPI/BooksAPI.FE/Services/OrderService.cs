@@ -1,18 +1,18 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using BooksAPI.FE.Contracts.UserManga;
+using BooksAPI.FE.Contracts.Order;
 using BooksAPI.FE.Interfaces;
 
 namespace BooksAPI.FE.Services;
 
-public class UserMangaService : IUserMangaService
+public class OrderService : IOrderService
 {
     private readonly IConfiguration _configuration;
     private readonly IHttpClientFactory _clientFactory;
     private readonly IRefreshTokenService _refreshTokenService;
 
-    public UserMangaService(IConfiguration configuration, IHttpClientFactory clientFactory,
+    public OrderService(IConfiguration configuration, IHttpClientFactory clientFactory,
         IRefreshTokenService refreshTokenService)
     {
         _configuration = configuration;
@@ -20,15 +20,17 @@ public class UserMangaService : IUserMangaService
         _refreshTokenService = refreshTokenService;
     }
 
-    public async Task<IEnumerable<UserMangaResponse>> GetUserMangas(string token, string refreshToken, string userId)
+    public async Task<List<OrderResponse>> GetUserOrders(string token, string refreshToken, string userId)
     {
-        string url = string.Format(_configuration["Backend:UserMangas:GetUserMangas"]!, userId);
+        string url = string.Format(_configuration["Backend:Orders:GetUserOrders"]!, userId);
+
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         HttpClient httpClient = _clientFactory.CreateClient();
 
         HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
+
         if (!responseMessage.IsSuccessStatusCode)
         {
             if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
@@ -40,8 +42,8 @@ public class UserMangaService : IUserMangaService
 
         await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
         {
-            List<UserMangaResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<UserMangaResponse>>(responseStream);
+            List<OrderResponse>? response =
+                await JsonSerializer.DeserializeAsync<List<OrderResponse>>(responseStream);
 
             if (response is null)
             {

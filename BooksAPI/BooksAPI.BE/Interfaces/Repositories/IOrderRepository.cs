@@ -4,15 +4,15 @@ namespace BooksAPI.BE.Interfaces.Repositories;
 
 public interface IOrderRepository
 {
-    public Task CreateOrder(Order order);
+    Task CreateOrder(Order order);
 
-    public Task<Order?> GetOrderById(int id);
+    Task<Order?> GetOrderById(int id);
 
-    public Task<List<Order>> GetAllOrdersByUserId(String userId);
+    Task<List<Order>> GetAllOrdersByUserId(String userId);
 
-    public Task<List<Order>> GetAllOrders();
-    
-    public Task UpdateOrder(Order order);
+    Task<List<Order>> GetAllOrders();
 
-    public Task DeleteOrder(Order order);
+    Task UpdateOrder(Order order);
+
+    Task DeleteOrder(Order order);
 }
