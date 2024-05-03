@@ -8,6 +8,8 @@
 @inject ILibraryMangaService LibraryMangaService;
 @inject IJSRuntime JsRuntime;
 @inject NavigationManager NavigationManager;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+
 
 <PageTitle>LibraryManga</PageTitle>
 
@@ -71,14 +73,11 @@
 else
 {
     <div class="mt-4">
-        <MudProgressLinear Color="Color.Primary" Size="MudBlazor.Size.Large" Indeterminate="true" Class="my-7"/>
+        <MudProgressLinear Color="Color.Primary" Size="Size.Large" Indeterminate="true" Class="my-7"/>
     </div>
 }
 
 @code {
-
-    [CascadingParameter]
-    private Task<AuthenticationState>? authenticationState { get; set; }
 
     [Parameter]
     public int PageNumber { get; set; }
@@ -178,7 +177,7 @@ else
 
     private async Task AddToCollectionAction()
     {
-        AuthenticationState state = await authenticationState;
+        AuthenticationState state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         if (!state.User.Identity.IsAuthenticated)
         {

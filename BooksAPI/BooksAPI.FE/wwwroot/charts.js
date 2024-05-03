@@ -1,23 +1,47 @@
-﻿google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawChart);
+﻿google.charts.load('current', {'packages': ['corechart']});
+google.charts.setOnLoadCallback(generateDemographicChart);
+google.charts.setOnLoadCallback(generateTypeChart);
 
-function test() {
-// Set Data
-    const data = google.visualization.arrayToDataTable([
-        ['Contry', 'Mhl'],
-        ['Italy', 60],
-        ['France', 49],
-        ['Spain', 44],
-        ['USA', 24],
-        ['Argentina', 15]
-    ]);
 
-// Set Options
+
+function generateDemographicChart(demographicStatistic, chartId) {
+    console.log(demographicStatistic);
+    
+    let data = new google.visualization.DataTable();
+    data.addColumn('string', 'Demographic');
+    data.addColumn('number', 'Count');
+    
+    demographicStatistic.forEach(statistic => {
+        data.addRow([statistic.demographicType, statistic.count]);
+    });
+
+    console.log(data);
+
     const options = {
-        title: 'World Wide Wine Production'
+        colors: ['#3366CC']
     };
 
-// Draw
-    const chart = new google.visualization.BarChart(document.getElementById('myChart'));
+    const chart = new google.visualization.BarChart(document.getElementById(chartId));
+    chart.draw(data, options);
+}
+
+function generateTypeChart(typeStatistics, chartId) {
+    console.log(typeStatistics);
+    
+    let data = new google.visualization.DataTable();
+    data.addColumn('string', 'Type');
+    data.addColumn('number', 'Count');
+
+    typeStatistics.forEach(statistic => {
+        data.addRow([statistic.type, statistic.count]);
+    });
+
+    console.log(data);
+
+    const options = {
+        colors: ['#DC3912']
+    };
+
+    const chart = new google.visualization.BarChart(document.getElementById(chartId));
     chart.draw(data, options);
 }

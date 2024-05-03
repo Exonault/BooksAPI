@@ -60,10 +60,6 @@
         }
         else
         {
-            // await SessionStorageService.SetItemAsync("kitka", "kurwa");
-            // await SessionStorageService.SetItemAsync(ApplicationConstants.JwtKey, loginResponse.Token);
-            // await SessionStorageService.SetItemAsync(ApplicationConstants.RefreshKey, loginResponse.RefreshToken);
-
             await JsRuntime.InvokeVoidAsync("addCookie",$"{loginResponse.Token}", $"{loginResponse.RefreshToken}");
             
             ((CustomAuthenticationStateProvider)AuthenticationStateProvider).UpdateUserState(loginResponse.Token);

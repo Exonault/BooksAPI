@@ -32,7 +32,8 @@ VALUES (1, 'PlanToRead', 0, 1, 36, 'InProgress', '31643fae-cec0-4756-bf85-aa333b
        (17, 'PlanToRead', 0, 1, 18, 'InProgress', '31643fae-cec0-4756-bf85-aa333bee61b4', 287),
        (18, 'Reading', 3, 3, 18, 'InProgress', '31643fae-cec0-4756-bf85-aa333bee61b4', 64),
        (19, 'PlanToRead', 0, 1, 20.9, 'InProgress', '31643fae-cec0-4756-bf85-aa333bee61b4', 31),
-       (20, 'PlanToRead', 0, 0, 28, 'PlanToCollect', '31643fae-cec0-4756-bf85-aa333bee61b4', 193);
+       (20, 'PlanToRead', 0, 0, 28, 'PlanToCollect', '31643fae-cec0-4756-bf85-aa333bee61b4', 193),
+       (21, 'PlanToRead', 0, 0, 20, 'PlanToCollect', '31643fae-cec0-4756-bf85-aa333bee61b4', 1601);
 
 
 INSERT INTO public."Orders" ("Id", "Date", "Description", "Place", "Amount", "NumberOfItems", "UserId")

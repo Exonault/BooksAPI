@@ -80,15 +80,14 @@ else
 }
 
 @code {
-
-    [CascadingParameter]
-    private Task<AuthenticationState>? authenticationState { get; set; }
-
+    
     private bool _shouldRender = false;
     private bool _error = false;
     private bool _isDataFetched = false;
 
     private string _userId;
+    private string _token;
+    private string _refreshToken;
 
     private IEnumerable<UserMangaResponse> _mangas = Array.Empty<UserMangaResponse>();
 
@@ -96,15 +95,17 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        AuthenticationState state = await authenticationState;
+        AuthenticationState state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         _userId = UserUtil.GetUserId(state.User);
 
-        string[] tokens;
+    
         try
         {
-            tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
-            await GetUserMangas(tokens);
+            string[] tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
+            _token = tokens[0];
+            _refreshToken = tokens[1];
+            await GetUserMangas();
             _isDataFetched = true;
         }
         catch (Exception e)
@@ -113,11 +114,11 @@ else
         }
     }
 
-    private async Task GetUserMangas(string[] tokens)
+    private async Task GetUserMangas()
     {
         try
         {
-            _mangas = await UserMangaService.GetUserMangas(tokens[0], tokens[1], _userId);
+            _mangas = await UserMangaService.GetUserMangas(_token, _refreshToken, _userId);
             _shouldRender = true;
             StateHasChanged();
         }
