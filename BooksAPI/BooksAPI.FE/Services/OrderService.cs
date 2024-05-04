@@ -66,8 +66,9 @@ public class OrderService : IOrderService
 
             token = tokens[0];
 
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            responseMessage = await httpClient.SendAsync(request);
+            HttpRequestMessage refreshedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
+            refreshedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            responseMessage = await httpClient.SendAsync(refreshedRequest);
         }
         else
         {

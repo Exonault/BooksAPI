@@ -1,4 +1,5 @@
-﻿using BooksAPI.BE.Contracts.Statistics.Order;
+﻿using BooksAPI.BE.Constants;
+using BooksAPI.BE.Contracts.Statistics.Order;
 using BooksAPI.BE.Contracts.Statistics.UserManga;
 using BooksAPI.BE.Entities;
 using BooksAPI.BE.Exception;
@@ -118,6 +119,11 @@ public class StatisticsService : IStatisticsService
 
         foreach (UserManga userManga in userMangas)
         {
+            if (UserMangaConstants.CollectingStatus.PlanToCollect == userManga.CollectionStatus) // skip plan to collect
+            {
+                continue;
+            }
+
             decimal priceForSeries = userManga.PricePerVolume * userManga.CollectedVolumes;
             MangaResponse mapping = new MangaResponse()
             {
@@ -150,6 +156,11 @@ public class StatisticsService : IStatisticsService
 
         foreach (UserManga userManga in userMangas)
         {
+            if (UserMangaConstants.CollectingStatus.PlanToCollect == userManga.CollectionStatus)
+            {
+                continue;
+            }
+
             totalCollectedVolumes += userManga.CollectedVolumes;
             totalReadVolumes += userManga.ReadVolumes;
             totalSpending += userManga.CollectedVolumes * userManga.PricePerVolume;

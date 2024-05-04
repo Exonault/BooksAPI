@@ -5,6 +5,7 @@
 @using BooksAPI.FE.Contracts.Author
 @using BooksAPI.FE.Contracts.LibraryManga
 @using BooksAPI.FE.Interfaces
+@using BooksAPI.FE.Util
 @inject ILibraryMangaService LibraryMangaService;
 @inject IJSRuntime JsRuntime;
 @inject NavigationManager NavigationManager;
@@ -41,15 +42,15 @@
                 </MudTd>
                 <MudTd DataLabel="Title" Class="w-50">
                     <MudText Typo="Typo.h6">@context.Title</MudText>
-                    <MudText Typo="Typo.body1">Total volumes: @FormatTotalVolumes(context.TotalVolumes)</MudText>
-                    <MudText Typo="Typo.body1">Publishing status: @FormatPublishingStatus(context.PublishingStatus)</MudText>
+                    <MudText Typo="Typo.body1">Total volumes: @FormatterUtil.FormatTotalVolumes(context.TotalVolumes)</MudText>
+                    <MudText Typo="Typo.body1">Publishing status: @FormatterUtil.FormatPublishingStatus(context.PublishingStatus)</MudText>
                     <MudText Typo="Typo.body1">Demographic type: @context.DemographicType</MudText>
-                    <MudText Typo="Typo.body1">Type: @FormatType(context.Type)</MudText>
+                    <MudText Typo="Typo.body1">Type: @FormatterUtil.FormatType(context.Type)</MudText>
                 </MudTd>
                 <MudTd DataLabel="Authors">
                     @foreach (AuthorResponse author in context.Authors)
                     {
-                        <MudText Typo="Typo.body1" Class="mt-1"> @FormatAuthor(author)</MudText>
+                        <MudText Typo="Typo.body1" Class="mt-1"> @FormatterUtil.FormatAuthor(author)</MudText>
                     }
                 </MudTd>
                 <MudTd DataLabel="Actions" Style="width: 15% !important">
@@ -78,6 +79,9 @@ else
 }
 
 @code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     [Parameter]
     public int PageNumber { get; set; }
@@ -127,57 +131,9 @@ else
         StateHasChanged();
     }
 
-    private string FormatPublishingStatus(string status)
-    {
-        if (LibraryMangaConstants.PublishingType.OnHiatus == status)
-        {
-            return "On Hiatus";
-        }
-
-        return status;
-    }
-
-    private string FormatType(string type)
-    {
-        if (LibraryMangaConstants.Type.LightNovel == type)
-        {
-            return "Light novel";
-        }
-
-        if (LibraryMangaConstants.Type.OneShot == type)
-        {
-            return "One shot";
-        }
-
-        return type;
-    }
-
-    private string FormatTotalVolumes(int? totalVolumes)
-    {
-        if (totalVolumes is null)
-        {
-            return "(?) volumes";
-        }
-
-        return $"{totalVolumes} volumes";
-    }
-
-    private string FormatAuthor(AuthorResponse author)
-    {
-        string role = "";
-        if (author.Role == AuthorConstants.AuthorRole.StoryAndArt)
-        {
-            role = "Story & Art";
-        }
-        else role = author.Role;
-
-        string result = $"{author.FirstName} {author.LastName}: {role}";
-        return result;
-    }
-
     private async Task AddToCollectionAction()
     {
-        AuthenticationState state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        AuthenticationState state = await AuthenticationState;
 
         if (!state.User.Identity.IsAuthenticated)
         {

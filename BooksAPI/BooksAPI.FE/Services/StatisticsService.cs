@@ -369,9 +369,10 @@ public class StatisticsService : IStatisticsService
 
             token = tokens[0];
             // refreshToken = tokens[1];
-
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            responseMessage = await httpClient.SendAsync(request);
+            
+            HttpRequestMessage refreshedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
+            refreshedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            responseMessage = await httpClient.SendAsync(refreshedRequest);
         }
         else
         {

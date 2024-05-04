@@ -1,0 +1,187 @@
+﻿@page "/statistics"
+@using BooksAPI.FE.Constants
+@using BooksAPI.FE.Contracts.Statistics.UserManga
+@using BooksAPI.FE.Interfaces
+@using BooksAPI.FE.Util
+
+@inject NavigationManager NavigationManager;
+@inject IJSRuntime JsRuntime;
+@inject IStatisticsService StatisticsService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+
+@attribute [Authorize(Policy = ApplicationConstants.PolicyNames.UserRolePolicyName)]
+
+<PageTitle>Statistics</PageTitle>
+<h3 class="text-center">Statistics</h3>
+
+@if (_error)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem md="4" xs="4">
+            <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
+                Unable to get statistics. Please try again later.
+            </MudAlert>
+        </MudItem>
+    </MudGrid>
+}
+else
+{
+    <MudTabs Elevation="2" ApplyEffectsToContainer="true" Centered="true">
+        <MudTabPanel Text="Spending" OnClick="@GenerateTotalSpendingChart" Style="height: 90%">
+            <div id="@TotalSpendingChartId" style="width: 100%; height: 60em;"></div>
+        </MudTabPanel>
+        <MudTabPanel Text="Collection" OnClick="@(GenerateCollectionCharts)">
+            <div class="d-flex">
+                <div id="@DemographicChartId" style="width:100%; max-width:600px; height:500px;"></div>
+                <div id="@TypeChartId" style="width:100%; max-width:600px; height:500px;"></div>
+                <div id="@ReadingChartId" style="width:100%; max-width:600px; height:500px;"></div>
+                <div id="@CollectionChartId" style="width:100%; max-width:600px; height:500px;"></div>
+                <div id="@PublishingChartId" style="width:100%; max-width:600px; height:500px;"></div>
+            </div>
+        </MudTabPanel>
+        <MudTabPanel Text="Orders"></MudTabPanel>
+
+    </MudTabs>
+}
+
+
+@code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    private const string TotalSpendingChartId = "totalSpendingChart";
+
+    private const string DemographicChartId = "demographicChart";
+    private const string TypeChartId = "typeChart";
+    private const string ReadingChartId = "readingChart";
+    private const string PublishingChartId = "publshingChart";
+    private const string CollectionChartId = "collectionChart";
+
+    private bool _shouldRender = false;
+    private bool _error = false;
+    private bool _isDataFetched = false;
+
+    private string _userId;
+
+    private string _token;
+    private string _refreshToken;
+
+    protected override bool ShouldRender() => _shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState state = await AuthenticationState;
+
+        _userId = UserUtil.GetUserId(state.User);
+        try
+        {
+            string[] tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
+            _token = tokens[0];
+            _refreshToken = tokens[1];
+        }
+        catch (Exception e)
+        {
+            _isDataFetched = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GenerateTotalSpendingChart();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+
+    private async Task GenerateTotalSpendingChart()
+    {
+        try
+        {
+            UserMangaTotalSpendingResponse totalSpending = await StatisticsService.GetTotalSpendingStatistics(_token, _refreshToken, _userId);
+
+            await JsRuntime.InvokeVoidAsync("generateTotalSpendingChart", totalSpending.Mangas, TotalSpendingChartId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            _error = true;
+            StateHasChanged();
+        }
+    }
+
+    private async Task GenerateCollectionCharts()
+    {
+        try
+        {
+            List<UserMangaDemographicResponse> demographicStatistic = await StatisticsService
+                .GetDemographicStatistics(_token, _refreshToken, _userId);
+            List<UserMangaTypeResponse> typeStatistic = await StatisticsService
+                .GetTypeStatistics(_token, _refreshToken, _userId);
+            List<UserMangaReadingStatusResponse> readingStatistic = await StatisticsService
+                .GetReadingStatusStatistics(_token, _refreshToken, _userId);
+            List<UserMangaCollectionStatusResponse> collectionStatusStatistic = await StatisticsService
+                .GetCollectionStatusStatistics(_token, _refreshToken, _userId);
+            List<UserMangaPublishingStatusResponse> publishingStatusStatistics = await StatisticsService
+                .GetPublishingStatusStatistics(_token, _refreshToken, _userId);
+
+            FormatResults(typeStatistic, readingStatistic, collectionStatusStatistic, publishingStatusStatistics);
+
+            await JsRuntime.InvokeVoidAsync("generateDemographicChart", demographicStatistic, DemographicChartId);
+            await JsRuntime.InvokeVoidAsync("generateTypeChart", typeStatistic, TypeChartId);
+            await JsRuntime.InvokeVoidAsync("generateReadingChart", readingStatistic, ReadingChartId);
+            await JsRuntime.InvokeVoidAsync("generateCollectionChart", collectionStatusStatistic, CollectionChartId);
+            await JsRuntime.InvokeVoidAsync("generatePublishingChart", publishingStatusStatistics, PublishingChartId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            _error = true;
+            StateHasChanged();
+        }
+    }
+
+    private void FormatResults(List<UserMangaTypeResponse> typeStatistic, List<UserMangaReadingStatusResponse> readingStatistic,
+        List<UserMangaCollectionStatusResponse> collectionStatusStatistic, List<UserMangaPublishingStatusResponse> publishingStatusStatistics)
+    {
+        foreach (UserMangaTypeResponse item in typeStatistic)
+        {
+            item.Type = FormatterUtil.FormatType(item.Type);
+        }
+
+        foreach (UserMangaReadingStatusResponse item in readingStatistic)
+        {
+            item.ReadingStatus = FormatterUtil.FormatReadingStatus(item.ReadingStatus);
+        }
+
+        foreach (UserMangaCollectionStatusResponse item in collectionStatusStatistic)
+        {
+            item.CollectionStatus = FormatterUtil.FormatCollectionStatus(item.CollectionStatus);
+        }
+
+        foreach (UserMangaPublishingStatusResponse item in publishingStatusStatistics)
+        {
+            item.PublishingStatus = FormatterUtil.FormatPublishingStatus(item.PublishingStatus);
+        }
+    }
+
+    private async Task GenerateOrdersStatistics()
+    {
+    }
+
+
+    // private void FormatResults()
+    // {
+    //     
+    // }
+
+    private void CloseAlert()
+    {
+        _error = false;
+        StateHasChanged();
+    }
+
+}

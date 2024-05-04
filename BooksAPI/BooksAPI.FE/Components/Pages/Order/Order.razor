@@ -67,6 +67,10 @@ else
 }
 
 @code {
+    
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+    
     private bool _shouldRender = false;
     private bool _error = false;
     private bool _isDataFetched = false;
@@ -81,7 +85,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        AuthenticationState state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        AuthenticationState state = await AuthenticationState;
 
         _userId = UserUtil.GetUserId(state.User);
         
