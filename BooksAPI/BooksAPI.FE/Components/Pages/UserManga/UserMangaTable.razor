@@ -1,7 +1,11 @@
 ﻿@using BooksAPI.FE.Contracts.UserManga
 @using BooksAPI.FE.Util
 
-<MudTable Items="Mangas">
+<MudTable Items="Mangas" Filter="new Func<UserMangaResponse, bool>(FilterFunc1)" @bind-SelectedItem="selectedItem">
+    <ToolBarContent>
+        <MudTextField @bind-Value="searchString" Placeholder="Search by Title" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+    </ToolBarContent>
     <HeaderContent>
         <MudTh>Cover</MudTh>
         <MudTh>Title</MudTh>
@@ -38,5 +42,25 @@
 
     [Parameter]
     public IEnumerable<UserMangaResponse> Mangas { get; set; }
-    
+
+    private UserMangaResponse selectedItem;
+    private string searchString;
+
+    private bool FilterFunc1(UserMangaResponse element) => FilterFunc(element, searchString);
+
+    private bool FilterFunc(UserMangaResponse element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+            return true;
+        }
+
+        if (element.LibraryMangaResponse.Title.Contains(searchString))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
 }

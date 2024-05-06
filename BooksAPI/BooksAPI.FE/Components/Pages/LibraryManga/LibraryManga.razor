@@ -22,13 +22,29 @@
         <MudGrid Justify="Justify.Center">
             <MudItem md="4" xs="4">
                 <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
-                    Unable to get mangas. Please try again later.
+                    Unable to get manga. Please try again later.
                 </MudAlert>
             </MudItem>
         </MudGrid>
     }
     else
     {
+        <AuthorizeView Policy="@ApplicationConstants.PolicyNames.AdminRolePolicyName">
+            <Authorized>
+                <div class="d-flex justify-content-end mr-5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary">Add new entry</MudButton>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+
+        <div class="d-flex justify-content-center flex-row mb-5">
+            @if (PageNumber != 1)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="@(() => PageButtons(PageNumber - 1))">Load previous 15</MudButton>
+            }
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(PageNumber + 1))">Load next 15</MudButton>
+        </div>
+
         <MudTable Items="_mangas">
             <HeaderContent>
                 <MudTh>Cover</MudTh>
@@ -38,14 +54,10 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Cover">
-                    <MudImage Src="@context.MainImageUrl" Width="200" Height="280" Fluid="true"/>
+                    <MudImage Src="@context.MainImageUrl" Width="100" Height="140" Fluid="true"/>
                 </MudTd>
                 <MudTd DataLabel="Title" Class="w-50">
                     <MudText Typo="Typo.h6">@context.Title</MudText>
-                    <MudText Typo="Typo.body1">Total volumes: @FormatterUtil.FormatTotalVolumes(context.TotalVolumes)</MudText>
-                    <MudText Typo="Typo.body1">Publishing status: @FormatterUtil.FormatPublishingStatus(context.PublishingStatus)</MudText>
-                    <MudText Typo="Typo.body1">Demographic type: @context.DemographicType</MudText>
-                    <MudText Typo="Typo.body1">Type: @FormatterUtil.FormatType(context.Type)</MudText>
                 </MudTd>
                 <MudTd DataLabel="Authors">
                     @foreach (AuthorResponse author in context.Authors)
@@ -54,10 +66,23 @@
                     }
                 </MudTd>
                 <MudTd DataLabel="Actions" Style="width: 15% !important">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                    <AuthorizeView Policy="@ApplicationConstants.PolicyNames.AdminRolePolicyName">
+                        <Authorized Context="authorizedContext">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                       OnClick="@(() => NavigationManager.NavigateTo($""))">
+                                Update information
+                            </MudButton>
+                        </Authorized>
+                    </AuthorizeView>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
+                               OnClick="@(() => NavigationManager.NavigateTo($"libraryMangaInfo/{context.Id}"))">
+                        More information
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
                                OnClick="@(() => AddToCollectionAction())">
                         Add to collection
                     </MudButton>
+
                 </MudTd>
             </RowTemplate>
         </MudTable>
@@ -125,12 +150,6 @@ else
         StateHasChanged();
     }
 
-    private void CloseAlert()
-    {
-        _error = false;
-        StateHasChanged();
-    }
-
     private async Task AddToCollectionAction()
     {
         AuthenticationState state = await AuthenticationState;
@@ -141,5 +160,12 @@ else
         }
         else NavigationManager.NavigateTo("login");
     }
+
+    private void CloseAlert()
+    {
+        _error = false;
+        StateHasChanged();
+    }
+
 
 }

@@ -78,15 +78,15 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("statistic/order/monthsByYear/{userId}", GetOrderBreakdownForMonthsByYear)
-            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(List<OrdersForMonthByYearResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
         
-        app.MapGet("statistics/order/place/{userId}", GetOrderBreakdownByPlace)
-            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+        app.MapGet("statistic/order/place/{userId}", GetOrderBreakdownByPlace)
+             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(List<OrderByPlaceResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)

@@ -1,5 +1,6 @@
 ﻿@page "/statistics"
 @using BooksAPI.FE.Constants
+@using BooksAPI.FE.Contracts.Statistics.Order
 @using BooksAPI.FE.Contracts.Statistics.UserManga
 @using BooksAPI.FE.Interfaces
 @using BooksAPI.FE.Util
@@ -32,14 +33,26 @@ else
         </MudTabPanel>
         <MudTabPanel Text="Collection" OnClick="@(GenerateCollectionCharts)">
             <div class="d-flex">
-                <div id="@DemographicChartId" style="width:100%; max-width:600px; height:500px;"></div>
-                <div id="@TypeChartId" style="width:100%; max-width:600px; height:500px;"></div>
-                <div id="@ReadingChartId" style="width:100%; max-width:600px; height:500px;"></div>
-                <div id="@CollectionChartId" style="width:100%; max-width:600px; height:500px;"></div>
-                <div id="@PublishingChartId" style="width:100%; max-width:600px; height:500px;"></div>
+                <div id="@ReadingChartId" style="width: 50%; height:500px;"></div>
+                <div id="@CollectionChartId" style="width: 50%; height:500px;"></div>
             </div>
+            <div class="d-flex">
+                <div id="@DemographicChartId" style="width: 33%; height:500px;"></div>
+                <div id="@TypeChartId" style="width: 33%; height:500px;"></div>
+                <div id="@PublishingChartId" style="width: 33%; height:500px;"></div>
+            </div>
+
         </MudTabPanel>
-        <MudTabPanel Text="Orders"></MudTabPanel>
+        <MudTabPanel Text="Orders" OnClick="@(GenerateOrdersStatistics)">
+            @* <div class="d-flex"> *@
+                <div id="@OrdersByYearCountChartId" style="width: 100%; height: 500px"></div>
+                <div id="@OrdersByYearPriceChartId" style="width: 100%; height: 500px"></div>
+            @* </div> *@
+            @* <div class="d-flex"> *@
+                <div id="@OrdersByPlaceCountChartId" style="width: 100%; height: 500px"></div>
+                <div id="@OrdersByPlacePriceChartId" style="width: 100%; height: 500px"></div>
+            @* </div> *@
+        </MudTabPanel>
 
     </MudTabs>
 }
@@ -57,6 +70,11 @@ else
     private const string ReadingChartId = "readingChart";
     private const string PublishingChartId = "publshingChart";
     private const string CollectionChartId = "collectionChart";
+
+    private const string OrdersByYearCountChartId = "ordersByYearCountChart";
+    private const string OrdersByYearPriceChartId = "ordersByYearSumChart";
+    private const string OrdersByPlaceCountChartId = "ordersbyPlaceCountChart";
+    private const string OrdersByPlacePriceChartId = "ordersbyPlacePriceChart";
 
     private bool _shouldRender = false;
     private bool _error = false;
@@ -93,7 +111,7 @@ else
             await GenerateTotalSpendingChart();
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+// await base.OnAfterRenderAsync(firstRender);
     }
 
 
@@ -144,6 +162,31 @@ else
         }
     }
 
+
+    private async Task GenerateOrdersStatistics()
+    {
+        try
+        {
+            List<OrdersByYearResponse> ordersByYear = await StatisticsService.GetOrderByYear(_token, _refreshToken, _userId);
+            List<OrderByPlaceResponse> orderByPlace = await StatisticsService.GetOrderByPlaceStatistics(_token, _refreshToken, _userId);
+
+            await JsRuntime.InvokeVoidAsync("generateOrderByYearCharts", ordersByYear, OrdersByYearCountChartId, OrdersByYearPriceChartId);
+            await JsRuntime.InvokeVoidAsync("generateOrderByPlaceCharts", orderByPlace, OrdersByPlaceCountChartId, OrdersByPlacePriceChartId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            _error = true;
+            StateHasChanged();
+        }
+    }
+
+    private void CloseAlert()
+    {
+        _error = false;
+        StateHasChanged();
+    }
+
     private void FormatResults(List<UserMangaTypeResponse> typeStatistic, List<UserMangaReadingStatusResponse> readingStatistic,
         List<UserMangaCollectionStatusResponse> collectionStatusStatistic, List<UserMangaPublishingStatusResponse> publishingStatusStatistics)
     {
@@ -168,20 +211,5 @@ else
         }
     }
 
-    private async Task GenerateOrdersStatistics()
-    {
-    }
-
-
-    // private void FormatResults()
-    // {
-    //     
-    // }
-
-    private void CloseAlert()
-    {
-        _error = false;
-        StateHasChanged();
-    }
 
 }
