@@ -1,11 +1,13 @@
 ﻿@page "/libraryMangaInfo/{id:int}"
 
 @attribute [AllowAnonymous]
+@using BooksAPI.FE.Contracts.Author
 @using BooksAPI.FE.Contracts.LibraryManga
 @using BooksAPI.FE.Interfaces
+@using BooksAPI.FE.Util
 
 @inject ILibraryMangaService LibraryMangaService;
-<h3>LibraryMangaInfo</h3>
+<h3 class="text-center">Information</h3>
 
 @if (_isDataFetched)
 {
@@ -21,7 +23,50 @@
     }
     else
     {
-       //Put an info page
+        //Put an info page
+
+        <MudContainer MaxWidth="MaxWidth.Medium">
+            <div class="d-flex flex-wrap mt-1">
+                <div class="d-flex flex-column align-items-start mr-2">
+                    <MudImage Src="@manga.MainImageUrl" Width="250" Height="350" Class="border border-dark"/>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <MudText Typo="Typo.h6">Title</MudText>
+                            <MudText Typo="Typo.body1">@manga.Title</MudText>
+                        </div>
+                        <div class="col">
+                            <MudText Typo="Typo.h6">Demographic</MudText>
+                            <MudText Typo="Typo.body1">@manga.DemographicType</MudText>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <MudText Typo="Typo.h6">Type</MudText>
+                            <MudText Typo="Typo.body1">@FormatterUtil.FormatType(manga.Type)</MudText>
+                        </div>
+                        <div class="col">
+                            <MudText Typo="Typo.h6">Publishing status</MudText>
+                            <MudText Typo="Typo.body1">@FormatterUtil.FormatPublishingStatus(manga.PublishingStatus)</MudText>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <MudText Typo="Typo.h6">Authors</MudText>
+                            @foreach (AuthorResponse author in manga.Authors)
+                            {
+                                <MudText Typo="Typo.body1">@FormatterUtil.FormatAuthor(author)</MudText>
+                            }
+                        </div>
+                        <div class="col">
+                            <MudText Typo="Typo.h6">Total volumes</MudText>
+                            <MudText Typo="Typo.body1">@FormatterUtil.FormatTotalVolumes(manga.TotalVolumes)</MudText>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </MudContainer>
     }
 }
 else
@@ -50,6 +95,7 @@ else
         {
             manga = await LibraryMangaService.GetManga(Id);
             _shouldRender = true;
+            _isDataFetched = true;
         }
         catch (Exception e)
         {
@@ -63,5 +109,6 @@ else
         _error = false;
         StateHasChanged();
     }
+
 
 }

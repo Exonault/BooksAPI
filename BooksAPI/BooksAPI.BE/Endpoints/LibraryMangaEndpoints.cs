@@ -40,6 +40,13 @@ public static class LibraryMangaEndpoints
             .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaResponse>), "application/json")
             .Produces(StatusCodes.Status500InternalServerError);
 
+        app.MapGet("libraryManga/search", SearchByTitle)
+            .AllowAnonymous()
+            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(15))
+                .Tag(CacheConstants.LibraryMangaForPageTag))
+            .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaResponse>), "application/json")
+            .Produces(StatusCodes.Status500InternalServerError);
+
         app.MapGet("/libraryMangas/all", GetAllLibraryMangas)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
             .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(15))
@@ -120,6 +127,12 @@ public static class LibraryMangaEndpoints
         return Results.Ok(libraryMangaResponses);
     }
 
+    private static async Task<IResult> SearchByTitle([FromQuery] string title, ILibraryMangaService service)
+    {
+        List<LibraryMangaResponse> libraryMangaResponses = await service.SearchByTitle(title);
+        return Results.Ok(libraryMangaResponses);
+    }
+
     private static async Task<IResult> GetLibraryMangasForPage([FromQuery] int pageIndex,
         [FromQuery] int pageEntriesCount, ILibraryMangaService service)
     {
@@ -153,7 +166,8 @@ public static class LibraryMangaEndpoints
         }
     }
 
-    private static async Task<IResult> DeleteLibraryMangas([FromRoute] int id, ILibraryMangaService service, IOutputCacheStore cacheStore)
+    private static async Task<IResult> DeleteLibraryMangas([FromRoute] int id, ILibraryMangaService service,
+        IOutputCacheStore cacheStore)
     {
         try
         {

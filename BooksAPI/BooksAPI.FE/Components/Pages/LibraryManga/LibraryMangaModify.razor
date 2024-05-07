@@ -1,0 +1,11 @@
+﻿@page "/createLibraryManga"
+@page "/updateLibraryManga/{id:int}"
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+
+    private bool IsCreate => Id == 0;
+}

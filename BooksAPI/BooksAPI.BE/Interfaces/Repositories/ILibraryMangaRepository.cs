@@ -10,6 +10,8 @@ public interface ILibraryMangaRepository
 
     Task<List<LibraryManga>> GetAllLibraryMangas();
 
+    Task<List<LibraryManga>> SearchByTitle(string searchTitle);
+
     Task<List<LibraryManga>> GetLibraryMangasForPage(int pageIndex, int pageEntriesCount);
 
     Task UpdateLibraryManga(LibraryManga libraryManga);

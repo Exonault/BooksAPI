@@ -69,7 +69,7 @@
                     <AuthorizeView Policy="@ApplicationConstants.PolicyNames.AdminRolePolicyName">
                         <Authorized Context="authorizedContext">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                                       OnClick="@(() => NavigationManager.NavigateTo($""))">
+                                       OnClick="@(() => NavigationManager.NavigateTo($"/updateLibraryManga/{context.Id}"))">
                                 Update information
                             </MudButton>
                         </Authorized>
@@ -79,7 +79,7 @@
                         More information
                     </MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
-                               OnClick="@(() => AddToCollectionAction())">
+                               OnClick="@(() => AddToCollectionAction(context.Id))">
                         Add to collection
                     </MudButton>
 
@@ -150,13 +150,13 @@ else
         StateHasChanged();
     }
 
-    private async Task AddToCollectionAction()
+    private async Task AddToCollectionAction(int id)
     {
         AuthenticationState state = await AuthenticationState;
 
-        if (!state.User.Identity.IsAuthenticated)
+        if (state.User.Identity.IsAuthenticated)
         {
-            // NavigationManager.NavigateTo("orders");
+             NavigationManager.NavigateTo($"/createUserManga/{id}");
         }
         else NavigationManager.NavigateTo("login");
     }

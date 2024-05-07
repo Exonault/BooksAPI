@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BooksAPI.BE.Repositories;
 
-public class LibraryMangaRepository:ILibraryMangaRepository
+public class LibraryMangaRepository : ILibraryMangaRepository
 {
     private readonly ApplicationDbContext _dbContext;
 
@@ -32,6 +32,14 @@ public class LibraryMangaRepository:ILibraryMangaRepository
         return await _dbContext.LibraryMangas
             .Include(lm => lm.Authors)
             .OrderBy(lm => lm.Id)
+            .ToListAsync();
+    }
+
+    public async Task<List<LibraryManga>> SearchByTitle(string searchTitle)
+    {
+        return await _dbContext.LibraryMangas
+            .Where(lm => lm.Title.Contains(searchTitle))
+            .Include(lm => lm.Authors)
             .ToListAsync();
     }
 
