@@ -45,12 +45,12 @@ else
         </MudTabPanel>
         <MudTabPanel Text="Orders" OnClick="@(GenerateOrdersStatistics)">
             @* <div class="d-flex"> *@
-                <div id="@OrdersByYearCountChartId" style="width: 100%; height: 500px"></div>
-                <div id="@OrdersByYearPriceChartId" style="width: 100%; height: 500px"></div>
+            <div id="@OrdersByYearCountChartId" style="width: 100%; height: 500px"></div>
+            <div id="@OrdersByYearPriceChartId" style="width: 100%; height: 500px"></div>
             @* </div> *@
             @* <div class="d-flex"> *@
-                <div id="@OrdersByPlaceCountChartId" style="width: 100%; height: 500px"></div>
-                <div id="@OrdersByPlacePriceChartId" style="width: 100%; height: 500px"></div>
+            <div id="@OrdersByPlaceCountChartId" style="width: 100%; height: 500px"></div>
+            <div id="@OrdersByPlacePriceChartId" style="width: 100%; height: 500px"></div>
             @* </div> *@
         </MudTabPanel>
 
@@ -192,7 +192,7 @@ else
     {
         foreach (UserMangaTypeResponse item in typeStatistic)
         {
-            item.Type = FormatterUtil.FormatType(item.Type);
+            item.Type = LibraryMangaConstants.Type.GetValueByKey(item.Type);
         }
 
         foreach (UserMangaReadingStatusResponse item in readingStatistic)
@@ -207,7 +207,7 @@ else
 
         foreach (UserMangaPublishingStatusResponse item in publishingStatusStatistics)
         {
-            item.PublishingStatus = FormatterUtil.FormatPublishingStatus(item.PublishingStatus);
+            item.PublishingStatus = LibraryMangaConstants.Type.GetValueByKey(item.PublishingStatus);
         }
     }
 

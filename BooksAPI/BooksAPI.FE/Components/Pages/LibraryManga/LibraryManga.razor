@@ -32,7 +32,7 @@
         <AuthorizeView Policy="@ApplicationConstants.PolicyNames.AdminRolePolicyName">
             <Authorized>
                 <div class="d-flex justify-content-end mr-5">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary">Add new entry</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("createLibraryManga"))">Add new entry</MudButton>
                 </div>
             </Authorized>
         </AuthorizeView>
@@ -42,7 +42,7 @@
             {
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="@(() => PageButtons(PageNumber - 1))">Load previous 15</MudButton>
             }
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(PageNumber + 1))">Load next 15</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(PageNumber + 1))" Class="">Load next 15</MudButton>
         </div>
 
         <MudTable Items="_mangas">
@@ -133,7 +133,6 @@ else
         {
             _mangas = await LibraryMangaService.GetMangasForPage(page, Entries);
             _shouldRender = true;
-            NavigationManager.NavigateTo($"/libraryManga/{page}");
         }
         catch (Exception e)
         {
@@ -146,7 +145,7 @@ else
     {
         PageNumber = page;
         await GetMangas(page);
-        await JsRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
+        NavigationManager.NavigateTo($"/libraryManga/{page}");
         StateHasChanged();
     }
 
@@ -156,7 +155,7 @@ else
 
         if (state.User.Identity.IsAuthenticated)
         {
-             NavigationManager.NavigateTo($"/createUserManga/{id}");
+            NavigationManager.NavigateTo($"/createUserManga/{id}");
         }
         else NavigationManager.NavigateTo("login");
     }

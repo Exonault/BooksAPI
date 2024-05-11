@@ -1,11 +1,144 @@
-﻿@page "/createLibraryManga"
-@page "/updateLibraryManga/{id:int}"
+﻿@using System.Text.Json
+@using BooksAPI.FE.Constants
+@using BooksAPI.FE.Model
+@page "/createLibraryManga"
+@* @page "/updateLibraryManga/{id:int}" *@
+
+<PageTitle>Create</PageTitle>
+
+<h3 class="text-center">Create a new Library Manga</h3>
+
+<EditForm Model="_model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator/>
+
+    @if (context.GetValidationMessages().Count() != 0)
+    {
+        <MudGrid Justify="Justify.Center">
+            <MudItem md="4" xs="4">
+                <MudAlert Severity="Severity.Error">
+                    <ValidationSummary/>
+                </MudAlert>
+            </MudItem>
+        </MudGrid>
+    }
+
+    <MudTextField T="string" Label="Title" InputType="InputType.Text" Variant="Variant.Text"
+                  @bind-Value="_model.Title"/>
+    <div class="d-flex col-12">
+        <MudSelect T="string" Label="Demographic type" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-3"
+                   @bind-Value="_model.DemographicType">
+            <MudSelectItem Value="@LibraryMangaConstants.DemographicType.GetValueByKey(LibraryMangaConstants.DemographicType.Shounen)"/>
+            <MudSelectItem Value="@LibraryMangaConstants.DemographicType.GetValueByKey(LibraryMangaConstants.DemographicType.Shoujo)"/>
+            <MudSelectItem Value="@LibraryMangaConstants.DemographicType.GetValueByKey(LibraryMangaConstants.DemographicType.Seinen)"/>
+            <MudSelectItem Value="@LibraryMangaConstants.DemographicType.GetValueByKey(LibraryMangaConstants.DemographicType.Josei)"/>
+        </MudSelect>
+
+        <MudSelect T="string" Label="Type" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-3"
+                   @bind-Value="_model.Type">
+            <MudSelectItem Value="@LibraryMangaConstants.Type.GetValueByKey(LibraryMangaConstants.Type.Manga)"/>
+            <MudSelectItem Value="@LibraryMangaConstants.Type.GetValueByKey(LibraryMangaConstants.Type.LightNovel)"/>
+            <MudSelectItem Value="@LibraryMangaConstants.Type.GetValueByKey(LibraryMangaConstants.Type.OneShot)"/>
+        </MudSelect>
+
+        <MudSelect T="string" Label="Publishing status" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter"
+                   @bind-Value="_model.PublishingStatus">
+            <MudSelectItem Value="@LibraryMangaConstants.PublishingType.GetValueByKey(LibraryMangaConstants.PublishingType.Publishing)"/>
+            <MudSelectItem Value="@LibraryMangaConstants.PublishingType.GetValueByKey(LibraryMangaConstants.PublishingType.Finished)"/>
+            <MudSelectItem Value="@LibraryMangaConstants.PublishingType.GetValueByKey(LibraryMangaConstants.PublishingType.OnHiatus)"/>
+        </MudSelect>
+    </div>
+
+    <div class="d-flex col-12">
+        <MudTextField T="string" Label="First volume image URL" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
+                      @bind-Value="_model.MainImageUrl"/>
+        <MudTextField T="int?" Label="Total volumes" Variant="Variant.Text" InputType="InputType.Number"
+                      @bind-Value="_model.TotalVolumes"/>
+    </div>
+
+    <MudText Typo="Typo.h6" Class="mt-3 text-center">Authors</MudText>
+
+    @foreach (AuthorModel modelAuthor in _model.Authors)
+    {
+        <div class="d-flex align-items-end col-12 mb-3">
+            <MudTextField T="string" Label="First name" Variant="Variant.Text" InputType="InputType.Text" Class="mr-4"
+                          @bind-Value="modelAuthor.FirstName"/>
+            <MudTextField T="string" Label="Last name" Variant="Variant.Text" InputType="InputType.Text" Class="mr-4"
+                          @bind-Value="modelAuthor.LastName"/>
+            <MudSelect T="string" Label="Role" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-4"
+                       @bind-Value="modelAuthor.Role">
+                <MudSelectItem Value="@AuthorConstants.AuthorRole.GetValueByKey(AuthorConstants.AuthorRole.Story)"/>
+                <MudSelectItem Value="@AuthorConstants.AuthorRole.GetValueByKey(AuthorConstants.AuthorRole.Art)"/>
+                <MudSelectItem Value="@AuthorConstants.AuthorRole.GetValueByKey(AuthorConstants.AuthorRole.StoryAndArt)"/>
+            </MudSelect>
+            <MudButton Variant="Variant.Filled" Class="h-75" Color="Color.Primary" OnClick="@(() => RemoveAuthor(modelAuthor))">Remove author</MudButton>
+        </div>
+    }
+    <div class="d-flex justify-content-center">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddAuthor">Add author</MudButton>
+    </div>
+    <br/>
+    <br/>
+    <div class="d-flex justify-content-center">
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Create</MudButton>
+    </div>
+
+
+</EditForm>
 
 @code {
 
     [Parameter]
     public int Id { get; set; }
 
-
     private bool IsCreate => Id == 0;
+
+    private LibraryMangaModel _model = new();
+
+    private bool _shouldRender = false;
+    protected override bool ShouldRender() => _shouldRender;
+
+    private void OnValidSubmit()
+    {
+        FormatModel();
+        string result = JsonSerializer.Serialize(_model);
+        Console.WriteLine(result);
+    }
+
+    private void FormatModel()
+    {
+        _model.DemographicType = LibraryMangaConstants.DemographicType.GetKeyByValue(_model.DemographicType);
+        _model.Type = LibraryMangaConstants.Type.GetKeyByValue(_model.Type);
+        _model.PublishingStatus = LibraryMangaConstants.PublishingType.GetKeyByValue(_model.PublishingStatus);
+
+        foreach (AuthorModel author in _model.Authors)
+        {
+            author.Role = AuthorConstants.AuthorRole.GetKeyByValue(author.Role);
+        }
+
+        if (string.IsNullOrEmpty(_model.MainImageUrl))
+        {
+            _model.MainImageUrl = "https://placehold.co/200x300?text=Placeholder";
+        }
+    }
+
+    private void RemoveAuthor(AuthorModel author)
+    {
+        if (_model.Authors.Count == 1)
+        {
+            return;
+        }
+
+        _model.Authors.Remove(author);
+        _shouldRender = true;
+        StateHasChanged();
+    }
+
+    private void AddAuthor()
+    {
+        _model.Authors.Add(new AuthorModel());
+        _shouldRender = true;
+        StateHasChanged();
+    }
+
+
 }

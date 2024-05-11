@@ -42,8 +42,8 @@ public static class LibraryMangaEndpoints
 
         app.MapGet("libraryManga/search", SearchByTitle)
             .AllowAnonymous()
-            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(15))
-                .Tag(CacheConstants.LibraryMangaForPageTag))
+            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(10))
+                .Tag(CacheConstants.LibraryMangaSearchTag))
             .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaResponse>), "application/json")
             .Produces(StatusCodes.Status500InternalServerError);
 

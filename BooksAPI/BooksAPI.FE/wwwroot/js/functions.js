@@ -25,4 +25,3 @@ function getTokens() {
     
     return [token, refreshToken];
 }
-

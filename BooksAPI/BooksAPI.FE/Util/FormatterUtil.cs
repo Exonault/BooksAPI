@@ -5,30 +5,30 @@ namespace BooksAPI.FE.Util;
 
 public static class FormatterUtil
 {
-    public static string FormatPublishingStatus(string status)
-    {
-        if (LibraryMangaConstants.PublishingType.OnHiatus == status)
-        {
-            return "On Hiatus";
-        }
-
-        return status;
-    }
-
-    public static string FormatType(string type)
-    {
-        if (LibraryMangaConstants.Type.LightNovel == type)
-        {
-            return "Light novel";
-        }
-
-        if (LibraryMangaConstants.Type.OneShot == type)
-        {
-            return "One shot";
-        }
-
-        return type;
-    }
+    // public static string FormatPublishingStatus(string status)
+    // {
+    //     if (LibraryMangaConstants.PublishingType.OnHiatus == status)
+    //     {
+    //         return "On Hiatus";
+    //     }
+    //
+    //     return status;
+    // }
+    //
+    // public static string FormatType(string type)
+    // {
+    //     if (LibraryMangaConstants.Type.LightNovel == type)
+    //     {
+    //         return "Light novel";
+    //     }
+    //
+    //     if (LibraryMangaConstants.Type.OneShot == type)
+    //     {
+    //         return "One shot";
+    //     }
+    //
+    //     return type;
+    // }
 
     public static string FormatTotalVolumes(int? totalVolumes)
     {

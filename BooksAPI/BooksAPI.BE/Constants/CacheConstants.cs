@@ -8,6 +8,8 @@ public static class CacheConstants
 
     public const string AllLibraryMangasTag = "allLibraryMangas";
 
+    public const string LibraryMangaSearchTag = "libraryMangaSearch";
+
 
     public const string OrderWithIdTag = "orderWithId";
 

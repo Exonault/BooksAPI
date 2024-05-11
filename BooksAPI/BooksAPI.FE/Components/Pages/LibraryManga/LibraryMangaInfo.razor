@@ -1,6 +1,7 @@
 ﻿@page "/libraryMangaInfo/{id:int}"
 
 @attribute [AllowAnonymous]
+@using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.Author
 @using BooksAPI.FE.Contracts.LibraryManga
 @using BooksAPI.FE.Interfaces
@@ -44,11 +45,11 @@
                     <div class="row mb-2">
                         <div class="col">
                             <MudText Typo="Typo.h6">Type</MudText>
-                            <MudText Typo="Typo.body1">@FormatterUtil.FormatType(manga.Type)</MudText>
+                            <MudText Typo="Typo.body1">@LibraryMangaConstants.Type.GetValueByKey(manga.Type)</MudText>
                         </div>
                         <div class="col">
                             <MudText Typo="Typo.h6">Publishing status</MudText>
-                            <MudText Typo="Typo.body1">@FormatterUtil.FormatPublishingStatus(manga.PublishingStatus)</MudText>
+                            <MudText Typo="Typo.body1">@LibraryMangaConstants.PublishingType.GetValueByKey(manga.PublishingStatus)</MudText>
                         </div>
                     </div>
                     <div class="row mb-2">
