@@ -1,6 +1,6 @@
 ﻿namespace BooksAPI.FE.Constants;
 
-public class ApplicationConstants
+public static class ApplicationConstants
 {
     public static class PolicyNames
     {

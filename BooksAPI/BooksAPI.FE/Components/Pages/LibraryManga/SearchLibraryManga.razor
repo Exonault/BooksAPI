@@ -1,0 +1,105 @@
+﻿@page "/searchLibraryManga"
+
+@using BooksAPI.FE.Contracts.LibraryManga
+@using BooksAPI.FE.Interfaces
+
+@attribute [AllowAnonymous]
+
+@inject ILibraryMangaService LibraryMangaService;
+
+<PageTitle>Search</PageTitle>
+<h3 class="text-center">Search library manga</h3>
+
+@if (_error)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem md="4" xs="4">
+            <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
+                Search must not be empty
+            </MudAlert>
+        </MudItem>
+    </MudGrid>
+}
+
+@if (_searchEmpty)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem md="4" xs="4">
+            <MudAlert Severity="Severity.Info" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
+                No results
+            </MudAlert>
+        </MudItem>
+    </MudGrid>
+}
+
+<div class="d-flex justify-content-center align-items-center flex-row mt-1 mb-5">
+    <MudTextField T="string" InputType="InputType.Text" Variant="Variant.Outlined" Label="Search library mangas by title"
+                  @bind-Value="SearchQuery"/>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(Search)" Class="ml-3">Search</MudButton>
+</div>
+
+@if (_isDataFetching)
+{
+    <div class="mt-4">
+        <MudProgressLinear Color="Color.Primary" Size="Size.Large" Indeterminate="true" Class="my-7"/>
+    </div>
+}
+
+@if (_searchDone && !_searchEmpty)
+{
+    <LibraryMangaTable Mangas="SearchResult"/>
+}
+
+@code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    public string SearchQuery { get; set; }
+
+    private IEnumerable<LibraryMangaResponse> SearchResult = Array.Empty<LibraryMangaResponse>();
+    private bool _searchDone = false;
+    private bool _shouldRender = false;
+    private bool _error = false;
+    private bool _isDataFetching = false;
+    private bool _searchEmpty = false;
+
+    protected override bool ShouldRender() => _shouldRender;
+
+    private async Task Search()
+    {
+        if (string.IsNullOrEmpty(SearchQuery))
+        {
+            _error = true;
+            _shouldRender = true;
+            StateHasChanged();
+            return;
+        }
+
+        _isDataFetching = true;
+        _shouldRender = true;
+        StateHasChanged();
+
+        try
+        {
+            SearchResult = await LibraryMangaService.SearchManga(SearchQuery);
+            _searchEmpty = !SearchResult.Any();
+            _searchDone = true;
+            _shouldRender = true;
+            _isDataFetching = false;
+        }
+        catch (Exception e)
+        {
+            _error = true;
+            _shouldRender = true;
+            _isDataFetching = false;
+        }
+    }
+
+    private void CloseAlert()
+    {
+        _error = false;
+        StateHasChanged();
+    }
+
+}

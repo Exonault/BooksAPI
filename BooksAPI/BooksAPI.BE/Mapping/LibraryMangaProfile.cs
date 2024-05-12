@@ -8,10 +8,10 @@ public class LibraryMangaProfile:Profile
 {
     public LibraryMangaProfile()
     {
-        CreateMap<CreateLibraryMangaRequest, LibraryManga>(); // Doesn't map authors
+        CreateMap<CreateLibraryMangaRequest, LibraryManga>();
 
-        CreateMap<LibraryManga, LibraryMangaResponse>(); //Doesn't map authors
+        CreateMap<LibraryManga, LibraryMangaResponse>();
 
-        CreateMap<UpdateLibraryMangaRequest, LibraryManga>(); //Doens't map authors
+        CreateMap<UpdateLibraryMangaRequest, LibraryManga>();
     }
 }

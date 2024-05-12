@@ -28,7 +28,8 @@ public static class LibraryMangaEndpoints
 
         app.MapGet("/libraryManga/{id:int}", GetLibraryMangaById)
             .AllowAnonymous()
-            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(10)))
+            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(10))
+                .Tag(CacheConstants.LibraryMangaWithIdTag))
             .Produces(StatusCodes.Status200OK, typeof(LibraryMangaResponse), "application/json")
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
@@ -150,6 +151,7 @@ public static class LibraryMangaEndpoints
             await service.UpdateLibraryManga(id, request);
             await cacheStore.EvictByTagAsync(CacheConstants.LibraryMangaForPageTag, CancellationToken.None);
             await cacheStore.EvictByTagAsync(CacheConstants.AllLibraryMangasTag, CancellationToken.None);
+            await cacheStore.EvictByTagAsync(CacheConstants.LibraryMangaWithIdTag, CancellationToken.None);
             return Results.Ok();
         }
         catch (ResourceNotFoundException ex)

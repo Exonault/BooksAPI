@@ -25,3 +25,7 @@ function getTokens() {
     
     return [token, refreshToken];
 }
+
+window.scrollToTop = function() {
+    window.scrollTo(0, 0);
+}

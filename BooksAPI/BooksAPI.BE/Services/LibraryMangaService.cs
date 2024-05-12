@@ -39,21 +39,23 @@ public class LibraryMangaService : ILibraryMangaService
             throw new ValidationException(validationResult.Errors);
         }
 
-        foreach (AuthorRequest authorRequest in request.Authors)
+        List<Author> authorsFiltered = new List<Author>();
+        foreach (Author author in libraryManga.Authors)
         {
-            Author? searchedAuthor =
-                await _authorRepository.GetAuthor(authorRequest.FirstName, authorRequest.LastName, authorRequest.Role);
+            Author? searchedAuthor = await _authorRepository.GetAuthor(author.FirstName, author.LastName, author.Role);
 
             if (searchedAuthor is null)
             {
-                Author author = _mapper.Map<Author>(authorRequest);
-                libraryManga.Authors.Add(author);
+                authorsFiltered.Add(author);
             }
             else
             {
-                libraryManga.Authors.Add(searchedAuthor);
+                authorsFiltered.Remove(author);
+                authorsFiltered.Add(searchedAuthor);
             }
         }
+
+        libraryManga.Authors = authorsFiltered;
 
         await _libraryMangaRepository.CreateLibraryManga(libraryManga);
     }
@@ -86,7 +88,7 @@ public class LibraryMangaService : ILibraryMangaService
     public async Task<List<LibraryMangaResponse>> GetLibraryMangasForPage(int pageIndex, int pageEntriesCount)
     {
         List<LibraryManga> libraryMangasForPage = await _libraryMangaRepository
-            .GetLibraryMangasForPage(pageIndex - 1, pageEntriesCount);//page 1 = pageIndex 0
+            .GetLibraryMangasForPage(pageIndex - 1, pageEntriesCount); //page 1 = pageIndex 0
 
         return _mapper.Map<List<LibraryMangaResponse>>(libraryMangasForPage);
     }
@@ -111,22 +113,25 @@ public class LibraryMangaService : ILibraryMangaService
 
         LibraryManga updatedManga = _mapper.Map(request, libraryManga);
 
-        foreach (AuthorRequest authorRequest in request.Authors)
-        {
-            Author? searchAuthor =
-                await _authorRepository.GetAuthor(authorRequest.FirstName, authorRequest.LastName, authorRequest.Role);
 
-            if (searchAuthor is null)
+        List<Author> authorsFiltered = new List<Author>();
+
+        foreach (Author author in updatedManga.Authors)
+        {
+            Author? searchedAuthor = await _authorRepository.GetAuthor(author.FirstName, author.LastName, author.Role);
+
+            if (searchedAuthor is null)
             {
-                Author author = _mapper.Map<Author>(authorRequest);
-                updatedManga.Authors.Add(author);
-                await _authorRepository.CreateAuthor(author);
+                authorsFiltered.Add(author);
             }
             else
             {
-                updatedManga.Authors.Add(searchAuthor);
+                authorsFiltered.Remove(author);
+                authorsFiltered.Add(searchedAuthor);
             }
         }
+
+        updatedManga.Authors = authorsFiltered;
 
         await _libraryMangaRepository.UpdateLibraryManga(updatedManga);
     }

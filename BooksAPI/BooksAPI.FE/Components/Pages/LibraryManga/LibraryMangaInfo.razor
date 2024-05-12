@@ -1,6 +1,7 @@
 ﻿@page "/libraryMangaInfo/{id:int}"
 
 @attribute [AllowAnonymous]
+
 @using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.Author
 @using BooksAPI.FE.Contracts.LibraryManga
@@ -29,7 +30,7 @@
         <MudContainer MaxWidth="MaxWidth.Medium">
             <div class="d-flex flex-wrap mt-1">
                 <div class="d-flex flex-column align-items-start mr-2">
-                    <MudImage Src="@manga.MainImageUrl" Width="250" Height="350" Class="border border-dark"/>
+                    <MudImage Src="@GetImageUrl(manga.MainImageUrl)" Width="250" Height="350" Class="border border-dark"/>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="row mb-2">
@@ -103,6 +104,16 @@ else
             _error = true;
             _shouldRender = true;
         }
+    }
+    
+    private string GetImageUrl(string? url)
+    {
+        if (string.IsNullOrEmpty(url))
+        {
+            return LibraryMangaConstants.ImagePlaceHolder;
+        }
+
+        return url;
     }
 
     private void CloseAlert()

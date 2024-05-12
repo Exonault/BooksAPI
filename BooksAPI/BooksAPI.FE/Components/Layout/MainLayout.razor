@@ -19,14 +19,18 @@
         <AuthorizeView>
             <NotAuthorized>
                 <div class="top-row px-4">
+                    <a href="/searchLibraryManga">Search manga</a>
                     <a href="/login">Login</a>
                     <a href="/register">Register</a>
                 </div>
             </NotAuthorized>
             <Authorized>
                 <div class="top-row px-4 d-flex justify-content-between align-items-center">
-                    <h4 class="mr-auto">Kitka @GetUserName(context.User)</h4>
-                    <a class="ml-auto" @onclick="Logout"> Logout</a>
+                    <h4>Kitka @GetUserName(context.User)</h4>
+                    <div>
+                        <a href="/searchLibraryManga">Search manga</a>
+                        <a @onclick="Logout"> Logout</a>
+                    </div>
                 </div>
             </Authorized>
         </AuthorizeView>

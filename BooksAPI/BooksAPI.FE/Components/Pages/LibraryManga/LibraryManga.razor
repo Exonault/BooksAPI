@@ -1,20 +1,17 @@
 ﻿@page "/libraryManga/{pageNumber:int}"
-@attribute [AllowAnonymous]
-
 @using BooksAPI.FE.Constants
-@using BooksAPI.FE.Contracts.Author
 @using BooksAPI.FE.Contracts.LibraryManga
 @using BooksAPI.FE.Interfaces
-@using BooksAPI.FE.Util
-@inject ILibraryMangaService LibraryMangaService;
-@inject IJSRuntime JsRuntime;
-@inject NavigationManager NavigationManager;
-@inject AuthenticationStateProvider AuthenticationStateProvider;
 
+@attribute [AllowAnonymous]
+
+@inject ILibraryMangaService LibraryMangaService;
+@inject NavigationManager NavigationManager;
+@inject IJSRuntime JsRuntime;
 
 <PageTitle>LibraryManga</PageTitle>
 
-<h3 class="text-center">All Mangas</h3>
+<h3 class="text-center" id="top">All Mangas</h3>
 @if (_isDataFetched)
 {
     @if (_error)
@@ -40,59 +37,19 @@
         <div class="d-flex justify-content-center flex-row mb-5">
             @if (PageNumber != 1)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="@(() => PageButtons(PageNumber - 1))">Load previous 15</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="@(() => PageButtons(PageNumber - 1))">Load previous @Entries</MudButton>
             }
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(PageNumber + 1))" Class="">Load next 15</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(PageNumber + 1))" Class="">Load next @Entries</MudButton>
         </div>
 
-        <MudTable Items="_mangas">
-            <HeaderContent>
-                <MudTh>Cover</MudTh>
-                <MudTh>Title</MudTh>
-                <MudTh>Authors</MudTh>
-                <MudTh>Actions</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Cover">
-                    <MudImage Src="@context.MainImageUrl" Width="100" Height="140" Fluid="true"/>
-                </MudTd>
-                <MudTd DataLabel="Title" Class="w-50">
-                    <MudText Typo="Typo.h6">@context.Title</MudText>
-                </MudTd>
-                <MudTd DataLabel="Authors">
-                    @foreach (AuthorResponse author in context.Authors)
-                    {
-                        <MudText Typo="Typo.body1" Class="mt-1"> @FormatterUtil.FormatAuthor(author)</MudText>
-                    }
-                </MudTd>
-                <MudTd DataLabel="Actions" Style="width: 15% !important">
-                    <AuthorizeView Policy="@ApplicationConstants.PolicyNames.AdminRolePolicyName">
-                        <Authorized Context="authorizedContext">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                                       OnClick="@(() => NavigationManager.NavigateTo($"/updateLibraryManga/{context.Id}"))">
-                                Update information
-                            </MudButton>
-                        </Authorized>
-                    </AuthorizeView>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
-                               OnClick="@(() => NavigationManager.NavigateTo($"libraryMangaInfo/{context.Id}"))">
-                        More information
-                    </MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
-                               OnClick="@(() => AddToCollectionAction(context.Id))">
-                        Add to collection
-                    </MudButton>
-
-                </MudTd>
-            </RowTemplate>
-        </MudTable>
+        <LibraryMangaTable Mangas="_mangas"/>
 
         <div class="d-flex justify-content-center flex-row mt-5">
             @if (PageNumber != 1)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="@(() => PageButtons(PageNumber - 1))">Load previous 15</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="@(() => PageButtons(PageNumber - 1))">Load previous @Entries</MudButton>
             }
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(PageNumber + 1))">Load next 15</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(PageNumber + 1))">Load next @Entries</MudButton>
         </div>
     }
 }
@@ -115,7 +72,7 @@ else
 
     private bool _shouldRender = false;
     private bool _error = false;
-    private const int Entries = 15;
+    private const int Entries = 25;
     private bool _isDataFetched = false;
 
     protected override bool ShouldRender() => _shouldRender;
@@ -145,19 +102,9 @@ else
     {
         PageNumber = page;
         await GetMangas(page);
+        await JsRuntime.InvokeVoidAsync("window.scrollToTop");
         NavigationManager.NavigateTo($"/libraryManga/{page}");
         StateHasChanged();
-    }
-
-    private async Task AddToCollectionAction(int id)
-    {
-        AuthenticationState state = await AuthenticationState;
-
-        if (state.User.Identity.IsAuthenticated)
-        {
-            NavigationManager.NavigateTo($"/createUserManga/{id}");
-        }
-        else NavigationManager.NavigateTo("login");
     }
 
     private void CloseAlert()

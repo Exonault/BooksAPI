@@ -1,6 +1,6 @@
 ﻿@page "/userManga"
 
-@attribute [Authorize(Policy = "UserPolicy")]
+@attribute [Authorize(Policy = ApplicationConstants.PolicyNames.UserRolePolicyName)]
 
 @using BooksAPI.FE.Authentication
 @using BooksAPI.FE.Constants

@@ -1,4 +1,3 @@
-using System.Text;
 using AutoMapper;
 using Blazored.SessionStorage;
 using BooksAPI.FE.Authentication;
@@ -7,9 +6,7 @@ using BooksAPI.FE.Constants;
 using BooksAPI.FE.Interfaces;
 using BooksAPI.FE.Mapping;
 using BooksAPI.FE.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,29 +37,13 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddBlazoredSessionStorage();
 
-MapperConfiguration mapperConfig = new MapperConfiguration(config => { config.AddProfile(new UserProfile()); });
+MapperConfiguration mapperConfig = new MapperConfiguration(config =>
+{
+    config.AddProfile(new UserProfile());
+    config.AddProfile(new LibraryMangaProfile());
+});
 
 builder.Services.AddSingleton(mapperConfig.CreateMapper());
-
-// builder.Services.AddAuthentication(options =>
-//     {
-//         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-//     })
-//     .AddJwtBearer(options =>
-//     {
-//         options.TokenValidationParameters = new TokenValidationParameters()
-//         {
-//             ValidateIssuer = true,
-//             ValidateAudience = true,
-//             ValidateIssuerSigningKey = true,
-//             ValidateLifetime = true,
-//             ValidIssuer = configuration["Jwt:Issuer"],
-//             ValidAudience = configuration["Jwt:Audience"],
-//             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
-//         };
-//     });
 
 builder.Services.AddAuthorization(options =>
 {

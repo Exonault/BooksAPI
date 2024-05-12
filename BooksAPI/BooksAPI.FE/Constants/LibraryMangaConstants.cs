@@ -2,6 +2,8 @@
 
 public static class LibraryMangaConstants
 {
+    public const string ImagePlaceHolder = "https://placehold.co/250x350?text=Placeholder"; //Placeholder image
+    
     public static class DemographicType
     {
         public const string Shounen = "Shounen";

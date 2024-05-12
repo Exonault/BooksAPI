@@ -5,7 +5,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 
 //DO NOT RUN; 
-// return;
+return;
 
 // string filePathData = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
 string filePathData = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
