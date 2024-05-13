@@ -4,6 +4,7 @@
 @using BooksAPI.FE.Authentication
 @using BooksAPI.FE.Contracts.User
 @using BooksAPI.FE.Interfaces
+@using BooksAPI.FE.Messages
 @using BooksAPI.FE.Model
 
 @inject IUserService UserService;
@@ -18,7 +19,7 @@
     <MudGrid Justify="Justify.Center">
         <MudItem md="4" xs="4">
             <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
-               Login failed!
+              @_errorMessage
             </MudAlert>
         </MudItem>
     </MudGrid>
@@ -46,25 +47,49 @@
     private LoginModel _model = new();
     private bool _shouldRender = false;
     private bool _error = false;
+    private string _errorMessage = UserMessages.ErrorLogging;
 
     protected override bool ShouldRender() => _shouldRender;
 
     private async void OnValidSubmit()
     {
-        LoginResponse? loginResponse = await UserService.Login(_model);
-        if (loginResponse is null)
+        try
+        {
+            LoginResponse? loginResponse = await UserService.Login(_model);
+            if (loginResponse is null)
+            {
+                _error = true;
+                _errorMessage = UserMessages.ErrorLogging;
+                _shouldRender = true;
+                StateHasChanged();
+            }
+            else
+            {
+                await JsRuntime.InvokeVoidAsync("addCookie", $"{loginResponse.Token}", $"{loginResponse.RefreshToken}");
+
+                ((CustomAuthenticationStateProvider)AuthenticationStateProvider).UpdateUserState(loginResponse.Token);
+
+                NavigationManager.NavigateTo("/");
+            }
+        }
+        catch (ArgumentException e)
         {
             _error = true;
+            _errorMessage = UserMessages.InvalidUserNameAndPassword;
             _shouldRender = true;
             StateHasChanged();
         }
-        else
+        catch (InvalidOperationException e)
         {
-            await JsRuntime.InvokeVoidAsync("addCookie",$"{loginResponse.Token}", $"{loginResponse.RefreshToken}");
-            
-            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).UpdateUserState(loginResponse.Token);
-
-            NavigationManager.NavigateTo("/");
+            _error = true;
+            _errorMessage = UserMessages.NoUser;
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            _error = true;
+            _errorMessage = UserMessages.ErrorLogging;
+            StateHasChanged();
         }
     }
 

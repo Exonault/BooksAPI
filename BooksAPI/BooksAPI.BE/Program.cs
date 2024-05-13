@@ -94,8 +94,8 @@ builder.Services.AddSingleton(mapperConfiguration.CreateMapper());
 builder.Services.AddOutputCache()
     .AddStackExchangeRedisOutputCache(options =>
     {
-        options.InstanceName = "localRedis";
-        options.Configuration = "localhost:6379";
+        options.InstanceName = configuration["Redis:Name"]!;
+        options.Configuration = configuration["Redis:Url"];
     });
 
 

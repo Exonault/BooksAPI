@@ -4,6 +4,7 @@
 
 @using BooksAPI.FE.Contracts.User
 @using BooksAPI.FE.Interfaces
+@using BooksAPI.FE.Messages
 @using BooksAPI.FE.Model
 
 
@@ -18,7 +19,7 @@
     <MudGrid Justify="Justify.Center">
         <MudItem md="4" xs="4">
             <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
-               Registration failed
+                @UserMessages.ErrorRegistering
             </MudAlert>
         </MudItem>
     </MudGrid>
@@ -53,25 +54,34 @@
 
     private async void OnValidSubmit()
     {
-        RegisterResponse? registerResponse = await UserService.Register(_model);
-        if (registerResponse is not null)
+        try
         {
-            if (!registerResponse.Successful)
+            RegisterResponse? registerResponse = await UserService.Register(_model);
+            
+            if (registerResponse is not null)
+            {
+                if (!registerResponse.Successful)
+                {
+                    _error = true;
+                    _shouldRender = true;
+                    StateHasChanged();
+                }
+                else
+                {
+                    NavigationManager.NavigateTo("/login");
+                }
+            }
+            else
             {
                 _error = true;
                 _shouldRender = true;
                 StateHasChanged();
             }
-            else
-            {
-                NavigationManager.NavigateTo("/login");
-            }
         }
-        else
+        catch (Exception e)
         {
-            _error = true;
-            _shouldRender = true;
-            StateHasChanged();
+            Console.WriteLine(e);
+            throw;
         }
     }
 
@@ -82,4 +92,3 @@
     }
 
 }
-

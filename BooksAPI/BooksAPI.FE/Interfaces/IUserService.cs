@@ -10,5 +10,4 @@ public interface IUserService
     Task<LoginResponse?> Login(LoginModel model);
 
     Task Logout(string token);
-    Task<bool> Refresh(string token, string refreshToken);
 }

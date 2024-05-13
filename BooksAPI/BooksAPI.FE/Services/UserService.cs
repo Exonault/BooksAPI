@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using AutoMapper;
 using BooksAPI.FE.Contracts.User;
@@ -14,15 +15,12 @@ public class UserService : IUserService
     private readonly IMapper _mapper;
     private readonly IConfiguration _configuration;
     private readonly string _userUrl;
-    private readonly IJSRuntime _jsRuntime;
 
-    public UserService(IHttpClientFactory clientFactory, IMapper mapper, IConfiguration configuration,
-        IJSRuntime jsRuntime)
+    public UserService(IHttpClientFactory clientFactory, IMapper mapper, IConfiguration configuration)
     {
         _clientFactory = clientFactory;
         _mapper = mapper;
         _configuration = configuration;
-        _jsRuntime = jsRuntime;
         _userUrl = _configuration["Backend:User"]!;
     }
 
@@ -35,25 +33,19 @@ public class UserService : IUserService
         request.Content = JsonContent.Create(requestContent);
 
         HttpClient httpClient = _clientFactory.CreateClient();
-        try
-        {
-            HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
-            if (!responseMessage.IsSuccessStatusCode)
-            {
-                return null;
-            }
 
-            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
-            {
-                RegisterResponse? registerResponse =
-                    await JsonSerializer.DeserializeAsync<RegisterResponse>(responseStream);
-
-                return registerResponse;
-            }
-        }
-        catch (Exception e)
+        HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
+        if (!responseMessage.IsSuccessStatusCode)
         {
             return null;
+        }
+
+        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        {
+            RegisterResponse? registerResponse =
+                await JsonSerializer.DeserializeAsync<RegisterResponse>(responseStream);
+
+            return registerResponse;
         }
     }
 
@@ -67,23 +59,27 @@ public class UserService : IUserService
 
         HttpClient httpClient = _clientFactory.CreateClient();
 
-        try
-        {
-            HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
-            if (!responseMessage.IsSuccessStatusCode)
-            {
-                return null;
-            }
+        HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
 
-            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
-            {
-                LoginResponse? loginResponse = await JsonSerializer.DeserializeAsync<LoginResponse>(responseStream);
-                return loginResponse;
-            }
+        if (responseMessage.StatusCode == HttpStatusCode.BadRequest)
+        {
+            throw new ArgumentException();
         }
-        catch (Exception e)
+
+        if (responseMessage.StatusCode == HttpStatusCode.NotFound)
+        {
+            throw new InvalidOperationException();
+        }
+        
+        if (!responseMessage.IsSuccessStatusCode)
         {
             return null;
+        }
+
+        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        {
+            LoginResponse? loginResponse = await JsonSerializer.DeserializeAsync<LoginResponse>(responseStream);
+            return loginResponse;
         }
     }
 
@@ -102,52 +98,6 @@ public class UserService : IUserService
         catch (Exception e)
         {
             // return null;
-        }
-    }
-
-    public async Task<bool> Refresh(string token, string refreshToken)
-    {
-        RefreshRequest requestContent = new RefreshRequest
-        {
-            AccessToken = token,
-            RefreshToken = refreshToken
-        };
-
-        string uri = string.Format(_userUrl, "refresh");
-
-        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, uri);
-        request.Content = JsonContent.Create(requestContent);
-
-        HttpClient httpClient = _clientFactory.CreateClient();
-
-        try
-        {
-            HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
-
-            if (!responseMessage.IsSuccessStatusCode)
-            {
-                return false;
-            }
-
-            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
-            {
-                LoginResponse? loginResponse = await JsonSerializer.DeserializeAsync<LoginResponse>(responseStream);
-                if (loginResponse is not null)
-                {
-                    await _jsRuntime.InvokeVoidAsync("addCookie", $"{loginResponse.Token}", $"{loginResponse.Token}");
-                    return true;
-                }
-                else
-                {
-                    await _jsRuntime.InvokeVoidAsync("deleteCookie", $"{token}",
-                        $"{refreshToken}");
-                    return false;
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            return false;
         }
     }
 }
