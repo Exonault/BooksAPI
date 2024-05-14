@@ -1,6 +1,9 @@
 ﻿@page "/createUserManga"
 @page "/updateUserManga"
 
+@using BooksAPI.FE.Constants
+@using BooksAPI.FE.Contracts.Author
+@using BooksAPI.FE.Contracts.LibraryManga
 @using BooksAPI.FE.Extensions
 @using BooksAPI.FE.Interfaces
 @using BooksAPI.FE.Model
@@ -11,9 +14,92 @@
 @inject ILibraryMangaService LibraryMangaService;
 @inject IJSRuntime JsRuntime;
 
+
+<h3 class="text-center">
+    @("Create a new entry")
+</h3>
+
+@if (_error)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem md="4" xs="4">
+            <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
+                @("Unable to create manga. Try again later")
+            </MudAlert>
+        </MudItem>
+    </MudGrid>
+}
+
+@if (_isDataFetching)
+{
+    <div class="mt-4">
+        <MudProgressLinear Color="Color.Primary" Size="Size.Large" Indeterminate="true" Class="my-7"/>
+    </div>
+}
+else
+{
+   <EditForm Model="_model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator/>
+
+    @if (context.GetValidationMessages().Count() != 0)
+    {
+        <MudGrid Justify="Justify.Center">
+            <MudItem md="4" xs="4">
+                <MudAlert Severity="Severity.Error">
+                    <ValidationSummary/>
+                </MudAlert>
+            </MudItem>
+        </MudGrid>
+    }
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="7">
+            <h4 class="text-center">Library manga information</h4>
+            <MudTextField Label="Title" InputType="InputType.Text" Variant="Variant.Text" Disabled="true"
+            Value="_libraryManga.Title" />
+            <div class="d-flex col-12">
+                <MudTextField Label="Demographic type" InputType="InputType.Text" Variant="Variant.Text"
+                              Value="LibraryMangaConstants.DemographicType.GetValueByKey(_libraryManga.DemographicType)" Disabled="true"/>
+                <MudTextField Label="Type" InputType="InputType.Text" Variant="Variant.Text"
+                              Value="LibraryMangaConstants.Type.GetValueByKey(_libraryManga.Type)" Disabled="true"/>
+                <MudTextField Label="Publishing status" InputType="InputType.Text" Variant="Variant.Text" Disabled="true"
+                              Value="LibraryMangaConstants.PublishingType.GetValueByKey(_libraryManga.PublishingStatus)"/>
+                <MudTextField Label="Total volumes" InputType="InputType.Text" Variant="Variant.Text" Disabled="true"
+                              Value="FormatterUtil.FormatTotalVolumes(_libraryManga.TotalVolumes)"/>
+            </div>
+            
+            @* <MudSelect Label="Reading status" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-3" @bind-Value="_model.ReadingStatus"> *@
+            @*     <MudSelectItem></MudSelectItem> *@
+            @*     <MudSelectItem></MudSelectItem> *@
+            @*     <MudSelectItem></MudSelectItem> *@
+            @* </MudSelect> *@
+            @* *@
+            @* <MudSelect Label="Collecting status"  Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-3" @bind-Value="_model.CollectionStatus"> *@
+            @*     <MudSelectItem></MudSelectItem> *@
+            @*     <MudSelectItem></MudSelectItem> *@
+            @*     <MudSelectItem></MudSelectItem> *@
+            @* </MudSelect> *@
+            
+            <MudTextField Label="Price per volume" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
+                          @bind-Value="_model.Price"/>
+
+            <MudTextField Label="Collected volume" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
+                          @bind-Value="_model.CollectedVolumes"/>
+
+            <MudTextField Label="Read volume" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
+                          @bind-Value="_model.ReadVolumes"/>
+            
+        </MudItem>
+    </MudGrid>
+
+</EditForm> 
+}
+
+
+
 @code {
 
-    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     private int _userMangaId = 0;
     private int _libraryMangaId = 0;
@@ -21,12 +107,15 @@
     private bool _isCreate;
     private bool _isUpdate;
     private bool _error;
+    private bool _isDataFetching = true;
 
     private string _userId;
     private string _token;
     private string _refreshToken;
 
     private UserMangaModel _model = new();
+
+    private LibraryMangaResponse _libraryManga;
 
     protected override async Task OnInitializedAsync()
     {
@@ -35,34 +124,47 @@
             AuthenticationState state = await AuthenticationState;
 
             _userId = UserUtil.GetUserId(state.User);
-            
+
             string[] tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
             _token = tokens[0];
             _refreshToken = tokens[1];
-            
-            NavigationManager.GetQueryString<int>("userMangaId", out _userMangaId);
+
             NavigationManager.GetQueryString<int>("libraryMangaId", out _libraryMangaId);
+            NavigationManager.GetQueryString<int>("userMangaId", out _userMangaId);
 
             _isCreate = _userMangaId == 0;
-            _isUpdate = _libraryMangaId == 0;
-            
+            // _isUpdate = _libraryMangaId == 0;
+
             if (_isCreate)
             {
                 //Get library manga and add it to the model;
+                _libraryManga = await LibraryMangaService.GetManga(_libraryMangaId);
+                _isDataFetching = false;
+                StateHasChanged();
+              
             }
 
-            if (_isUpdate)
-            {
-                //Get user manga
-            }
+            // if (_isUpdate)
+            // {
+            //     //Get user manga
+            // }
         }
         catch (Exception e)
         {
             //ignore
             _error = true;
         }
+    }
 
-        
+    private void OnValidSubmit()
+    {
+    }
+
+
+    private void CloseAlert()
+    {
+        _error = false;
+        StateHasChanged();
     }
 
 }

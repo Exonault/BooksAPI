@@ -13,6 +13,4 @@ public class UserMangaModel
     public decimal Price { get; set; }
 
     public string CollectionStatus { get; set; } = string.Empty;
-
-    public LibraryMangaResponse LibraryManga { get; set; }
 }

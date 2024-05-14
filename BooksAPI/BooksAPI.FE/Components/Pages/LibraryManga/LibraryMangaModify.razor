@@ -1,6 +1,7 @@
 ﻿@page "/createLibraryManga"
 @page "/updateLibraryManga"
 
+@using System.Text.Json
 @using BooksAPI.FE.Authentication
 @using BooksAPI.FE.Constants
 @using BooksAPI.FE.Extensions
@@ -169,6 +170,9 @@
         FormatModel();
         try
         {
+            string serialize = JsonSerializer.Serialize(_model);
+            Console.WriteLine(serialize);
+
             if (IsCreate)
             {
                 _createSuccess = await LibraryMangaService.CreateManga(_model, _token, _refreshToken);
@@ -177,7 +181,7 @@
             else
             {
                 bool updateSuccess = await LibraryMangaService.UpdateManga(_id, _model, _token, _refreshToken);
-
+            
                 if (updateSuccess)
                 {
                     NavigationManager.NavigateTo("/libraryManga/1");

@@ -16,7 +16,7 @@ public class UserMangaValidator : AbstractValidator<UserManga>
             .WithMessage(UserMangaMessages.ReadingStatusValidationMessage);
 
         RuleFor(x => new { x.ReadVolumes, x.CollectedVolumes })
-            .Must(x => x.ReadVolumes >= 1)
+            .Must(x => x.ReadVolumes >= 0)
             .WithMessage(UserMangaMessages.ReadVolumesRequiredMessage)
             .Must(x => x.ReadVolumes <= x.CollectedVolumes)
             .WithMessage(UserMangaMessages.ReadVolumesLowerThanTotalVolumes);
@@ -28,15 +28,13 @@ public class UserMangaValidator : AbstractValidator<UserManga>
             .WithMessage(UserMangaMessages.CollectionStatusValidationMessage);
 
         RuleFor(x => x.PricePerVolume)
-            .GreaterThan(0)
+            .GreaterThanOrEqualTo(0)
             .WithMessage(UserMangaMessages.PricePerVolumeValidationMessage);
 
-        RuleFor(x => new { x.CollectedVolumes, x.LibraryManga.TotalVolumes })
-            .NotEmpty()
-            .WithMessage(UserMangaMessages.CollectedVolumesRequiredMessage)
-            .Must(x => x.CollectedVolumes <= x.TotalVolumes)
-            .WithMessage(UserMangaMessages.CollectedVolumesLowerThanTotalVolumes);
-        
+        RuleFor(x => x.CollectedVolumes)
+            .GreaterThanOrEqualTo(0)
+            .WithMessage(UserMangaMessages.CollectedVolumesRequiredMessage);
+
         RuleFor(x => x.LibraryManga)
             .SetValidator(new LibraryMangaValidator());
     }
