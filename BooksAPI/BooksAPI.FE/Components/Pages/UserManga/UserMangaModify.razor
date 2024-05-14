@@ -1,15 +1,68 @@
-﻿@* @page "/createUserManga/{libraryMangaId:id}" *@
-@* @page "/updateUserManga/{id:int}" *@
+﻿@page "/createUserManga"
+@page "/updateUserManga"
+
+@using BooksAPI.FE.Extensions
+@using BooksAPI.FE.Interfaces
+@using BooksAPI.FE.Model
+@using BooksAPI.FE.Util
+
+@inject NavigationManager NavigationManager;
+@inject IUserMangaService UserMangaService;
+@inject ILibraryMangaService LibraryMangaService;
+@inject IJSRuntime JsRuntime;
 
 @code {
 
-    [Parameter]
-    public int Id { get; set; }
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
-    [Parameter]
-    public int LibraryMangaId { get; set; }
-    
-    private bool IsCreate => Id == 0;
+    private int _userMangaId = 0;
+    private int _libraryMangaId = 0;
 
-    private bool IsUpdate => LibraryMangaId == 0;
+    private bool _isCreate;
+    private bool _isUpdate;
+    private bool _error;
+
+    private string _userId;
+    private string _token;
+    private string _refreshToken;
+
+    private UserMangaModel _model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            AuthenticationState state = await AuthenticationState;
+
+            _userId = UserUtil.GetUserId(state.User);
+            
+            string[] tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
+            _token = tokens[0];
+            _refreshToken = tokens[1];
+            
+            NavigationManager.GetQueryString<int>("userMangaId", out _userMangaId);
+            NavigationManager.GetQueryString<int>("libraryMangaId", out _libraryMangaId);
+
+            _isCreate = _userMangaId == 0;
+            _isUpdate = _libraryMangaId == 0;
+            
+            if (_isCreate)
+            {
+                //Get library manga and add it to the model;
+            }
+
+            if (_isUpdate)
+            {
+                //Get user manga
+            }
+        }
+        catch (Exception e)
+        {
+            //ignore
+            _error = true;
+        }
+
+        
+    }
+
 }

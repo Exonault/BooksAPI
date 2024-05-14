@@ -1,10 +1,11 @@
-﻿@using BooksAPI.FE.Authentication
+﻿@page "/createLibraryManga"
+@page "/updateLibraryManga"
+
+@using BooksAPI.FE.Authentication
 @using BooksAPI.FE.Constants
+@using BooksAPI.FE.Extensions
 @using BooksAPI.FE.Interfaces
 @using BooksAPI.FE.Model
-
-@page "/createLibraryManga"
-@page "/updateLibraryManga/{id:int}"
 
 @attribute [Authorize(Policy = ApplicationConstants.PolicyNames.AdminRolePolicyName)]
 
@@ -17,7 +18,6 @@
 
 <h3 class="text-center">
     @(IsCreate ? "Create a new library manga" : "Update library manga")
-
 </h3>
 
 @if (_error)
@@ -122,11 +122,7 @@
 </EditForm>
 
 @code {
-
-    [Parameter]
-    public int Id { get; set; }
-
-    private bool IsCreate => Id == 0;
+    private bool IsCreate;
 
     private LibraryMangaModel _model = new();
 
@@ -139,6 +135,8 @@
     private string _token;
     private string _refreshToken;
 
+    private int _id;
+
     protected override async Task OnInitializedAsync()
     {
         try
@@ -147,9 +145,13 @@
             _token = tokens[0];
             _refreshToken = tokens[1];
 
+            NavigationManager.GetQueryString<int>("libraryMangaId", out _id);
+
+            IsCreate = _id == 0;
+
             if (!IsCreate)
             {
-                _model = await LibraryMangaService.GetMangaModel(Id);
+                _model = await LibraryMangaService.GetMangaModel(_id);
             }
 
             _shouldRender = true;
@@ -174,7 +176,7 @@
             }
             else
             {
-                bool updateSuccess = await LibraryMangaService.UpdateManga(Id, _model, _token, _refreshToken);
+                bool updateSuccess = await LibraryMangaService.UpdateManga(_id, _model, _token, _refreshToken);
 
                 if (updateSuccess)
                 {

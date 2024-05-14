@@ -30,7 +30,7 @@
         </MudTd>
         <MudTd DataLabel="Actions" Style="width: 15% !important;">
             <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                       OnClick="@(() => NavigationManager.NavigateTo($"libraryMangaInfo/{context.Id}"))">
+                       OnClick="@(() => NavigationManager.NavigateTo($"libraryMangaInformation?libraryMangaId={context.Id}"))">
                 More information
             </MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
@@ -40,7 +40,7 @@
             <AuthorizeView Policy="@ApplicationConstants.PolicyNames.AdminRolePolicyName">
                 <Authorized Context="authorizedContext">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
-                               OnClick="@(() => NavigationManager.NavigateTo($"/updateLibraryManga/{context.Id}"))">
+                               OnClick="@(() => NavigationManager.NavigateTo($"/updateLibraryManga?libraryMangaId={context.Id}"))">
                         Update information
                     </MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="@(() => DeleteManga(context.Id))">
@@ -84,7 +84,7 @@
 
         if (state.User.Identity.IsAuthenticated)
         {
-            NavigationManager.NavigateTo($"/createUserManga/{id}");
+            NavigationManager.NavigateTo($"/createUserManga?libraryMangaId={id}");
         }
         else NavigationManager.NavigateTo("login");
     }

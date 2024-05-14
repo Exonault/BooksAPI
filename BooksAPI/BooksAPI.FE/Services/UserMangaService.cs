@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using BooksAPI.FE.Contracts.UserManga;
 using BooksAPI.FE.Interfaces;
+using BooksAPI.FE.Model;
 
 namespace BooksAPI.FE.Services;
 
@@ -50,6 +51,26 @@ public class UserMangaService : IUserMangaService
 
             return response;
         }
+    }
+
+    public Task<UserMangaResponse> GetUserManga(string token, string refreshToken, string userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> CreateUserManga(UserMangaModel model, string token, string refreshToken, string userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> UpdateUserManga(UserMangaModel model, string token, string refreshToken, string userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> DeleteUserManga(UserMangaModel model, string token, string refreshToken, string userId)
+    {
+        throw new NotImplementedException();
     }
 
     private async Task<HttpResponseMessage> RefreshRequest(string token, string refreshToken,
