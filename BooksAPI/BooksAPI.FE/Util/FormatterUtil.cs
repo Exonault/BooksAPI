@@ -27,31 +27,4 @@ public static class FormatterUtil
         string result = $"{author.FirstName} {author.LastName}: {role}";
         return result;
     }
-
-
-    public static string FormatCollectionStatus(string collectionStatus)
-    {
-        if (collectionStatus == UserMangaConstants.CollectingStatus.InProgress)
-        {
-            return "In progress";
-        }
-        else if (collectionStatus == UserMangaConstants.CollectingStatus.PlanToCollect)
-        {
-            return "Plan to collect";
-        }
-        else return collectionStatus;
-    }
-
-    public static string FormatReadingStatus(string readingStatus)
-    {
-        if (readingStatus == UserMangaConstants.ReadingStatus.OnHold)
-        {
-            return "On hold";
-        }
-        else if (readingStatus == UserMangaConstants.ReadingStatus.PlanToRead)
-        {
-            return "Plan to read";
-        }
-        else return readingStatus;
-    }
 }

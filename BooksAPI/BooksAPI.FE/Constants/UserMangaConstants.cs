@@ -14,8 +14,28 @@ public static class UserMangaConstants
         {
             Reading, Finished, OnHold, Dropped, PlanToRead
         };
+
+
+        private static readonly List<(string Key, string Label)> KeyLabelMapping =
+        [
+            (Reading, "Reading"),
+            (Finished, "Finished"),
+            (OnHold, "On hold"),
+            (Dropped, "Dropped"),
+            (PlanToRead, "Plan to read")
+        ];
+
+        public static string GetKeyByLabel(string label)
+        {
+            return KeyLabelMapping.FirstOrDefault(x => x.Label == label).Key;
+        }
+
+        public static string GetLabelByKey(string key)
+        {
+            return KeyLabelMapping.FirstOrDefault(x => x.Key == key).Label;
+        }
     }
-    
+
 
     public static class CollectingStatus
     {
@@ -27,5 +47,22 @@ public static class UserMangaConstants
         {
             Collected, InProgress, PlanToCollect,
         };
+
+        private static readonly List<(string Key, string Label)> KeyLabelMapping =
+        [
+            (Collected, "Collected"),
+            (InProgress, "In progress"),
+            (PlanToCollect, "Plan to collect")
+        ];
+
+        public static string GetKeyByLabel(string label)
+        {
+            return KeyLabelMapping.FirstOrDefault(x => x.Label == label).Key;
+        }
+
+        public static string GetLabelByKey(string key)
+        {
+            return KeyLabelMapping.FirstOrDefault(x => x.Key == key).Label;
+        }
     }
 }

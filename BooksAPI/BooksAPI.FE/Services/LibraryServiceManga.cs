@@ -54,14 +54,14 @@ public class LibraryMangaService : ILibraryMangaService
 
     public async Task<LibraryMangaModel> GetMangaModel(int id)
     {
-        LibraryMangaResponse response = await GetManga(id);
+        LibraryMangaResponse? response = await GetManga(id);
 
         LibraryMangaModel model = _mapper.Map<LibraryMangaModel>(response);
 
         return model;
     }
 
-    public async Task<LibraryMangaResponse> GetManga(int id)
+    public async Task<LibraryMangaResponse?> GetManga(int id)
     {
         string url = string.Format(_configuration["Backend:LibraryMangas:GetLibraryManga"]!, id);
 

@@ -3,7 +3,7 @@
 public static class LibraryMangaConstants
 {
     public const string ImagePlaceHolder = "https://placehold.co/250x350?text=Placeholder"; //Placeholder image
-    
+
     public static class DemographicType
     {
         public const string Shounen = "Shounen";
@@ -19,25 +19,22 @@ public static class LibraryMangaConstants
             Josei,
         };
 
-        private static Dictionary<string, string> tempDictionary = new Dictionary<string, string>()
-        {
-            { Shounen, "Shounen" },
-            { Seinen, "Seinen" },
-            { Shoujo, "Shoujo" },
-            { Josei, "Josei" },
-        };
+        private static readonly List<(string Key, string Label)> KeyLabelMapping =
+        [
+            (Shounen, "Shounen"),
+            (Seinen, "Seinen"),
+            (Shoujo, "Shoujo"),
+            (Josei, "Josei")
+        ];
 
-        // public static readonly IReadOnlyDictionary<string, string> DemographicTypesWithPresentation =
-        //     new ReadOnlyDictionary<string, string>(tempDictionary);
-
-        public static string GetKeyByValue(string value)
+        public static string GetKeyByLabel(string label)
         {
-            return tempDictionary.FirstOrDefault(x => x.Value == value).Key;
+            return KeyLabelMapping.FirstOrDefault(x => x.Label == label).Key;
         }
 
-        public static string GetValueByKey(string key)
+        public static string GetLabelByKey(string key)
         {
-            return tempDictionary.FirstOrDefault(x => x.Key == key).Value;
+            return KeyLabelMapping.FirstOrDefault(x => x.Key == key).Label;
         }
     }
 
@@ -54,24 +51,22 @@ public static class LibraryMangaConstants
             OneShot
         };
 
-        private static Dictionary<string, string> tempDictionary = new Dictionary<string, string>()
-        {
-            { Manga, "Manga" },
-            { LightNovel, "Light novel" },
-            { OneShot, "One shot" },
-        };
+        private static readonly List<(string Key, string Label)> KeyLabelMapping =
+        [
+            (Manga, "Manga"),
+            (LightNovel, "Light novel"),
+            (OneShot, "One shot")
+        ];
 
-        // public static readonly IReadOnlyDictionary<string, string> TypesWithPresentation =
-        //     new ReadOnlyDictionary<string, string>(tempDictionary);
 
-        public static string GetKeyByValue(string value)
+        public static string GetKeyByLabel(string label)
         {
-            return tempDictionary.FirstOrDefault(x => x.Value == value).Key;
+            return KeyLabelMapping.FirstOrDefault(x => x.Label == label).Key;
         }
 
-        public static string GetValueByKey(string key)
+        public static string GetLabelByKey(string key)
         {
-            return tempDictionary.FirstOrDefault(x => x.Key == key).Value;
+            return KeyLabelMapping.FirstOrDefault(x => x.Key == key).Label;
         }
     }
 
@@ -88,24 +83,21 @@ public static class LibraryMangaConstants
             OnHiatus
         };
 
-        private static Dictionary<string, string> tempDictionary = new Dictionary<string, string>()
-        {
-            { Publishing, "Publishing" },
-            { Finished, "Finished" },
-            { OnHiatus, "On Hiatus" },
-        };
+        private static readonly List<(string Key, string Label)> KeyLabelMapping =
+        [
+            (Publishing, "Publishing"),
+            (Finished, "Finished"),
+            (OnHiatus, "On Hiatus")
+        ];
 
-        // public static readonly IReadOnlyDictionary<string, string> PublishingStatusWithPresentation =
-        //     new ReadOnlyDictionary<string, string>(tempDictionary);
-
-        public static string GetKeyByValue(string value)
+        public static string GetKeyByLabel(string label)
         {
-            return tempDictionary.FirstOrDefault(x => x.Value == value).Key;
+            return KeyLabelMapping.FirstOrDefault(x => x.Label == label).Key;
         }
 
-        public static string GetValueByKey(string key)
+        public static string GetLabelByKey(string key)
         {
-            return tempDictionary.FirstOrDefault(x => x.Key == key).Value;
+            return KeyLabelMapping.FirstOrDefault(x => x.Key == key).Label;
         }
     }
 }

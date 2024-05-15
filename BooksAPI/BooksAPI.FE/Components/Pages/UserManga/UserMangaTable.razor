@@ -24,10 +24,10 @@
             <MudText Typo="Typo.h6">@context.LibraryMangaResponse.Title</MudText>
         </MudTd>
         <MudTd DataLabel="Reading status">
-            <MudText Typo="Typo.body1">@FormatterUtil.FormatReadingStatus(context.ReadingStatus)</MudText>
+            <MudText Typo="Typo.body1">@UserMangaConstants.ReadingStatus.GetLabelByKey(context.ReadingStatus)</MudText>
         </MudTd>
         <MudTd DataLabel="Collection status">
-            <MudText Typo="Typo.body1">@FormatterUtil.FormatCollectionStatus(context.CollectionStatus)</MudText>
+            <MudText Typo="Typo.body1">@UserMangaConstants.CollectingStatus.GetLabelByKey(context.CollectionStatus)</MudText>
         </MudTd>
         <MudTd DataLabel="Collected volumes">
             <MudText Typo="Typo.body1">@context.CollectedVolumes</MudText>

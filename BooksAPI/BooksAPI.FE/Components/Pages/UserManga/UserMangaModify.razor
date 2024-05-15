@@ -1,8 +1,7 @@
 ﻿@page "/createUserManga"
 @page "/updateUserManga"
-
+@using System.Text.Json
 @using BooksAPI.FE.Constants
-@using BooksAPI.FE.Contracts.Author
 @using BooksAPI.FE.Contracts.LibraryManga
 @using BooksAPI.FE.Extensions
 @using BooksAPI.FE.Interfaces
@@ -30,76 +29,95 @@
     </MudGrid>
 }
 
-@if (_isDataFetching)
+
+@if (_isDataFetched && _libraryManga is not null)
+{
+    <EditForm Model="_model" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator/>
+
+        @if (context.GetValidationMessages().Count() != 0)
+        {
+            <MudGrid Justify="Justify.Center">
+                <MudItem md="4" xs="4">
+                    <MudAlert Severity="Severity.Error">
+                        <ValidationSummary/>
+                    </MudAlert>
+                </MudItem>
+            </MudGrid>
+        }
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="7">
+                <h4 class="text-center">Library manga information</h4>
+                <MudCard Outlined="true" Class="mt-3">
+                    <MudCardContent>
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <MudText Typo="Typo.h5" Align="Align.Center">Title</MudText>
+                                <MudText Typo="Typo.h6" Align="Align.Center">@_libraryManga.Title</MudText>
+                            </div>
+                            <div class="row">
+                                <div class="col mr-2">
+                                    <MudText Typo="Typo.h5">Demographic</MudText>
+                                    <MudText Typo="Typo.h6">@_libraryManga.DemographicType</MudText>
+                                </div>
+                                <div class="col mr-2">
+                                    <MudText Typo="Typo.h5">Type</MudText>
+                                    <MudText Typo="Typo.h6">@LibraryMangaConstants.Type.GetLabelByKey(_libraryManga.Type)</MudText>
+                                </div>
+                                <div class="col mr-2">
+                                    <MudText Typo="Typo.h5">Publishing status</MudText>
+                                    <MudText Typo="Typo.h6">@LibraryMangaConstants.PublishingType.GetLabelByKey(_libraryManga.PublishingStatus)</MudText>
+                                </div>
+                                <div class="col">
+                                    <MudText Typo="Typo.h5">Total volumes</MudText>
+                                    <MudText Typo="Typo.h6">@FormatterUtil.FormatTotalVolumes(_libraryManga.TotalVolumes)</MudText>
+                                </div>
+                            </div>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+
+                <h4 class="text-center mt-5">User information</h4>
+                <div class="d-flex col-12 mt-2">
+                    <MudSelect Label="Reading status" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-3" @bind-Value="_model.ReadingStatus">
+                        <MudSelectItem Value="UserMangaConstants.ReadingStatus.GetLabelByKey(UserMangaConstants.ReadingStatus.Reading)"/>
+                        <MudSelectItem Value="UserMangaConstants.ReadingStatus.GetLabelByKey(UserMangaConstants.ReadingStatus.Finished)"/>
+                        <MudSelectItem Value="UserMangaConstants.ReadingStatus.GetLabelByKey(UserMangaConstants.ReadingStatus.OnHold)"/>
+                        <MudSelectItem Value="UserMangaConstants.ReadingStatus.GetLabelByKey(UserMangaConstants.ReadingStatus.Dropped)"/>
+                        <MudSelectItem Value="UserMangaConstants.ReadingStatus.GetLabelByKey(UserMangaConstants.ReadingStatus.PlanToRead)"/>
+                    </MudSelect>
+
+                    <MudSelect Label="Collecting status" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-3" @bind-Value="_model.CollectionStatus">
+                        <MudSelectItem Value="UserMangaConstants.CollectingStatus.GetLabelByKey(UserMangaConstants.CollectingStatus.InProgress)"/>
+                        <MudSelectItem Value="UserMangaConstants.CollectingStatus.GetLabelByKey(UserMangaConstants.CollectingStatus.Collected)"/>
+                        <MudSelectItem Value="UserMangaConstants.CollectingStatus.GetLabelByKey(UserMangaConstants.CollectingStatus.PlanToCollect)"/>
+                    </MudSelect>
+                </div>
+                <div class="d-flex col-12">
+                    <MudTextField Label="Price per volume" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
+                                  @bind-Value="_model.Price"/>
+
+                    <MudTextField Label="Collected volume" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
+                                  @bind-Value="_model.CollectedVolumes"/>
+
+                    <MudTextField Label="Read volume" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
+                                  @bind-Value="_model.ReadVolumes"/>
+                </div>
+            </MudItem>
+        </MudGrid>
+
+    </EditForm>
+}
+else if (!_isDataFetched)
 {
     <div class="mt-4">
         <MudProgressLinear Color="Color.Primary" Size="Size.Large" Indeterminate="true" Class="my-7"/>
     </div>
 }
-else
-{
-   <EditForm Model="_model" OnValidSubmit="OnValidSubmit">
-    <DataAnnotationsValidator/>
-
-    @if (context.GetValidationMessages().Count() != 0)
-    {
-        <MudGrid Justify="Justify.Center">
-            <MudItem md="4" xs="4">
-                <MudAlert Severity="Severity.Error">
-                    <ValidationSummary/>
-                </MudAlert>
-            </MudItem>
-        </MudGrid>
-    }
-    <MudGrid Justify="Justify.Center">
-        <MudItem xs="7">
-            <h4 class="text-center">Library manga information</h4>
-            <MudTextField Label="Title" InputType="InputType.Text" Variant="Variant.Text" Disabled="true"
-            Value="_libraryManga.Title" />
-            <div class="d-flex col-12">
-                <MudTextField Label="Demographic type" InputType="InputType.Text" Variant="Variant.Text"
-                              Value="LibraryMangaConstants.DemographicType.GetValueByKey(_libraryManga.DemographicType)" Disabled="true"/>
-                <MudTextField Label="Type" InputType="InputType.Text" Variant="Variant.Text"
-                              Value="LibraryMangaConstants.Type.GetValueByKey(_libraryManga.Type)" Disabled="true"/>
-                <MudTextField Label="Publishing status" InputType="InputType.Text" Variant="Variant.Text" Disabled="true"
-                              Value="LibraryMangaConstants.PublishingType.GetValueByKey(_libraryManga.PublishingStatus)"/>
-                <MudTextField Label="Total volumes" InputType="InputType.Text" Variant="Variant.Text" Disabled="true"
-                              Value="FormatterUtil.FormatTotalVolumes(_libraryManga.TotalVolumes)"/>
-            </div>
-            
-            @* <MudSelect Label="Reading status" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-3" @bind-Value="_model.ReadingStatus"> *@
-            @*     <MudSelectItem></MudSelectItem> *@
-            @*     <MudSelectItem></MudSelectItem> *@
-            @*     <MudSelectItem></MudSelectItem> *@
-            @* </MudSelect> *@
-            @* *@
-            @* <MudSelect Label="Collecting status"  Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-3" @bind-Value="_model.CollectionStatus"> *@
-            @*     <MudSelectItem></MudSelectItem> *@
-            @*     <MudSelectItem></MudSelectItem> *@
-            @*     <MudSelectItem></MudSelectItem> *@
-            @* </MudSelect> *@
-            
-            <MudTextField Label="Price per volume" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
-                          @bind-Value="_model.Price"/>
-
-            <MudTextField Label="Collected volume" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
-                          @bind-Value="_model.CollectedVolumes"/>
-
-            <MudTextField Label="Read volume" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
-                          @bind-Value="_model.ReadVolumes"/>
-            
-        </MudItem>
-    </MudGrid>
-
-</EditForm> 
-}
-
-
 
 @code {
 
-    [CascadingParameter]
-    private Task<AuthenticationState>? AuthenticationState { get; set; }
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     private int _userMangaId = 0;
     private int _libraryMangaId = 0;
@@ -107,7 +125,7 @@ else
     private bool _isCreate;
     private bool _isUpdate;
     private bool _error;
-    private bool _isDataFetching = true;
+    private bool _isDataFetched = false;
 
     private string _userId;
     private string _token;
@@ -115,7 +133,7 @@ else
 
     private UserMangaModel _model = new();
 
-    private LibraryMangaResponse _libraryManga;
+    private LibraryMangaResponse? _libraryManga;
 
     protected override async Task OnInitializedAsync()
     {
@@ -137,29 +155,33 @@ else
 
             if (_isCreate)
             {
-                //Get library manga and add it to the model;
                 _libraryManga = await LibraryMangaService.GetManga(_libraryMangaId);
-                _isDataFetching = false;
+                _isDataFetched = true;
                 StateHasChanged();
-              
             }
-
-            // if (_isUpdate)
-            // {
-            //     //Get user manga
-            // }
         }
         catch (Exception e)
         {
-            //ignore
             _error = true;
+            _isDataFetched = true;
         }
     }
 
     private void OnValidSubmit()
     {
+        FormatModel();
+        
+        Console.WriteLine(JsonSerializer.Serialize(_model, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        }));
     }
 
+    private void FormatModel()
+    {
+        _model.ReadingStatus = UserMangaConstants.ReadingStatus.GetKeyByLabel(_model.ReadingStatus);
+        _model.CollectionStatus = UserMangaConstants.CollectingStatus.GetKeyByLabel(_model.CollectionStatus);
+    }
 
     private void CloseAlert()
     {

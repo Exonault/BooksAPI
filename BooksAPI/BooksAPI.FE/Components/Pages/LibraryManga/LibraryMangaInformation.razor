@@ -48,11 +48,11 @@
                     <div class="row mb-2">
                         <div class="col">
                             <MudText Typo="Typo.h6">Type</MudText>
-                            <MudText Typo="Typo.body1">@LibraryMangaConstants.Type.GetValueByKey(manga.Type)</MudText>
+                            <MudText Typo="Typo.body1">@LibraryMangaConstants.Type.GetLabelByKey(manga.Type)</MudText>
                         </div>
                         <div class="col">
                             <MudText Typo="Typo.h6">Publishing status</MudText>
-                            <MudText Typo="Typo.body1">@LibraryMangaConstants.PublishingType.GetValueByKey(manga.PublishingStatus)</MudText>
+                            <MudText Typo="Typo.body1">@LibraryMangaConstants.PublishingType.GetLabelByKey(manga.PublishingStatus)</MudText>
                         </div>
                     </div>
                     <div class="row mb-2">
@@ -84,7 +84,7 @@ else
 
     private int _id;
 
-    private LibraryMangaResponse manga;
+    private LibraryMangaResponse? manga;
 
     private bool _shouldRender = false;
     private bool _error = false;

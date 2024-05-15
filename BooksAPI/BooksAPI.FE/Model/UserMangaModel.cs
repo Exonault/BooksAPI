@@ -1,4 +1,5 @@
-﻿using BooksAPI.FE.Contracts.LibraryManga;
+﻿using System.ComponentModel.DataAnnotations;
+using BooksAPI.FE.Attribute;
 
 namespace BooksAPI.FE.Model;
 
@@ -6,11 +7,12 @@ public class UserMangaModel
 {               
     public string ReadingStatus { get; set; } = string.Empty;
     
-    public int ReadVolumes { get; set; }
+    [ReadVolumesValidation("CollectedVolumes")]
+    public int? ReadVolumes { get; set; }
 
-    public int CollectedVolumes { get; set; }
+    public int? CollectedVolumes { get; set; }
     
-    public decimal Price { get; set; }
+    public decimal? Price { get; set; }
 
     public string CollectionStatus { get; set; } = string.Empty;
 }
