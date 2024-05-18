@@ -1,6 +1,6 @@
 ﻿@page "/createUserManga"
 @page "/updateUserManga"
-@using System.Text.Json
+
 @using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.LibraryManga
 @using BooksAPI.FE.Extensions
@@ -13,6 +13,7 @@
 @inject ILibraryMangaService LibraryMangaService;
 @inject IJSRuntime JsRuntime;
 
+<PageTitle>@("Create")</PageTitle>
 
 <h3 class="text-center">
     @("Create a new entry")
@@ -23,7 +24,7 @@
     <MudGrid Justify="Justify.Center">
         <MudItem md="4" xs="4">
             <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
-                @("Unable to create manga. Try again later")
+                @_errorMessage
             </MudAlert>
         </MudItem>
     </MudGrid>
@@ -53,24 +54,34 @@
                         <div class="col-12">
                             <div class="row mb-3">
                                 <MudText Typo="Typo.h5" Align="Align.Center">Title</MudText>
-                                <MudText Typo="Typo.h6" Align="Align.Center">@_libraryManga.Title</MudText>
+                                <MudText Typo="Typo.h6" Align="Align.Center">
+                                    <b>@_libraryManga.Title</b>
+                                </MudText>
                             </div>
                             <div class="row">
                                 <div class="col mr-2">
                                     <MudText Typo="Typo.h5">Demographic</MudText>
-                                    <MudText Typo="Typo.h6">@_libraryManga.DemographicType</MudText>
+                                    <MudText Typo="Typo.h6">
+                                        <b>@_libraryManga.DemographicType</b>
+                                    </MudText>
                                 </div>
                                 <div class="col mr-2">
                                     <MudText Typo="Typo.h5">Type</MudText>
-                                    <MudText Typo="Typo.h6">@LibraryMangaConstants.Type.GetLabelByKey(_libraryManga.Type)</MudText>
+                                    <MudText Typo="Typo.h6">
+                                        <b>@LibraryMangaConstants.Type.GetLabelByKey(_libraryManga.Type)</b>
+                                    </MudText>
                                 </div>
                                 <div class="col mr-2">
                                     <MudText Typo="Typo.h5">Publishing status</MudText>
-                                    <MudText Typo="Typo.h6">@LibraryMangaConstants.PublishingType.GetLabelByKey(_libraryManga.PublishingStatus)</MudText>
+                                    <MudText Typo="Typo.h6">
+                                        <b>@LibraryMangaConstants.PublishingType.GetLabelByKey(_libraryManga.PublishingStatus)</b>
+                                    </MudText>
                                 </div>
                                 <div class="col">
                                     <MudText Typo="Typo.h5">Total volumes</MudText>
-                                    <MudText Typo="Typo.h6">@FormatterUtil.FormatTotalVolumes(_libraryManga.TotalVolumes)</MudText>
+                                    <MudText Typo="Typo.h6">
+                                        <b>@FormatterUtil.FormatTotalVolumes(_libraryManga.TotalVolumes)</b>
+                                    </MudText>
                                 </div>
                             </div>
                         </div>
@@ -94,14 +105,19 @@
                     </MudSelect>
                 </div>
                 <div class="d-flex col-12">
-                    <MudTextField Label="Price per volume" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
-                                  @bind-Value="_model.Price"/>
+                    <MudNumericField T="decimal" HideSpinButtons="true" Min="0" Format="F2" Label="Price per volume" Variant="Variant.Text" Class="mr-3"
+                                     @bind-Value="_model.Price"/>
 
-                    <MudTextField Label="Collected volume" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
-                                  @bind-Value="_model.CollectedVolumes"/>
+                    <MudNumericField T="int" HideSpinButtons="true" Min="0" Label="Collected volume" Variant="Variant.Text" Class="mr-3"
+                                     @bind-Value="_model.CollectedVolumes"/>
 
-                    <MudTextField Label="Read volume" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
-                                  @bind-Value="_model.ReadVolumes"/>
+                    <MudNumericField T="int" HideSpinButtons="true" Min="0" Label="Read volume" Variant="Variant.Text" Class="mr-3"
+                                     @bind-Value="_model.ReadVolumes"/>
+                </div>
+
+                <br/>
+                <div class="d-flex justify-content-center">
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">@(_isCreate ? "Create" : "Update")</MudButton>
                 </div>
             </MudItem>
         </MudGrid>
@@ -117,7 +133,8 @@ else if (!_isDataFetched)
 
 @code {
 
-    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     private int _userMangaId = 0;
     private int _libraryMangaId = 0;
@@ -130,6 +147,8 @@ else if (!_isDataFetched)
     private string _userId;
     private string _token;
     private string _refreshToken;
+
+    private string _errorMessage = "Unable to create manga. Try again later";
 
     private UserMangaModel _model = new();
 
@@ -151,11 +170,20 @@ else if (!_isDataFetched)
             NavigationManager.GetQueryString<int>("userMangaId", out _userMangaId);
 
             _isCreate = _userMangaId == 0;
-            // _isUpdate = _libraryMangaId == 0;
 
             if (_isCreate)
             {
                 _libraryManga = await LibraryMangaService.GetManga(_libraryMangaId);
+                _model.LibraryMangaId = _libraryMangaId;
+                _model.LibraryMangaResponse = _libraryManga;
+                _isDataFetched = true;
+                StateHasChanged();
+            }
+            else
+            {
+                _model = await UserMangaService.GetUserMangaModel(_userMangaId, _token, _refreshToken, _userId);
+                FormatUpdateModel();
+                _libraryManga = _model.LibraryMangaResponse;
                 _isDataFetched = true;
                 StateHasChanged();
             }
@@ -163,24 +191,65 @@ else if (!_isDataFetched)
         catch (Exception e)
         {
             _error = true;
+            _errorMessage = "Unable to create manga. Try again later";
             _isDataFetched = true;
         }
     }
 
-    private void OnValidSubmit()
+    private async Task OnValidSubmit()
     {
-        FormatModel();
-        
-        Console.WriteLine(JsonSerializer.Serialize(_model, new JsonSerializerOptions
+        FormatCreateModel();
+        try
         {
-            WriteIndented = true
-        }));
+            if (_isCreate)
+            {
+                bool createSuccessful = await UserMangaService.CreateUserManga(_model, _token, _refreshToken, _userId);
+
+                if (createSuccessful)
+                {
+                    NavigationManager.NavigateTo("libraryManga/1");
+                }
+                else
+                {
+                }
+            }
+            // else
+            // {
+            //     bool updateSuccessful = await UserMangaService.UpdateUserManga(_userMangaId, _model, _token, _refreshToken, _userId);
+            //
+            //     if (updateSuccessful)
+            //     {
+            //         NavigationManager.NavigateTo("userManga");
+            //     }
+            //     
+            // }
+        }
+        catch (Exception e)
+        {
+            _error = true;
+            _errorMessage = "Error";
+            StateHasChanged();
+        }
     }
 
-    private void FormatModel()
+    private void FormatCreateModel()
     {
         _model.ReadingStatus = UserMangaConstants.ReadingStatus.GetKeyByLabel(_model.ReadingStatus);
         _model.CollectionStatus = UserMangaConstants.CollectingStatus.GetKeyByLabel(_model.CollectionStatus);
+        _model.LibraryMangaId = _libraryMangaId;
+
+        // if (_model.CollectionStatus == UserMangaConstants.CollectingStatus.Collected &&
+        //     _libraryManga!.PublishingStatus == LibraryMangaConstants.PublishingType.Publishing)
+        // {
+        //     _error = true;
+        //     _errorMessage = "Collection status cannot be collected when the publishing status is required";
+        // }
+    }
+
+    private void FormatUpdateModel()
+    {
+        _model.ReadingStatus = UserMangaConstants.ReadingStatus.GetLabelByKey(_model.ReadingStatus);
+        _model.CollectionStatus = UserMangaConstants.CollectingStatus.GetLabelByKey(_model.CollectionStatus);
     }
 
     private void CloseAlert()

@@ -11,8 +11,8 @@ INSERT INTO public."AspNetUserRoles" ("UserId", "RoleId")
 VALUES ('31643fae-cec0-4756-bf85-aa333bee61b4', '3187bce0-f9a9-48fb-adb6-36cea86dfb16'),
        ('31643fae-cec0-4756-bf85-aa333bee61b4', '284b3a5c-4235-4b01-ba23-09f2f6f9737c');
 
-INSERT INTO public."UserMangas" ("ReadingStatus", "ReadVolumes", "CollectedVolumes", "PricePerVolume",
-                                 "CollectionStatus", "UserId", "LibraryMangaId")
+INSERT INTO public."UserMangas" 
+    ("ReadingStatus", "ReadVolumes", "CollectedVolumes", "PricePerVolume", "CollectionStatus", "UserId", "LibraryMangaId")
 VALUES ('PlanToRead', 0, 1, 36, 'InProgress', '31643fae-cec0-4756-bf85-aa333bee61b4', 1168),
        ('Reading', 17, 17, 18, 'InProgress', '31643fae-cec0-4756-bf85-aa333bee61b4', 118),
        ('Reading', 10, 10, 18, 'InProgress', '31643fae-cec0-4756-bf85-aa333bee61b4', 23),

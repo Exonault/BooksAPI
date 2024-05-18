@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using AutoMapper;
 using BooksAPI.FE.Contracts.UserManga;
 using BooksAPI.FE.Interfaces;
 using BooksAPI.FE.Model;
@@ -12,13 +13,15 @@ public class UserMangaService : IUserMangaService
     private readonly IConfiguration _configuration;
     private readonly IHttpClientFactory _clientFactory;
     private readonly IRefreshTokenService _refreshTokenService;
+    private readonly IMapper _mapper;
 
     public UserMangaService(IConfiguration configuration, IHttpClientFactory clientFactory,
-        IRefreshTokenService refreshTokenService)
+        IRefreshTokenService refreshTokenService, IMapper mapper)
     {
         _configuration = configuration;
         _clientFactory = clientFactory;
         _refreshTokenService = refreshTokenService;
+        _mapper = mapper;
     }
 
     public async Task<IEnumerable<UserMangaResponse>> GetUserMangas(string token, string refreshToken, string userId)
@@ -53,17 +56,92 @@ public class UserMangaService : IUserMangaService
         }
     }
 
-    public Task<UserMangaResponse> GetUserManga(string token, string refreshToken, string userId)
+    public async Task<UserMangaModel> GetUserMangaModel(int id, string token, string refreshToken, string userId)
     {
-        throw new NotImplementedException();
+        UserMangaResponse userManga = await GetUserManga(id, token, refreshToken, userId);
+
+        UserMangaModel model = _mapper.Map<UserMangaModel>(userManga);
+
+        return model;
     }
 
-    public Task<bool> CreateUserManga(UserMangaModel model, string token, string refreshToken, string userId)
+    public async Task<UserMangaResponse> GetUserManga(int id, string token, string refreshToken, string userId)
     {
-        throw new NotImplementedException();
+        string url = string.Format(_configuration["Backend:UserMangas:GetUserMangaById"]!, id);
+
+        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
+
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        HttpClient httpClient = _clientFactory.CreateClient();
+
+        HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
+            }
+            else throw new Exception();
+        }
+
+        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        {
+            UserMangaResponse? response =
+                await JsonSerializer.DeserializeAsync<UserMangaResponse>(responseStream);
+
+            if (response is null)
+            {
+                throw new Exception();
+            }
+
+            return response;
+        }
     }
 
-    public Task<bool> UpdateUserManga(UserMangaModel model, string token, string refreshToken, string userId)
+    public async Task<bool> CreateUserManga(UserMangaModel model, string token, string refreshToken, string userId)
+    {
+        string url = _configuration["Backend:UserMangas:GetUserMangas"]!;
+
+        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        CreateUserMangaRequest requestContent = _mapper.Map<CreateUserMangaRequest>(model);
+
+        requestContent.UserId = userId;
+
+        string result = JsonSerializer.Serialize(requestContent, new JsonSerializerOptions()
+        {
+            WriteIndented = true
+        });
+        Console.WriteLine(result);
+
+        //return false;
+        request.Content = JsonContent.Create(requestContent);
+
+        HttpClient httpClient = _clientFactory.CreateClient();
+
+        HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
+
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
+            }
+            else throw new Exception();
+        }
+
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public Task<bool> UpdateUserManga(int id, UserMangaModel model, string token, string refreshToken, string userId)
     {
         throw new NotImplementedException();
     }

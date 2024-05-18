@@ -18,7 +18,7 @@ public static class UserMangaEndpoints
     public static void MapUserMangaEndpoints(this WebApplication app)
     {
         app.MapPost("/userManga", CreateUserManga)
-            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            //.RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

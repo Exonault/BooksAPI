@@ -39,13 +39,15 @@
             </MudButton>
             <AuthorizeView Policy="@ApplicationConstants.PolicyNames.AdminRolePolicyName">
                 <Authorized Context="authorizedContext">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
-                               OnClick="@(() => NavigationManager.NavigateTo($"/updateLibraryManga?libraryMangaId={context.Id}"))">
-                        Update information
-                    </MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="@(() => DeleteManga(context.Id))">
-                        Delete library manga
-                    </MudButton>
+                    <div class="justify-content-center">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
+                                   OnClick="@(() => NavigationManager.NavigateTo($"/updateLibraryManga?libraryMangaId={context.Id}"))">
+                            Update
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="@(() => DeleteManga(context.Id))">
+                            Delete
+                        </MudButton>
+                    </div>
                 </Authorized>
             </AuthorizeView>
         </MudTd>
@@ -54,11 +56,9 @@
 
 @code {
 
-    [Parameter]
-    public IEnumerable<LibraryMangaResponse> Mangas { get; set; }
+    [Parameter] public IEnumerable<LibraryMangaResponse> Mangas { get; set; }
 
-    [CascadingParameter]
-    private Task<AuthenticationState>? AuthenticationState { get; set; }
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     private string _token;
     private string _refreshToken;

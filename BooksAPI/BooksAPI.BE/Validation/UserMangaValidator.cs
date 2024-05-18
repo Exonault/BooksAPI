@@ -21,10 +21,10 @@ public class UserMangaValidator : AbstractValidator<UserManga>
             .Must(x => x.ReadVolumes <= x.CollectedVolumes)
             .WithMessage(UserMangaMessages.ReadVolumesLowerThanTotalVolumes);
 
-        RuleFor(x => x.CollectionStatus)
+        RuleFor(x => new { x.CollectionStatus, x.LibraryManga.PublishingStatus })
             .NotEmpty()
             .WithMessage(UserMangaMessages.CollectionStatusRequiredMessage)
-            .Must(x => UserMangaConstants.CollectingStatus.CollectingStatuses.Contains(x))
+            .Must(x => UserMangaConstants.CollectingStatus.CollectingStatuses.Contains(x.CollectionStatus))
             .WithMessage(UserMangaMessages.CollectionStatusValidationMessage);
 
         RuleFor(x => x.PricePerVolume)
@@ -34,6 +34,16 @@ public class UserMangaValidator : AbstractValidator<UserManga>
         RuleFor(x => x.CollectedVolumes)
             .GreaterThanOrEqualTo(0)
             .WithMessage(UserMangaMessages.CollectedVolumesRequiredMessage);
+
+        RuleFor(x => new { x.CollectionStatus, x.LibraryManga.PublishingStatus })
+            .Custom((obj, context) =>
+            {
+                if (obj.CollectionStatus == UserMangaConstants.CollectingStatus.Collected &&
+                    obj.PublishingStatus == LibraryMangaConstants.PublishingType.Publishing)
+                {
+                    context.AddFailure("CollectionStatus", UserMangaMessages.CollectionStatusMessage);
+                }
+            });
 
         RuleFor(x => x.LibraryManga)
             .SetValidator(new LibraryMangaValidator());

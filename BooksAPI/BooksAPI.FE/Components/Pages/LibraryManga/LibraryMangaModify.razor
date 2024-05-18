@@ -87,7 +87,7 @@
             <div class="d-flex col-12">
                 <MudTextField T="string" Label="First volume image URL" Variant="Variant.Text" InputType="InputType.Text" Class="mr-3"
                               @bind-Value="_model.MainImageUrl"/>
-                <MudTextField Label="Total volumes" Variant="Variant.Text"
+                <MudNumericField T="int?" HideSpinButtons="true" Min="0" Label="Total volumes" Variant="Variant.Text"
                               @bind-Value="_model.TotalVolumes"/>
             </div>
 
@@ -102,9 +102,9 @@
                                   @bind-Value="modelAuthor.LastName"/>
                     <MudSelect T="string" Label="Role" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-4"
                                @bind-Value="modelAuthor.Role">
-                        <MudSelectItem Value="@AuthorConstants.AuthorRole.GetValueByKey(AuthorConstants.AuthorRole.Story)"/>
-                        <MudSelectItem Value="@AuthorConstants.AuthorRole.GetValueByKey(AuthorConstants.AuthorRole.Art)"/>
-                        <MudSelectItem Value="@AuthorConstants.AuthorRole.GetValueByKey(AuthorConstants.AuthorRole.StoryAndArt)"/>
+                        <MudSelectItem Value="@AuthorConstants.AuthorRole.GetLabelByKey(AuthorConstants.AuthorRole.Story)"/>
+                        <MudSelectItem Value="@AuthorConstants.AuthorRole.GetLabelByKey(AuthorConstants.AuthorRole.Art)"/>
+                        <MudSelectItem Value="@AuthorConstants.AuthorRole.GetLabelByKey(AuthorConstants.AuthorRole.StoryAndArt)"/>
                     </MudSelect>
                     <MudButton Variant="Variant.Filled" Class="h-75" Color="Color.Primary" OnClick="@(() => RemoveAuthor(modelAuthor))">Remove author</MudButton>
                 </div>
@@ -153,6 +153,7 @@
             if (!IsCreate)
             {
                 _model = await LibraryMangaService.GetMangaModel(_id);
+                FormatUpdateModel();
             }
 
             _shouldRender = true;
@@ -167,12 +168,13 @@
 
     private async void OnValidSubmit()
     {
-        FormatModel();
+        FormatCreateModel();
         try
         {
             string serialize = JsonSerializer.Serialize(_model);
             Console.WriteLine(serialize);
 
+            return;
             if (IsCreate)
             {
                 _createSuccess = await LibraryMangaService.CreateManga(_model, _token, _refreshToken);
@@ -200,7 +202,7 @@
         }
     }
 
-    private void FormatModel()
+    private void FormatCreateModel()
     {
         _model.DemographicType = LibraryMangaConstants.DemographicType.GetKeyByLabel(_model.DemographicType);
         _model.Type = LibraryMangaConstants.Type.GetKeyByLabel(_model.Type);
@@ -208,7 +210,19 @@
 
         foreach (AuthorModel author in _model.Authors)
         {
-            author.Role = AuthorConstants.AuthorRole.GetKeyByValue(author.Role);
+            author.Role = AuthorConstants.AuthorRole.GetKeyByLabel(author.Role);
+        }
+    }
+
+    private void FormatUpdateModel()
+    {
+        _model.DemographicType = LibraryMangaConstants.DemographicType.GetLabelByKey(_model.DemographicType);
+        _model.Type = LibraryMangaConstants.Type.GetLabelByKey(_model.Type);
+        _model.PublishingStatus = LibraryMangaConstants.PublishingType.GetLabelByKey(_model.PublishingStatus);
+
+        foreach (AuthorModel author in _model.Authors)
+        {
+            author.Role = AuthorConstants.AuthorRole.GetLabelByKey(author.Role);
         }
     }
 

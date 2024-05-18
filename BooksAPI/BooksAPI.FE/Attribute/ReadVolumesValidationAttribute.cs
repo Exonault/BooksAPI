@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BooksAPI.FE.Model;
 
 namespace BooksAPI.FE.Attribute;
 
@@ -11,25 +12,18 @@ public class ReadVolumesValidationAttribute : ValidationAttribute
         _other = other;
     }
 
-    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+    protected override ValidationResult? IsValid(object value, ValidationContext validationContext)
     {
-        int valueInt = Convert.ToInt32(value);
-        var property = validationContext.ObjectType.GetProperty(_other);
-        if (property == null)
-        {
-            return new ValidationResult($"Unknown property: {_other}");
-        }
+        var userMangaModel = (UserMangaModel)validationContext.ObjectInstance;
 
-        var otherValue = property.GetValue(validationContext.ObjectInstance, null);
-        int otherValueInt = Convert.ToInt32(otherValue);
+        int readVolumes = userMangaModel.ReadVolumes;
+        int collectedVolumes = userMangaModel.CollectedVolumes;
 
-        if (valueInt >= otherValueInt)
+        if (readVolumes > collectedVolumes)
         {
-            // here we are verifying whether the 2 values are equal
-            // but you could do any custom validation you like
             return new ValidationResult("Read volumes must be less than or equal to collected volumes");
         }
-
-        return null;
+        
+        return ValidationResult.Success;
     }
 }

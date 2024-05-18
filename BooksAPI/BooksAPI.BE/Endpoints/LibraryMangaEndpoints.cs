@@ -92,6 +92,7 @@ public static class LibraryMangaEndpoints
             await service.CreateLibraryManga(request);
             await cacheStore.EvictByTagAsync(CacheConstants.LibraryMangaForPageTag, CancellationToken.None);
             await cacheStore.EvictByTagAsync(CacheConstants.AllLibraryMangasTag, CancellationToken.None);
+            await cacheStore.EvictByTagAsync(CacheConstants.LibraryMangaSearchTag, CancellationToken.None);
             return Results.Ok();
         }
         catch (ValidationException ex)
@@ -152,6 +153,7 @@ public static class LibraryMangaEndpoints
             await cacheStore.EvictByTagAsync(CacheConstants.LibraryMangaForPageTag, CancellationToken.None);
             await cacheStore.EvictByTagAsync(CacheConstants.AllLibraryMangasTag, CancellationToken.None);
             await cacheStore.EvictByTagAsync(CacheConstants.LibraryMangaWithIdTag, CancellationToken.None);
+            await cacheStore.EvictByTagAsync(CacheConstants.LibraryMangaSearchTag, CancellationToken.None);
             return Results.Ok();
         }
         catch (ResourceNotFoundException ex)
@@ -176,6 +178,7 @@ public static class LibraryMangaEndpoints
             await service.DeleteLibraryManga(id);
             await cacheStore.EvictByTagAsync(CacheConstants.LibraryMangaForPageTag, CancellationToken.None);
             await cacheStore.EvictByTagAsync(CacheConstants.AllLibraryMangasTag, CancellationToken.None);
+            await cacheStore.EvictByTagAsync(CacheConstants.LibraryMangaSearchTag, CancellationToken.None);
             return Results.Ok();
         }
         catch (ResourceNotFoundException ex)

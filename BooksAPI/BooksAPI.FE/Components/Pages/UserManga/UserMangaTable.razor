@@ -1,6 +1,7 @@
 ﻿@using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.UserManga
-@using BooksAPI.FE.Util
+
+@inject NavigationManager NavigationManager;
 
 <MudTable Items="Mangas" Filter="new Func<UserMangaResponse, bool>(FilterFunc1)" @bind-SelectedItem="selectedItem">
     <ToolBarContent>
@@ -20,7 +21,7 @@
         <MudTd DataLabel="Cover">
             <MudImage Src="@GetImageUrl(context.LibraryMangaResponse.MainImageUrl)" Width="150" Height="210" Fluid="true" Class="border border-dark"/>
         </MudTd>
-        <MudTd DataLabel="Title">
+        <MudTd DataLabel="Title" Style="width: 40% !important;">
             <MudText Typo="Typo.h6">@context.LibraryMangaResponse.Title</MudText>
         </MudTd>
         <MudTd DataLabel="Reading status">
@@ -35,7 +36,12 @@
         <MudTd DataLabel="Read volumes">
             <MudText Typo="Typo.body1">@context.ReadVolumes</MudText>
         </MudTd>
-        <MudTd DataLabel="Actions"></MudTd>
+        <MudTd DataLabel="Actions" Style="width: 10% !important;">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3">Information</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
+                       OnClick="@(() => NavigationManager.NavigateTo($"/updateUserManga?userMangaId={context.Id}"))">Update</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3">Delete</MudButton>
+        </MudTd>
     </RowTemplate>
 </MudTable>
 
@@ -73,5 +79,5 @@
 
         return url;
     }
-    
+
 }

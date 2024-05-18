@@ -21,12 +21,12 @@ public static class AuthorConstants
         };
 
 
-        public static string GetKeyByValue(string value)
+        public static string GetKeyByLabel(string value)
         {
             return tempDictionary.FirstOrDefault(x => x.Value == value).Key;
         }
 
-        public static string GetValueByKey(string key)
+        public static string GetLabelByKey(string key)
         {
             return tempDictionary.FirstOrDefault(x => x.Key == key).Value;
         }
