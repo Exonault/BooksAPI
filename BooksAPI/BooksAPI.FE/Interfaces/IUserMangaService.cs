@@ -10,5 +10,5 @@ public interface IUserMangaService
     Task<UserMangaResponse> GetUserManga(int id, string token, string refreshToken, string userId);
     Task<bool> CreateUserManga(UserMangaModel model, string token, string refreshToken, string userId);
     Task<bool> UpdateUserManga(int id, UserMangaModel model, string token, string refreshToken, string userId);
-    Task<bool> DeleteUserManga(UserMangaModel model, string token, string refreshToken, string userId);
+    Task<bool> DeleteUserManga(int id, string token, string refreshToken, string userId);
 }

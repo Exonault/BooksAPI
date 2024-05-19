@@ -24,6 +24,7 @@ public static class UserMangaEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status409Conflict)
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("/userManga/{id:int}", GetUserMangaById)
@@ -102,6 +103,10 @@ public static class UserMangaEndpoints
         catch (ResourceNotFoundException ex)
         {
             return Results.NotFound(ex.Message);
+        }
+        catch (UserMangaAlreadyExistsException ex)
+        {
+            return Results.Conflict(ex.Message);
         }
         catch (ValidationException ex)
         {

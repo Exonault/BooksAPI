@@ -8,6 +8,8 @@ public interface IUserMangaRepository
 
     Task<UserManga?> GetUserMangaById(int id);
 
+    Task<UserManga?> GetUserMangaByUserIdAndLibraryMangaId(string userId, int libraryMangaId);
+
     Task<List<UserManga>> GetUserMangaByUserId(string userId);
 
     Task<List<UserManga>> GetAllUserManga();

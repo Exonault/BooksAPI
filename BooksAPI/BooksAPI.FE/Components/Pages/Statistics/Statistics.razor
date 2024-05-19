@@ -5,10 +5,8 @@
 @using BooksAPI.FE.Interfaces
 @using BooksAPI.FE.Util
 
-@inject NavigationManager NavigationManager;
 @inject IJSRuntime JsRuntime;
 @inject IStatisticsService StatisticsService;
-@inject AuthenticationStateProvider AuthenticationStateProvider;
 
 @attribute [Authorize(Policy = ApplicationConstants.PolicyNames.UserRolePolicyName)]
 
@@ -106,8 +104,7 @@ else
         {
             await GenerateTotalSpendingChart();
         }
-
-// await base.OnAfterRenderAsync(firstRender);
+        
     }
 
 

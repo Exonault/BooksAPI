@@ -30,10 +30,12 @@ public static class UserMangaMessages
     public const string PricePerVolumeValidationMessage =
         "Price per volume is required and must be greater than or equal to 0";
 
-    public const string NoUserComicWithId = "No user manga with id";
+    public const string NoUserMangaWithId = "No user manga with id";
 
     public const string DeleteImpossible = "You can't delete this user manga";
 
     public const string CollectionStatusMessage =
         "Collection status cannot be collected when the publishing status is required";
+
+    public const string UserMangaAlreadyCreated = "Already created userManga with the LibraryManga id";
 }

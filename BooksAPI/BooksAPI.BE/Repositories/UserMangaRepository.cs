@@ -29,6 +29,15 @@ public class UserMangaRepository : IUserMangaRepository
             .FirstOrDefaultAsync(um => um.Id == id);
     }
 
+    public async Task<UserManga?> GetUserMangaByUserIdAndLibraryMangaId(string userId, int libraryMangaId)
+    {
+        return await _dbContext.UserMangas
+            .Include(um => um.LibraryManga)
+            .Include(um => um.LibraryManga.Authors)
+            .Include(um => um.User)
+            .FirstOrDefaultAsync(um => um.User.Id == userId && um.LibraryManga.Id == libraryMangaId);
+    }
+
     public async Task<List<UserManga>> GetUserMangaByUserId(string userId)
     {
         return await _dbContext.UserMangas

@@ -125,13 +125,7 @@ public class LibraryMangaService : ILibraryMangaService
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         CreateLibraryMangaRequest requestContent = _mapper.Map<CreateLibraryMangaRequest>(model);
-
-        string result = JsonSerializer.Serialize(requestContent, new JsonSerializerOptions()
-        {
-            WriteIndented = true
-        });
-        Console.WriteLine(result);
-
+        
         // return false;
         request.Content = JsonContent.Create(requestContent);
 
@@ -163,12 +157,6 @@ public class LibraryMangaService : ILibraryMangaService
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         UpdateLibraryMangaRequest requestContent = _mapper.Map<UpdateLibraryMangaRequest>(model);
-
-        string result = JsonSerializer.Serialize(requestContent, new JsonSerializerOptions()
-        {
-            WriteIndented = true
-        });
-        Console.WriteLine(result);
         
         request.Content = JsonContent.Create(requestContent);
 

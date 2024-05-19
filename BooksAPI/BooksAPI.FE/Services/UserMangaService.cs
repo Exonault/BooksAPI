@@ -62,6 +62,8 @@ public class UserMangaService : IUserMangaService
 
         UserMangaModel model = _mapper.Map<UserMangaModel>(userManga);
 
+        model.LibraryMangaId = userManga.LibraryMangaResponse.Id;
+
         return model;
     }
 
@@ -110,14 +112,7 @@ public class UserMangaService : IUserMangaService
         CreateUserMangaRequest requestContent = _mapper.Map<CreateUserMangaRequest>(model);
 
         requestContent.UserId = userId;
-
-        string result = JsonSerializer.Serialize(requestContent, new JsonSerializerOptions()
-        {
-            WriteIndented = true
-        });
-        Console.WriteLine(result);
-
-        //return false;
+        
         request.Content = JsonContent.Create(requestContent);
 
         HttpClient httpClient = _clientFactory.CreateClient();
@@ -141,14 +136,67 @@ public class UserMangaService : IUserMangaService
         return false;
     }
 
-    public Task<bool> UpdateUserManga(int id, UserMangaModel model, string token, string refreshToken, string userId)
+    public async Task<bool> UpdateUserManga(int id, UserMangaModel model, string token, string refreshToken,
+        string userId)
     {
-        throw new NotImplementedException();
+        string url = string.Format(_configuration["Backend:UserMangas:UpdateUserManga"]!, id);
+
+        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, url);
+
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        UpdateUserMangaRequest requestContent = _mapper.Map<UpdateUserMangaRequest>(model);
+
+        requestContent.UserId = userId;
+
+        request.Content = JsonContent.Create(requestContent);
+
+        HttpClient httpClient = _clientFactory.CreateClient();
+
+        HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
+
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
+            }
+            else throw new Exception();
+        }
+
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            return true;
+        }
+
+        return false;
     }
 
-    public Task<bool> DeleteUserManga(UserMangaModel model, string token, string refreshToken, string userId)
+    public async Task<bool> DeleteUserManga(int id, string token, string refreshToken, string userId)
     {
-        throw new NotImplementedException();
+        string url = string.Format(_configuration["Backend:UserMangas:DeleteUserManga"]!, id, userId);
+
+        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, url);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        HttpClient httpClient = _clientFactory.CreateClient();
+
+        HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
+            }
+            else throw new Exception();
+        }
+
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private async Task<HttpResponseMessage> RefreshRequest(string token, string refreshToken,

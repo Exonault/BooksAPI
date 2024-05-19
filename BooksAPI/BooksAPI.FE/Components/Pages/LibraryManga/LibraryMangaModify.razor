@@ -15,7 +15,7 @@
 @inject NavigationManager NavigationManager;
 @inject AuthenticationStateProvider AuthenticationStateProvider;
 
-<PageTitle>Create</PageTitle>
+<PageTitle> @(IsCreate ? "Create" : "Update")</PageTitle>
 
 <h3 class="text-center">
     @(IsCreate ? "Create a new library manga" : "Update library manga")
@@ -173,8 +173,7 @@
         {
             string serialize = JsonSerializer.Serialize(_model);
             Console.WriteLine(serialize);
-
-            return;
+            
             if (IsCreate)
             {
                 _createSuccess = await LibraryMangaService.CreateManga(_model, _token, _refreshToken);

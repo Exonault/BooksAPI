@@ -27,49 +27,51 @@
     }
     else
     {
-        //Put an info page
-
         <MudContainer MaxWidth="MaxWidth.Medium">
-            <div class="d-flex flex-wrap mt-1">
-                <div class="d-flex flex-column align-items-start mr-2">
-                    <MudImage Src="@GetImageUrl(manga.MainImageUrl)" Width="250" Height="350" Class="border border-dark"/>
-                </div>
-                <div class="col-12 col-md-6">
-                    <div class="row mb-2">
-                        <div class="col">
-                            <MudText Typo="Typo.h6">Title</MudText>
-                            <MudText Typo="Typo.body1">@manga.Title</MudText>
+            <MudCard Outlined="true" Class="mt-3" >
+                <MudCardContent>
+                    <div class="d-flex flex-wrap mt-1">
+                        <div class="d-flex flex-column align-items-start mr-2">
+                            <MudImage Src="@GetImageUrl(manga.MainImageUrl)" Width="250" Height="350" Class="border border-dark"/>
                         </div>
-                        <div class="col">
-                            <MudText Typo="Typo.h6">Demographic</MudText>
-                            <MudText Typo="Typo.body1">@manga.DemographicType</MudText>
+                        <div class="col-12 col-md-6 ml-4">
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <MudText Typo="Typo.h6">Title</MudText>
+                                    <MudText Typo="Typo.body1">@manga.Title</MudText>
+                                </div>
+                                <div class="col">
+                                    <MudText Typo="Typo.h6">Demographic</MudText>
+                                    <MudText Typo="Typo.body1">@manga.DemographicType</MudText>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <MudText Typo="Typo.h6">Type</MudText>
+                                    <MudText Typo="Typo.body1">@LibraryMangaConstants.Type.GetLabelByKey(manga.Type)</MudText>
+                                </div>
+                                <div class="col">
+                                    <MudText Typo="Typo.h6">Publishing status</MudText>
+                                    <MudText Typo="Typo.body1">@LibraryMangaConstants.PublishingType.GetLabelByKey(manga.PublishingStatus)</MudText>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <MudText Typo="Typo.h6">Authors</MudText>
+                                    @foreach (AuthorResponse author in manga.Authors)
+                                    {
+                                        <MudText Typo="Typo.body1">@FormatterUtil.FormatAuthor(author)</MudText>
+                                    }
+                                </div>
+                                <div class="col">
+                                    <MudText Typo="Typo.h6">Total volumes</MudText>
+                                    <MudText Typo="Typo.body1">@FormatterUtil.FormatTotalVolumes(manga.TotalVolumes)</MudText>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="row mb-2">
-                        <div class="col">
-                            <MudText Typo="Typo.h6">Type</MudText>
-                            <MudText Typo="Typo.body1">@LibraryMangaConstants.Type.GetLabelByKey(manga.Type)</MudText>
-                        </div>
-                        <div class="col">
-                            <MudText Typo="Typo.h6">Publishing status</MudText>
-                            <MudText Typo="Typo.body1">@LibraryMangaConstants.PublishingType.GetLabelByKey(manga.PublishingStatus)</MudText>
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col">
-                            <MudText Typo="Typo.h6">Authors</MudText>
-                            @foreach (AuthorResponse author in manga.Authors)
-                            {
-                                <MudText Typo="Typo.body1">@FormatterUtil.FormatAuthor(author)</MudText>
-                            }
-                        </div>
-                        <div class="col">
-                            <MudText Typo="Typo.h6">Total volumes</MudText>
-                            <MudText Typo="Typo.body1">@FormatterUtil.FormatTotalVolumes(manga.TotalVolumes)</MudText>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                </MudCardContent>
+            </MudCard>
         </MudContainer>
     }
 }
@@ -97,7 +99,7 @@ else
         try
         {
             NavigationManager.GetQueryString<int>("libraryMangaId", out _id);
-            
+
             manga = await LibraryMangaService.GetManga(_id);
             _shouldRender = true;
             _isDataFetched = true;
@@ -108,7 +110,7 @@ else
             _shouldRender = true;
         }
     }
-    
+
     private string GetImageUrl(string? url)
     {
         if (string.IsNullOrEmpty(url))

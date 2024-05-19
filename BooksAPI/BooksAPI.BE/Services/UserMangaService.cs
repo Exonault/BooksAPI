@@ -46,6 +46,14 @@ public class UserMangaService : IUserMangaService
             throw new ResourceNotFoundException(LibraryMangaMessages.NoLibraryComicWithId);
         }
 
+        UserManga? possibleEntry = await _userMangaRepository
+            .GetUserMangaByUserIdAndLibraryMangaId(user.Id, libraryManga.Id);
+
+        if (possibleEntry is null)
+        {
+            throw new UserMangaAlreadyExistsException(UserMangaMessages.UserMangaAlreadyCreated);
+        }
+
         UserManga userManga = _mapper.Map<UserManga>(request);
 
         userManga.LibraryManga = libraryManga;
@@ -67,7 +75,7 @@ public class UserMangaService : IUserMangaService
 
         if (userManga is null)
         {
-            throw new ResourceNotFoundException(UserMangaMessages.NoUserComicWithId);
+            throw new ResourceNotFoundException(UserMangaMessages.NoUserMangaWithId);
         }
 
         UserMangaResponse response = _mapper.Map<UserMangaResponse>(userManga);
@@ -134,8 +142,13 @@ public class UserMangaService : IUserMangaService
 
         UserManga? userMangaById = await _userMangaRepository.GetUserMangaById(id);
 
-        _mapper.Map(userManga, userMangaById);
-        await _userMangaRepository.UpdateUserManga(userManga);
+        if (userMangaById is null)
+        {
+            throw new ResourceNotFoundException(UserMangaMessages.NoUserMangaWithId);
+        }
+
+        UserManga updatedManga = _mapper.Map(request, userMangaById);
+        await _userMangaRepository.UpdateUserManga(updatedManga);
     }
 
     public async Task DeleteUserManga(int id, string userId)
@@ -151,7 +164,7 @@ public class UserMangaService : IUserMangaService
 
         if (userManga is null)
         {
-            throw new ResourceNotFoundException(UserMangaMessages.NoUserComicWithId);
+            throw new ResourceNotFoundException(UserMangaMessages.NoUserMangaWithId);
         }
 
         if (userManga.User.Id != userId)

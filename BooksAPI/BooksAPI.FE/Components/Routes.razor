@@ -4,9 +4,7 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
                 <NotAuthorized>
-                    Kitka kurva <br/>
-                    Not authorized
-                    @* @{ NavigationManager.NavigateTo("login"); } *@
+                    @{ NavigationManager.NavigateTo("login"); }
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="routeData" Selector="h1"/>

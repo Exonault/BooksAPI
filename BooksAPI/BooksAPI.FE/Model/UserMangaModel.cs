@@ -22,7 +22,7 @@ public class UserMangaModel
     public int CollectedVolumes { get; set; }
     
     [Required(ErrorMessage = UserMangaMessages.PriceRequired)]
-    public decimal Price { get; set; }
+    public decimal PricePerVolume { get; set; }
     
     public int LibraryMangaId { get; set; }
 

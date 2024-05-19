@@ -2,6 +2,7 @@
 @page "/updateUserManga"
 
 @using BooksAPI.FE.Constants
+@using BooksAPI.FE.Contracts.Author
 @using BooksAPI.FE.Contracts.LibraryManga
 @using BooksAPI.FE.Extensions
 @using BooksAPI.FE.Interfaces
@@ -13,10 +14,10 @@
 @inject ILibraryMangaService LibraryMangaService;
 @inject IJSRuntime JsRuntime;
 
-<PageTitle>@("Create")</PageTitle>
+<PageTitle>@(_isCreate ? "Create" : "Update")</PageTitle>
 
 <h3 class="text-center">
-    @("Create a new entry")
+    @(_isCreate ? "Create a new entry" : "Update current entry")
 </h3>
 
 @if (_error)
@@ -49,39 +50,35 @@
         <MudGrid Justify="Justify.Center">
             <MudItem xs="7">
                 <h4 class="text-center">Library manga information</h4>
+
                 <MudCard Outlined="true" Class="mt-3">
                     <MudCardContent>
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <MudText Typo="Typo.h5" Align="Align.Center">Title</MudText>
-                                <MudText Typo="Typo.h6" Align="Align.Center">
-                                    <b>@_libraryManga.Title</b>
-                                </MudText>
+                        <div class="d-flex flex-warp">
+                            <div class="d-flex flex-column align-items-start">
+                                <MudImage Src="@GetImageUrl(_libraryManga.MainImageUrl)" Width="150" Height="210" Class="border border-dark"/>
                             </div>
-                            <div class="row">
-                                <div class="col mr-2">
-                                    <MudText Typo="Typo.h5">Demographic</MudText>
-                                    <MudText Typo="Typo.h6">
-                                        <b>@_libraryManga.DemographicType</b>
-                                    </MudText>
+                            <div class="col-12" style="width: 85% !important;">
+                                <div class="row mb-5">
+                                    <MudText Typo="Typo.h6" Align="Align.Center">Title</MudText>
+                                    <MudText Typo="Typo.body1" Align="Align.Center">@_libraryManga.Title</MudText>
                                 </div>
-                                <div class="col mr-2">
-                                    <MudText Typo="Typo.h5">Type</MudText>
-                                    <MudText Typo="Typo.h6">
-                                        <b>@LibraryMangaConstants.Type.GetLabelByKey(_libraryManga.Type)</b>
-                                    </MudText>
-                                </div>
-                                <div class="col mr-2">
-                                    <MudText Typo="Typo.h5">Publishing status</MudText>
-                                    <MudText Typo="Typo.h6">
-                                        <b>@LibraryMangaConstants.PublishingType.GetLabelByKey(_libraryManga.PublishingStatus)</b>
-                                    </MudText>
-                                </div>
-                                <div class="col">
-                                    <MudText Typo="Typo.h5">Total volumes</MudText>
-                                    <MudText Typo="Typo.h6">
-                                        <b>@FormatterUtil.FormatTotalVolumes(_libraryManga.TotalVolumes)</b>
-                                    </MudText>
+                                <div class="row">
+                                    <div class="col ml-2">
+                                        <MudText Typo="Typo.h6">Demographic</MudText>
+                                        <MudText Typo="Typo.body1">@_libraryManga.DemographicType</MudText>
+                                    </div>
+                                    <div class="col">
+                                        <MudText Typo="Typo.h6">Type</MudText>
+                                        <MudText Typo="Typo.body1">@LibraryMangaConstants.Type.GetLabelByKey(_libraryManga.Type)</MudText>
+                                    </div>
+                                    <div class="col">
+                                        <MudText Typo="Typo.h6">Publishing status</MudText>
+                                        <MudText Typo="Typo.body1">@LibraryMangaConstants.PublishingType.GetLabelByKey(_libraryManga.PublishingStatus)</MudText>
+                                    </div>
+                                    <div class="col">
+                                        <MudText Typo="Typo.h6">Total volumes</MudText>
+                                        <MudText Typo="Typo.body1">@FormatterUtil.FormatTotalVolumes(_libraryManga.TotalVolumes)</MudText>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -105,8 +102,8 @@
                     </MudSelect>
                 </div>
                 <div class="d-flex col-12">
-                    <MudNumericField T="decimal" HideSpinButtons="true" Min="0" Format="F2" Label="Price per volume" Variant="Variant.Text" Class="mr-3"
-                                     @bind-Value="_model.Price"/>
+                    <MudNumericField T="decimal" HideSpinButtons="true" Min="0" Format="F2" Label="Price for 1 volume" Variant="Variant.Text" Class="mr-3"
+                                     @bind-Value="_model.PricePerVolume"/>
 
                     <MudNumericField T="int" HideSpinButtons="true" Min="0" Label="Collected volume" Variant="Variant.Text" Class="mr-3"
                                      @bind-Value="_model.CollectedVolumes"/>
@@ -184,6 +181,7 @@ else if (!_isDataFetched)
                 _model = await UserMangaService.GetUserMangaModel(_userMangaId, _token, _refreshToken, _userId);
                 FormatUpdateModel();
                 _libraryManga = _model.LibraryMangaResponse;
+                _libraryMangaId = _model.LibraryMangaId;
                 _isDataFetched = true;
                 StateHasChanged();
             }
@@ -209,20 +207,16 @@ else if (!_isDataFetched)
                 {
                     NavigationManager.NavigateTo("libraryManga/1");
                 }
-                else
+            }
+            else
+            {
+                bool updateSuccessful = await UserMangaService.UpdateUserManga(_userMangaId, _model, _token, _refreshToken, _userId);
+
+                if (updateSuccessful)
                 {
+                    NavigationManager.NavigateTo("userManga");
                 }
             }
-            // else
-            // {
-            //     bool updateSuccessful = await UserMangaService.UpdateUserManga(_userMangaId, _model, _token, _refreshToken, _userId);
-            //
-            //     if (updateSuccessful)
-            //     {
-            //         NavigationManager.NavigateTo("userManga");
-            //     }
-            //     
-            // }
         }
         catch (Exception e)
         {
@@ -237,19 +231,22 @@ else if (!_isDataFetched)
         _model.ReadingStatus = UserMangaConstants.ReadingStatus.GetKeyByLabel(_model.ReadingStatus);
         _model.CollectionStatus = UserMangaConstants.CollectingStatus.GetKeyByLabel(_model.CollectionStatus);
         _model.LibraryMangaId = _libraryMangaId;
-
-        // if (_model.CollectionStatus == UserMangaConstants.CollectingStatus.Collected &&
-        //     _libraryManga!.PublishingStatus == LibraryMangaConstants.PublishingType.Publishing)
-        // {
-        //     _error = true;
-        //     _errorMessage = "Collection status cannot be collected when the publishing status is required";
-        // }
     }
 
     private void FormatUpdateModel()
     {
         _model.ReadingStatus = UserMangaConstants.ReadingStatus.GetLabelByKey(_model.ReadingStatus);
         _model.CollectionStatus = UserMangaConstants.CollectingStatus.GetLabelByKey(_model.CollectionStatus);
+    }
+
+    private string GetImageUrl(string? url)
+    {
+        if (string.IsNullOrEmpty(url))
+        {
+            return LibraryMangaConstants.ImagePlaceHolder;
+        }
+
+        return url;
     }
 
     private void CloseAlert()

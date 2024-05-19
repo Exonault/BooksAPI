@@ -1,11 +1,13 @@
 ﻿@using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.Author
 @using BooksAPI.FE.Contracts.LibraryManga
+@using BooksAPI.FE.Extensions
 @using BooksAPI.FE.Interfaces
 @using BooksAPI.FE.Util
 
 @inject NavigationManager NavigationManager;
 @inject ILibraryMangaService LibraryMangaService;
+@inject IUserMangaService UserMangaService;
 @inject IJSRuntime JsRuntime;
 
 <MudTable Items="Mangas">
@@ -33,10 +35,13 @@
                        OnClick="@(() => NavigationManager.NavigateTo($"libraryMangaInformation?libraryMangaId={context.Id}"))">
                 More information
             </MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
-                       OnClick="@(() => AddToCollectionAction(context.Id))">
-                Add to collection
-            </MudButton>
+            @if (!userMangasLibraryIds.Contains(context.Id)) // if !userMangas.contain(id) -> show button
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
+                           OnClick="@(() => AddToCollectionAction(context.Id))">
+                    Add to collection
+                </MudButton>
+            }
             <AuthorizeView Policy="@ApplicationConstants.PolicyNames.AdminRolePolicyName">
                 <Authorized Context="authorizedContext">
                     <div class="justify-content-center">
@@ -56,20 +61,34 @@
 
 @code {
 
-    [Parameter] public IEnumerable<LibraryMangaResponse> Mangas { get; set; }
+    [Parameter]
+    public IEnumerable<LibraryMangaResponse> Mangas { get; set; }
 
-    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     private string _token;
     private string _refreshToken;
+    private string _userId;
+
+    private List<int> userMangasLibraryIds = new();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            AuthenticationState state = await AuthenticationState;
+
+            _userId = UserUtil.GetUserId(state.User);
+
             string[] tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
             _token = tokens[0];
             _refreshToken = tokens[1];
+
+            if (state.User.Identity.IsAuthenticated)
+            {
+                userMangasLibraryIds = await UserMangaService.GetLibraryMangaIdsFromUserId(_token, _refreshToken, _userId);
+            }
         }
         catch (Exception e)
         {
@@ -89,14 +108,14 @@
         else NavigationManager.NavigateTo("login");
     }
 
-    private string GetImageUrl(string? url)
+    private string GetImageUrl(string? imageUrl)
     {
-        if (string.IsNullOrEmpty(url))
+        if (string.IsNullOrEmpty(imageUrl))
         {
             return LibraryMangaConstants.ImagePlaceHolder;
         }
 
-        return url;
+        return imageUrl;
     }
 
     private async Task DeleteManga(int id)

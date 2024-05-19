@@ -1,7 +1,12 @@
 ﻿@using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.UserManga
+@using BooksAPI.FE.Interfaces
+@using BooksAPI.FE.Util
+
 
 @inject NavigationManager NavigationManager;
+@inject IUserMangaService UserMangaService;
+@inject IJSRuntime JsRuntime;
 
 <MudTable Items="Mangas" Filter="new Func<UserMangaResponse, bool>(FilterFunc1)" @bind-SelectedItem="selectedItem">
     <ToolBarContent>
@@ -15,13 +20,14 @@
         <MudTh>Collection status</MudTh>
         <MudTh>Collected volumes</MudTh>
         <MudTh>Read volumes</MudTh>
+        <MudTh>Price per volume</MudTh>
         <MudTh>Actions</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Cover">
             <MudImage Src="@GetImageUrl(context.LibraryMangaResponse.MainImageUrl)" Width="150" Height="210" Fluid="true" Class="border border-dark"/>
         </MudTd>
-        <MudTd DataLabel="Title" Style="width: 40% !important;">
+        <MudTd DataLabel="Title" Style="width: 35% !important;">
             <MudText Typo="Typo.h6">@context.LibraryMangaResponse.Title</MudText>
         </MudTd>
         <MudTd DataLabel="Reading status">
@@ -36,22 +42,51 @@
         <MudTd DataLabel="Read volumes">
             <MudText Typo="Typo.body1">@context.ReadVolumes</MudText>
         </MudTd>
+        <MudTd>
+            <MudText Typo="Typo.body1">@context.PricePerVolume</MudText>
+        </MudTd>
         <MudTd DataLabel="Actions" Style="width: 10% !important;">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3">Information</MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
-                       OnClick="@(() => NavigationManager.NavigateTo($"/updateUserManga?userMangaId={context.Id}"))">Update</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3">Delete</MudButton>
+                       OnClick="@(() => NavigationManager.NavigateTo($"/updateUserManga?userMangaId={context.Id}"))">
+                Update
+            </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="() => DeleteManga(context.Id)">Delete</MudButton>
         </MudTd>
     </RowTemplate>
 </MudTable>
 
 @code {
 
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+
     [Parameter]
     public IEnumerable<UserMangaResponse> Mangas { get; set; }
 
     private UserMangaResponse selectedItem;
     private string searchString;
+
+    private string _token;
+    private string _refreshToken;
+    private string _userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState state = await AuthenticationState;
+
+        _userId = UserUtil.GetUserId(state.User);
+
+        try
+        {
+            string[] tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
+            _token = tokens[0];
+            _refreshToken = tokens[1];
+        }
+        catch (Exception e)
+        {
+            StateHasChanged();
+        }
+    }
 
     private bool FilterFunc1(UserMangaResponse element) => FilterFunc(element, searchString);
 
@@ -70,6 +105,7 @@
         return false;
     }
 
+
     private string GetImageUrl(string? url)
     {
         if (string.IsNullOrEmpty(url))
@@ -78,6 +114,23 @@
         }
 
         return url;
+    }
+
+    private async Task DeleteManga(int id)
+    {
+        try
+        {
+            bool isDeleteSuccess = await UserMangaService.DeleteUserManga(id, _token, _refreshToken, _userId);
+            if (isDeleteSuccess)
+            {
+                Mangas = Mangas.Where(m => m.Id != id);
+                StateHasChanged();
+            }
+        }
+        catch (Exception e)
+        {
+            //ignore
+        }
     }
 
 }
