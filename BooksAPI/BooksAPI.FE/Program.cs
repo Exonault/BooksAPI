@@ -42,6 +42,7 @@ MapperConfiguration mapperConfig = new MapperConfiguration(config =>
     config.AddProfile(new UserProfile());
     config.AddProfile(new LibraryMangaProfile());
     config.AddProfile(new UserMangaProfile());
+    config.AddProfile(new OrderProfile());
 });
 
 builder.Services.AddSingleton(mapperConfig.CreateMapper());

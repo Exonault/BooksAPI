@@ -61,7 +61,7 @@ public class LibraryMangaService : ILibraryMangaService
         return model;
     }
 
-    public async Task<LibraryMangaResponse?> GetManga(int id)
+    public async Task<LibraryMangaResponse> GetManga(int id)
     {
         string url = string.Format(_configuration["Backend:LibraryMangas:GetLibraryManga"]!, id);
 

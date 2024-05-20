@@ -1,4 +1,4 @@
-﻿@page "/order"
+﻿@page "/orders"
 @using BooksAPI.FE.Authentication
 @using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.Order
@@ -60,7 +60,7 @@
                 </MudTd>
                 <MudTd DataLabel="Actions">
                     <div>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("updateOrder"))">Update</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo($"/updateOrder/?orderId={context.Id}"))">Update</MudButton>
                         <MudButton Variant="Variant.Filled" Color="Color.Primary">Delete</MudButton>
                     </div>
                 </MudTd>

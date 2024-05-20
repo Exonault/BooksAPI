@@ -1,4 +1,5 @@
 ﻿@page "/statistics"
+@using BooksAPI.FE.Authentication
 @using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.Statistics.Order
 @using BooksAPI.FE.Contracts.Statistics.UserManga
@@ -7,6 +8,8 @@
 
 @inject IJSRuntime JsRuntime;
 @inject IStatisticsService StatisticsService;
+@inject NavigationManager NavigationManager;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 
 @attribute [Authorize(Policy = ApplicationConstants.PolicyNames.UserRolePolicyName)]
 
@@ -116,6 +119,12 @@ else
 
             await JsRuntime.InvokeVoidAsync("generateTotalSpendingChart", totalSpending.Mangas, TotalSpendingChartId);
         }
+        catch (InvalidOperationException e)
+        {
+            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).UpdateUserState("");
+
+            NavigationManager.NavigateTo("/", true);
+        }
         catch (Exception e)
         {
             Console.WriteLine(e);
@@ -147,6 +156,12 @@ else
             await JsRuntime.InvokeVoidAsync("generateCollectionChart", collectionStatusStatistic, CollectionChartId);
             await JsRuntime.InvokeVoidAsync("generatePublishingChart", publishingStatusStatistics, PublishingChartId);
         }
+        catch (InvalidOperationException e)
+        {
+            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).UpdateUserState("");
+
+            NavigationManager.NavigateTo("/", true);
+        }
         catch (Exception e)
         {
             Console.WriteLine(e);
@@ -165,6 +180,12 @@ else
 
             await JsRuntime.InvokeVoidAsync("generateOrderByYearCharts", ordersByYear, OrdersByYearCountChartId, OrdersByYearPriceChartId);
             await JsRuntime.InvokeVoidAsync("generateOrderByPlaceCharts", orderByPlace, OrdersByPlaceCountChartId, OrdersByPlacePriceChartId);
+        }
+        catch (InvalidOperationException e)
+        {
+            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).UpdateUserState("");
+
+            NavigationManager.NavigateTo("/", true);
         }
         catch (Exception e)
         {
@@ -200,7 +221,7 @@ else
 
         foreach (UserMangaPublishingStatusResponse item in publishingStatusStatistics)
         {
-            item.PublishingStatus = LibraryMangaConstants.Type.GetLabelByKey(item.PublishingStatus);
+            item.PublishingStatus = LibraryMangaConstants.PublishingType.GetLabelByKey(item.PublishingStatus);
         }
     }
 

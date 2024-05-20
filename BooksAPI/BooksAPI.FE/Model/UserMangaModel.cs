@@ -26,7 +26,7 @@ public class UserMangaModel
     
     public int LibraryMangaId { get; set; }
 
-    public LibraryMangaResponse? LibraryMangaResponse { get; set; }
+    public LibraryMangaResponse LibraryMangaResponse { get; set; }
 
     
 }

@@ -60,6 +60,7 @@ public class RefreshTokenService : IRefreshTokenService
         }
         catch (Exception e)
         {
+            await _jsRuntime.InvokeVoidAsync("deleteCookie", $"{token}", $"{refreshToken}");
             return false;
         }
     }

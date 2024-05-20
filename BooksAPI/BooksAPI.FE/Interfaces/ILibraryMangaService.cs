@@ -9,7 +9,7 @@ public interface ILibraryMangaService
 
     Task<LibraryMangaModel> GetMangaModel(int id);
 
-    Task<LibraryMangaResponse?> GetManga(int id);
+    Task<LibraryMangaResponse> GetManga(int id);
 
     Task<IEnumerable<LibraryMangaResponse>> SearchManga(string search);
 

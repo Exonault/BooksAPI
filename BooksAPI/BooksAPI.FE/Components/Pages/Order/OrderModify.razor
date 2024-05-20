@@ -1,10 +1,187 @@
 ﻿@page "/createOrder"
 @page "/updateOrder"
 
-<PageTitle>Create</PageTitle>
+@attribute [Authorize(Policy = ApplicationConstants.PolicyNames.UserRolePolicyName)]
 
-<h3>Create/Update</h3>
+@using BooksAPI.FE.Authentication
+@using BooksAPI.FE.Constants
+@using BooksAPI.FE.Extensions
+@using BooksAPI.FE.Interfaces
+@using BooksAPI.FE.Model
+@using BooksAPI.FE.Util
+
+@inject NavigationManager NavigationManager;
+@inject IJSRuntime JsRuntime;
+@inject IOrderService OrderService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+
+<PageTitle>@(_isCreate ? "Create" : "Update")</PageTitle>
+
+<h3 class="text-center">
+    @(_isCreate ? "Create a new order" : "Update current order")
+</h3>
+
+@if (_error)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem md="4" xs="4">
+            <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
+                @(_isCreate ? "Unable to create order. Try again later" : "Unable to update order. Try again later")
+            </MudAlert>
+        </MudItem>
+    </MudGrid>
+}
+
+@if (true)
+{
+    <EditForm Model="_model" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator/>
+
+        @if (context.GetValidationMessages().Count() != 0)
+        {
+            <MudGrid Justify="Justify.Center">
+                <MudItem md="4" xs="4">
+                    <MudAlert Severity="Severity.Error">
+                        <ValidationSummary/>
+                    </MudAlert>
+                </MudItem>
+            </MudGrid>
+        }
+
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="6">
+                <MudTextField T="string" Label="Description" InputType="InputType.Text" Variant="Variant.Text"
+                              @bind-Value="_model.Description"/>
+                <div class="d-flex col-12">
+                    <MudDatePicker Editable="true" Mask="@(new DateMask("dd.MM.yyyy"))" DateFormat="dd.MM.yyyy" Class="mr-3"
+                                   @bind-Date="_model.Date"/>
+
+                    <MudTextField Label="Place" InputType="InputType.Text" Variant="Variant.Text"
+                                  @bind-Value="_model.Place"/>
+                </div>
+
+                <div class="d-flex col-12">
+                    <MudNumericField T="decimal" HideSpinButtons="true" Min="0" Format="F2" Label="Amount" Variant="Variant.Text" Class="mr-5"
+                                     @bind-Value="_model.Amount"/>
+
+                    <MudNumericField T="int" HideSpinButtons="true" Min="1" Label="Number of items" Variant="Variant.Text"
+                                     @bind-Value="_model.NumberOfItems"/>
+                </div>
+                <br/>
+                <div class="d-flex justify-content-center">
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">@(_isCreate ? "Create" : "Update")</MudButton>
+                </div>
+            </MudItem>
+        </MudGrid>
+    </EditForm>
+}
 
 @code {
-    
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    private int _orderId;
+
+    private string _userId;
+    private string _token;
+    private string _refreshToken;
+
+    private bool _isCreate;
+    private bool _error;
+    private bool _isDataFetched;
+
+    // [NotInFuture(ErrorMessage = OrderMessages.NotInFuture)]
+    // private DateTime? _date = DateTime.Today;
+
+    private OrderModel _model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            AuthenticationState state = await AuthenticationState;
+
+            _userId = UserUtil.GetUserId(state.User);
+
+            string[] tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
+            _token = tokens[0];
+            _refreshToken = tokens[1];
+
+            NavigationManager.GetQueryString<int>("orderId", out _orderId);
+
+            _isCreate = _orderId == 0;
+
+            if (!_isCreate)
+            {
+                _model = await OrderService.GetOrderModel(_orderId, _token, _refreshToken, _userId);
+                // _date = _model.Date.ToDateTime(new TimeOnly(0, 0));
+            }
+
+            _isDataFetched = true;
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            _error = true;
+            StateHasChanged();
+        }
+    }
+
+    private async void OnValidSubmit()
+    {
+        FormatModel();
+        try
+        {
+            if (_isCreate)
+            {
+                await OrderService.CreateOrder(_model, _token, _refreshToken, _userId);
+            }
+            else
+            {
+                await OrderService.UpdateOrder(_orderId, _model, _token, _refreshToken, _userId);
+            }
+
+            NavigationManager.NavigateTo("orders");
+        }
+        catch (InvalidOperationException e)
+        {
+            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).UpdateUserState("");
+
+            NavigationManager.NavigateTo("/", true);
+        }
+        catch (Exception e)
+        {
+            _error = true;
+            StateHasChanged();
+        }
+
+        // string result = JsonSerializer.Serialize(_model, new JsonSerializerOptions()
+        // {
+        //     WriteIndented = true
+        // });
+        // Console.WriteLine(result);
+        // var createOrderRequest = Mapper.Map<CreateOrderRequest>(_model);
+        //
+        // result = JsonSerializer.Serialize(createOrderRequest, new JsonSerializerOptions()
+        // {
+        //     WriteIndented = true
+        // });
+        //
+        //
+        // Console.WriteLine(result);
+    }
+
+    private void FormatModel()
+    {
+        // _model.Date = DateOnly.FromDateTime((DateTime)_date!);
+    }
+
+
+    private void CloseAlert()
+    {
+        _error = false;
+        StateHasChanged();
+    }
+
 }

@@ -13,69 +13,67 @@
 @inject NavigationManager NavigationManager;
 <h3 class="text-center">Information</h3>
 
-@if (_isDataFetched)
+@if (_error)
 {
-    @if (_error)
-    {
-        <MudGrid Justify="Justify.Center">
-            <MudItem md="4" xs="4">
-                <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
-                    Unable to get mangas. Please try again later.
-                </MudAlert>
-            </MudItem>
-        </MudGrid>
-    }
-    else
-    {
-        <MudContainer MaxWidth="MaxWidth.Medium">
-            <MudCard Outlined="true" Class="mt-3" >
-                <MudCardContent>
-                    <div class="d-flex flex-wrap mt-1">
-                        <div class="d-flex flex-column align-items-start mr-2">
-                            <MudImage Src="@GetImageUrl(manga.MainImageUrl)" Width="250" Height="350" Class="border border-dark"/>
+    <MudGrid Justify="Justify.Center">
+        <MudItem md="4" xs="4">
+            <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="(() => CloseAlert())">
+                Unable to get mangas. Please try again later.
+            </MudAlert>
+        </MudItem>
+    </MudGrid>
+}
+
+@if (_isDataFetched && _manga is not null)
+{
+    <MudContainer MaxWidth="MaxWidth.Medium">
+        <MudCard Outlined="true" Class="mt-3">
+            <MudCardContent>
+                <div class="d-flex flex-wrap mt-1">
+                    <div class="d-flex flex-column align-items-start mr-2">
+                        <MudImage Src="@GetImageUrl(_manga.MainImageUrl)" Width="250" Height="350" Class="border border-dark"/>
+                    </div>
+                    <div class="col-12 col-md-6 ml-4">
+                        <div class="row mb-2">
+                            <div class="col">
+                                <MudText Typo="Typo.h6">Title</MudText>
+                                <MudText Typo="Typo.body1">@_manga.Title</MudText>
+                            </div>
+                            <div class="col">
+                                <MudText Typo="Typo.h6">Demographic</MudText>
+                                <MudText Typo="Typo.body1">@_manga.DemographicType</MudText>
+                            </div>
                         </div>
-                        <div class="col-12 col-md-6 ml-4">
-                            <div class="row mb-2">
-                                <div class="col">
-                                    <MudText Typo="Typo.h6">Title</MudText>
-                                    <MudText Typo="Typo.body1">@manga.Title</MudText>
-                                </div>
-                                <div class="col">
-                                    <MudText Typo="Typo.h6">Demographic</MudText>
-                                    <MudText Typo="Typo.body1">@manga.DemographicType</MudText>
-                                </div>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <MudText Typo="Typo.h6">Type</MudText>
+                                <MudText Typo="Typo.body1">@LibraryMangaConstants.Type.GetLabelByKey(_manga.Type)</MudText>
                             </div>
-                            <div class="row mb-2">
-                                <div class="col">
-                                    <MudText Typo="Typo.h6">Type</MudText>
-                                    <MudText Typo="Typo.body1">@LibraryMangaConstants.Type.GetLabelByKey(manga.Type)</MudText>
-                                </div>
-                                <div class="col">
-                                    <MudText Typo="Typo.h6">Publishing status</MudText>
-                                    <MudText Typo="Typo.body1">@LibraryMangaConstants.PublishingType.GetLabelByKey(manga.PublishingStatus)</MudText>
-                                </div>
+                            <div class="col">
+                                <MudText Typo="Typo.h6">Publishing status</MudText>
+                                <MudText Typo="Typo.body1">@LibraryMangaConstants.PublishingType.GetLabelByKey(_manga.PublishingStatus)</MudText>
                             </div>
-                            <div class="row mb-2">
-                                <div class="col">
-                                    <MudText Typo="Typo.h6">Authors</MudText>
-                                    @foreach (AuthorResponse author in manga.Authors)
-                                    {
-                                        <MudText Typo="Typo.body1">@FormatterUtil.FormatAuthor(author)</MudText>
-                                    }
-                                </div>
-                                <div class="col">
-                                    <MudText Typo="Typo.h6">Total volumes</MudText>
-                                    <MudText Typo="Typo.body1">@FormatterUtil.FormatTotalVolumes(manga.TotalVolumes)</MudText>
-                                </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <MudText Typo="Typo.h6">Authors</MudText>
+                                @foreach (AuthorResponse author in _manga.Authors)
+                                {
+                                    <MudText Typo="Typo.body1">@FormatterUtil.FormatAuthor(author)</MudText>
+                                }
+                            </div>
+                            <div class="col">
+                                <MudText Typo="Typo.h6">Total volumes</MudText>
+                                <MudText Typo="Typo.body1">@FormatterUtil.FormatTotalVolumes(_manga.TotalVolumes)</MudText>
                             </div>
                         </div>
                     </div>
-                </MudCardContent>
-            </MudCard>
-        </MudContainer>
-    }
+                </div>
+            </MudCardContent>
+        </MudCard>
+    </MudContainer>
 }
-else
+else if(!_isDataFetched)
 {
     <div class="mt-4">
         <MudProgressLinear Color="Color.Primary" Size="Size.Large" Indeterminate="true" Class="my-7"/>
@@ -86,7 +84,7 @@ else
 
     private int _id;
 
-    private LibraryMangaResponse? manga;
+    private LibraryMangaResponse? _manga;
 
     private bool _shouldRender = false;
     private bool _error = false;
@@ -100,14 +98,19 @@ else
         {
             NavigationManager.GetQueryString<int>("libraryMangaId", out _id);
 
-            manga = await LibraryMangaService.GetManga(_id);
+            _manga = await LibraryMangaService.GetManga(_id);
             _shouldRender = true;
             _isDataFetched = true;
+            
+            StateHasChanged();
         }
         catch (Exception e)
         {
             _error = true;
             _shouldRender = true;
+            _isDataFetched = true;
+            
+            StateHasChanged();
         }
     }
 
