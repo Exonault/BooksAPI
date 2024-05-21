@@ -70,7 +70,7 @@ public class UserService : IUserService
         {
             throw new InvalidOperationException();
         }
-        
+
         if (!responseMessage.IsSuccessStatusCode)
         {
             return null;

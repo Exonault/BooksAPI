@@ -127,7 +127,6 @@ else
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
             _error = true;
             StateHasChanged();
         }
@@ -148,7 +147,7 @@ else
             List<UserMangaPublishingStatusResponse> publishingStatusStatistics = await StatisticsService
                 .GetPublishingStatusStatistics(_token, _refreshToken, _userId);
 
-            FormatResults(typeStatistic, readingStatistic, collectionStatusStatistic, publishingStatusStatistics);
+            FormatResultsCollection(typeStatistic, readingStatistic, collectionStatusStatistic, publishingStatusStatistics);
 
             await JsRuntime.InvokeVoidAsync("generateDemographicChart", demographicStatistic, DemographicChartId);
             await JsRuntime.InvokeVoidAsync("generateTypeChart", typeStatistic, TypeChartId);
@@ -164,7 +163,6 @@ else
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
             _error = true;
             StateHasChanged();
         }
@@ -189,7 +187,6 @@ else
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
             _error = true;
             StateHasChanged();
         }
@@ -201,7 +198,7 @@ else
         StateHasChanged();
     }
 
-    private void FormatResults(List<UserMangaTypeResponse> typeStatistic, List<UserMangaReadingStatusResponse> readingStatistic,
+    private void FormatResultsCollection(List<UserMangaTypeResponse> typeStatistic, List<UserMangaReadingStatusResponse> readingStatistic,
         List<UserMangaCollectionStatusResponse> collectionStatusStatistic, List<UserMangaPublishingStatusResponse> publishingStatusStatistics)
     {
         foreach (UserMangaTypeResponse item in typeStatistic)

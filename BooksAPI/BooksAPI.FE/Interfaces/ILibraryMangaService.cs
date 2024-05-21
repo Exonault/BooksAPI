@@ -5,13 +5,13 @@ namespace BooksAPI.FE.Interfaces;
 
 public interface ILibraryMangaService
 {
-    Task<IEnumerable<LibraryMangaResponse>> GetMangasForPage(int page, int entries);
+    Task<List<LibraryMangaResponse>> GetMangasForPage(int page, int entries);
 
     Task<LibraryMangaModel> GetMangaModel(int id);
 
     Task<LibraryMangaResponse> GetManga(int id);
 
-    Task<IEnumerable<LibraryMangaResponse>> SearchManga(string search);
+    Task<List<LibraryMangaResponse>> SearchManga(string search);
 
     Task<bool> CreateManga(LibraryMangaModel model, string token, string refreshToken);
 

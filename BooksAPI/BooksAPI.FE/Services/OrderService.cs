@@ -41,21 +41,25 @@ public class OrderService : IOrderService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        if (responseMessage.IsSuccessStatusCode)
         {
-            List<OrderResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<OrderResponse>>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                List<OrderResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<OrderResponse>>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
         }
+
+        throw new Exception();
     }
 
     public async Task<OrderResponse> GetOrder(int id, string token, string refreshToken, string userId)
@@ -76,18 +80,24 @@ public class OrderService : IOrderService
             else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+
+        if (responseMessage.IsSuccessStatusCode)
         {
-            OrderResponse? response =
-                await JsonSerializer.DeserializeAsync<OrderResponse>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                OrderResponse? response =
+                    await JsonSerializer.DeserializeAsync<OrderResponse>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
         }
+
+        throw new Exception();
     }
 
     public async Task<OrderModel> GetOrderModel(int id, string token, string refreshToken, string userId)
@@ -109,8 +119,6 @@ public class OrderService : IOrderService
         CreateOrderRequest requestContent = _mapper.Map<CreateOrderRequest>(model);
 
         requestContent.UserId = userId;
-
-        // return false;
 
         request.Content = JsonContent.Create(requestContent);
 

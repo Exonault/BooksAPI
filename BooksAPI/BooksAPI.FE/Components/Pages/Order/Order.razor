@@ -32,10 +32,13 @@
         <div class="d-flex justify-content-end mb-2">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("/createOrder"))">Add new order</MudButton>
         </div>
-        
+
         <MudTable Items="_orders">
             <HeaderContent>
-                <MudTh>Date</MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<OrderResponse, object>(x=> x.Date)" InitialDirection="SortDirection.Descending">Date</MudTableSortLabel>
+                </MudTh>
+                @* <MudTh>Date</MudTh> *@
                 <MudTh>Place</MudTh>
                 <MudTh>Description</MudTh>
                 <MudTh>Price</MudTh>
@@ -49,7 +52,7 @@
                 <MudTd DataLabel="Place">
                     <MudText Typo="Typo.body1"> @context.Place</MudText>
                 </MudTd>
-                <MudTd DataLabel="Description">
+                <MudTd DataLabel="Description" Class="w-50">
                     <MudText Typo="Typo.body1"> @context.Description</MudText>
                 </MudTd>
                 <MudTd DataLabel="Price">
@@ -58,10 +61,10 @@
                 <MudTd DataLabel="Count">
                     <MudText Typo="Typo.body1"> @context.NumberOfItems</MudText>
                 </MudTd>
-                <MudTd DataLabel="Actions">
-                    <div>
+                <MudTd DataLabel="Actions" Style="width: 10% !important;">
+                    <div class="justify-content-center">
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo($"/updateOrder/?orderId={context.Id}"))">Update</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Delete</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => DeleteOrder(context.Id))" Class="mt-3">Delete</MudButton>
                     </div>
                 </MudTd>
             </RowTemplate>
@@ -76,19 +79,19 @@ else
 }
 
 @code {
-    
+
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
-    
+
     private bool _shouldRender = false;
     private bool _error = false;
     private bool _isDataFetched = false;
-    
+
     private string _userId;
     private string _token;
     private string _refreshToken;
 
-    private IEnumerable<OrderResponse> _orders = Array.Empty<OrderResponse>();
+    private List<OrderResponse> _orders = new();
 
     protected override bool ShouldRender() => _shouldRender;
 
@@ -97,10 +100,10 @@ else
         AuthenticationState state = await AuthenticationState;
 
         _userId = UserUtil.GetUserId(state.User);
-        
+
         try
         {
-            string[]tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
+            string[] tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
             _token = tokens[0];
             _refreshToken = tokens[1];
             await GetUserOrders();
@@ -130,6 +133,31 @@ else
         {
             _error = true;
             _shouldRender = true;
+        }
+    }
+
+    private async Task DeleteOrder(int id)
+    {
+        try
+        {
+            bool isDeleteSuccess = await OrderService.DeleteOrder(id, _token, _refreshToken, _userId);
+
+            //bool isDeleteSuccess = await UserMangaService.DeleteUserManga(id, _token, _refreshToken, _userId);
+            if (isDeleteSuccess)
+            {
+                // UserMangaResponse? userMangaResponse = Mangas.FirstOrDefault(x => x.Id == id);
+                // Mangas.Remove(userMangaResponse!);
+                // StateHasChanged();
+
+                OrderResponse? orderResponse = _orders.FirstOrDefault(x => x.Id == id);
+                _orders.Remove(orderResponse!);
+                StateHasChanged();
+            }
+        }
+        catch (Exception e)
+        {
+            _error = true;
+            StateHasChanged();
         }
     }
 

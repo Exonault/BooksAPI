@@ -5,7 +5,7 @@ namespace BooksAPI.FE.Interfaces;
 
 public interface IUserMangaService
 {
-    Task<IEnumerable<UserMangaResponse>> GetUserMangas(string token, string refreshToken, string userId);
+    Task<List<UserMangaResponse>> GetUserMangas(string token, string refreshToken, string userId);
     Task<UserMangaModel> GetUserMangaModel(int id, string token, string refreshToken, string userId);
     Task<UserMangaResponse> GetUserManga(int id, string token, string refreshToken, string userId);
     Task<bool> CreateUserManga(UserMangaModel model, string token, string refreshToken, string userId);

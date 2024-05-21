@@ -25,7 +25,7 @@ public class LibraryMangaService : ILibraryMangaService
         _refreshTokenService = refreshTokenService;
     }
 
-    public async Task<IEnumerable<LibraryMangaResponse>> GetMangasForPage(int page, int entries)
+    public async Task<List<LibraryMangaResponse>> GetMangasForPage(int page, int entries)
     {
         string url = string.Format(_configuration["Backend:LibraryMangas:GetLibraryMangasForPage"]!, page, entries);
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -33,22 +33,24 @@ public class LibraryMangaService : ILibraryMangaService
         HttpClient httpClient = _clientFactory.CreateClient();
 
         HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
-        if (!responseMessage.IsSuccessStatusCode)
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+            {
+                List<LibraryMangaResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<LibraryMangaResponse>>(responseStream);
+
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
         {
             throw new Exception();
-        }
-
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
-        {
-            List<LibraryMangaResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<LibraryMangaResponse>>(responseStream);
-
-            if (response is null)
-            {
-                throw new Exception();
-            }
-
-            return response;
         }
     }
 
@@ -70,26 +72,28 @@ public class LibraryMangaService : ILibraryMangaService
         HttpClient httpClient = _clientFactory.CreateClient();
 
         HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
-        if (!responseMessage.IsSuccessStatusCode)
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+            {
+                LibraryMangaResponse? response =
+                    await JsonSerializer.DeserializeAsync<LibraryMangaResponse>(responseStream);
+
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
         {
             throw new Exception();
         }
-
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
-        {
-            LibraryMangaResponse? response =
-                await JsonSerializer.DeserializeAsync<LibraryMangaResponse>(responseStream);
-
-            if (response is null)
-            {
-                throw new Exception();
-            }
-
-            return response;
-        }
     }
 
-    public async Task<IEnumerable<LibraryMangaResponse>> SearchManga(string search)
+    public async Task<List<LibraryMangaResponse>> SearchManga(string search)
     {
         string url = string.Format(_configuration["Backend:LibraryMangas:SearchLibraryManga"]!, search);
 
@@ -98,22 +102,24 @@ public class LibraryMangaService : ILibraryMangaService
         HttpClient httpClient = _clientFactory.CreateClient();
 
         HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
-        if (!responseMessage.IsSuccessStatusCode)
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+            {
+                List<LibraryMangaResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<LibraryMangaResponse>>(responseStream);
+
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
         {
             throw new Exception();
-        }
-
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
-        {
-            List<LibraryMangaResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<LibraryMangaResponse>>(responseStream);
-
-            if (response is null)
-            {
-                throw new Exception();
-            }
-
-            return response;
         }
     }
 
@@ -126,7 +132,6 @@ public class LibraryMangaService : ILibraryMangaService
 
         CreateLibraryMangaRequest requestContent = _mapper.Map<CreateLibraryMangaRequest>(model);
         
-        // return false;
         request.Content = JsonContent.Create(requestContent);
 
         HttpClient httpClient = _clientFactory.CreateClient();
@@ -138,7 +143,6 @@ public class LibraryMangaService : ILibraryMangaService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
         if (responseMessage.IsSuccessStatusCode)
@@ -157,7 +161,7 @@ public class LibraryMangaService : ILibraryMangaService
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         UpdateLibraryMangaRequest requestContent = _mapper.Map<UpdateLibraryMangaRequest>(model);
-        
+
         request.Content = JsonContent.Create(requestContent);
 
         HttpClient httpClient = _clientFactory.CreateClient();
@@ -169,7 +173,6 @@ public class LibraryMangaService : ILibraryMangaService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
         if (responseMessage.IsSuccessStatusCode)
@@ -196,7 +199,6 @@ public class LibraryMangaService : ILibraryMangaService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
         if (responseMessage.IsSuccessStatusCode)

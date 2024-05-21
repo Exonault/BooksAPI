@@ -17,8 +17,10 @@ public class OrderModel
     public string Place { get; set; } = string.Empty;
 
     [Required(ErrorMessage = OrderMessages.AmountRequired)]
+    [GreaterThanZero(ErrorMessage = OrderMessages.AmountMoreThanZero)]
     public decimal Amount { get; set; }
 
     [Required(ErrorMessage = OrderMessages.NumberOfItemsRequired)]
-    public int NumberOfItems { get; set; }
+    [GreaterThanZero(ErrorMessage = OrderMessages.NumberOfItemsAtLeastOne)]
+    public int NumberOfItems { get; set; } = 1;
 }

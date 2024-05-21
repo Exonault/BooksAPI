@@ -49,7 +49,7 @@ public class UserMangaService : IUserMangaService
         UserManga? possibleEntry = await _userMangaRepository
             .GetUserMangaByUserIdAndLibraryMangaId(user.Id, libraryManga.Id);
 
-        if (possibleEntry is null)
+        if (possibleEntry is not null)
         {
             throw new UserMangaAlreadyExistsException(UserMangaMessages.UserMangaAlreadyCreated);
         }

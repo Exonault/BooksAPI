@@ -64,7 +64,7 @@
 @code {
 
     [Parameter]
-    public IEnumerable<LibraryMangaResponse> Mangas { get; set; }
+    public List<LibraryMangaResponse> Mangas { get; set; }
 
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
@@ -128,7 +128,8 @@
 
             if (isDeleteSuccess)
             {
-                Mangas = Mangas.Where(m => m.Id != id);
+                LibraryMangaResponse? libraryMangaResponse = Mangas.FirstOrDefault(x => x.Id == id);
+                Mangas.Remove(libraryMangaResponse!);
                 StateHasChanged();
             }
         }

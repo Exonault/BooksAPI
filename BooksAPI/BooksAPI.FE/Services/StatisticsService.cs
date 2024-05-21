@@ -38,20 +38,26 @@ public class StatisticsService : IStatisticsService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        if (responseMessage.IsSuccessStatusCode)
         {
-            List<UserMangaDemographicResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<UserMangaDemographicResponse>>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                List<UserMangaDemographicResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<UserMangaDemographicResponse>>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
+        {
+            throw new Exception();
         }
     }
 
@@ -71,20 +77,26 @@ public class StatisticsService : IStatisticsService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        if (responseMessage.IsSuccessStatusCode)
         {
-            List<UserMangaTypeResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<UserMangaTypeResponse>>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                List<UserMangaTypeResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<UserMangaTypeResponse>>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
+        {
+            throw new Exception();
         }
     }
 
@@ -105,20 +117,26 @@ public class StatisticsService : IStatisticsService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        if (responseMessage.IsSuccessStatusCode)
         {
-            List<UserMangaCollectionStatusResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<UserMangaCollectionStatusResponse>>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                List<UserMangaCollectionStatusResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<UserMangaCollectionStatusResponse>>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
+        {
+            throw new Exception();
         }
     }
 
@@ -139,20 +157,26 @@ public class StatisticsService : IStatisticsService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        if (responseMessage.IsSuccessStatusCode)
         {
-            List<UserMangaPublishingStatusResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<UserMangaPublishingStatusResponse>>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                List<UserMangaPublishingStatusResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<UserMangaPublishingStatusResponse>>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
+        {
+            throw new Exception();
         }
     }
 
@@ -176,17 +200,24 @@ public class StatisticsService : IStatisticsService
             else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        if (responseMessage.IsSuccessStatusCode)
         {
-            List<UserMangaReadingStatusResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<UserMangaReadingStatusResponse>>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                List<UserMangaReadingStatusResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<UserMangaReadingStatusResponse>>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
+        {
+            throw new Exception();
         }
     }
 
@@ -207,20 +238,26 @@ public class StatisticsService : IStatisticsService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        if (responseMessage.IsSuccessStatusCode)
         {
-            UserMangaTotalSpendingResponse? response =
-                await JsonSerializer.DeserializeAsync<UserMangaTotalSpendingResponse>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                UserMangaTotalSpendingResponse? response =
+                    await JsonSerializer.DeserializeAsync<UserMangaTotalSpendingResponse>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
+        {
+            throw new Exception();
         }
     }
 
@@ -244,21 +281,29 @@ public class StatisticsService : IStatisticsService
             else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        if (responseMessage.IsSuccessStatusCode)
         {
-            GeneralStatisticsResponse? response =
-                await JsonSerializer.DeserializeAsync<GeneralStatisticsResponse>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                GeneralStatisticsResponse? response =
+                    await JsonSerializer.DeserializeAsync<GeneralStatisticsResponse>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
+        {
+            throw new Exception();
         }
     }
 
-    public async Task<List<OrderByPlaceResponse>> GetOrderByPlaceStatistics(string token, string refreshToken, string userId)
+    public async Task<List<OrderByPlaceResponse>> GetOrderByPlaceStatistics(string token, string refreshToken,
+        string userId)
     {
         string url = string.Format(_configuration["Backend:Statistics:GetOrderByPlaceStatistics"]!, userId);
 
@@ -277,17 +322,24 @@ public class StatisticsService : IStatisticsService
             else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        if (responseMessage.IsSuccessStatusCode)
         {
-            List<OrderByPlaceResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<OrderByPlaceResponse>>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                List<OrderByPlaceResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<OrderByPlaceResponse>>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
+        {
+            throw new Exception();
         }
     }
 
@@ -310,24 +362,31 @@ public class StatisticsService : IStatisticsService
             else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        if (responseMessage.IsSuccessStatusCode)
         {
-            List<OrdersByYearResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<OrdersByYearResponse>>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                List<OrdersByYearResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<OrdersByYearResponse>>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
+        {
+            throw new Exception();
         }
     }
 
-    public async Task<List<OrdersForMonthByYearResponse>> GetOrderForMonthByYearResponse(string token, string refreshToken,
-        string userId, int year)
+    public async Task<List<OrdersForMonthByYearResponse>> GetOrderForMonthByYearResponse(string token,
+        string refreshToken, string userId, int year)
     {
-        string url = string.Format(_configuration["Backend:Statistics:GetOrderForMonthsByYearStatistics"]!, userId);
+        string url = string.Format(_configuration["Backend:Statistics:GetOrderForMonthsByYearStatistics"]!, userId, year);
 
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -344,17 +403,24 @@ public class StatisticsService : IStatisticsService
             else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        if (responseMessage.IsSuccessStatusCode)
         {
-            List<OrdersForMonthByYearResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<OrdersForMonthByYearResponse>>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                List<OrdersForMonthByYearResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<OrdersForMonthByYearResponse>>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
+        {
+            throw new Exception();
         }
     }
 
@@ -368,8 +434,7 @@ public class StatisticsService : IStatisticsService
             string[] tokens = await _refreshTokenService.GetTokens();
 
             token = tokens[0];
-            // refreshToken = tokens[1];
-            
+
             HttpRequestMessage refreshedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
             refreshedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             responseMessage = await httpClient.SendAsync(refreshedRequest);

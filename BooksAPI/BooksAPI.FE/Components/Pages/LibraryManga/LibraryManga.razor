@@ -68,7 +68,7 @@ else
     [Parameter]
     public int PageNumber { get; set; }
 
-    private IEnumerable<LibraryMangaResponse>? _mangas = Array.Empty<LibraryMangaResponse>();
+    private List<LibraryMangaResponse>? _mangas = new();
 
     private bool _shouldRender = false;
     private bool _error = false;

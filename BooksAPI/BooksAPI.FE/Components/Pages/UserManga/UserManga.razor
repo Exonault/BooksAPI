@@ -91,7 +91,7 @@ else
     private string _token;
     private string _refreshToken;
 
-    private IEnumerable<UserMangaResponse> _mangas = Array.Empty<UserMangaResponse>();
+    private List<UserMangaResponse> _mangas = new();
 
     protected override bool ShouldRender() => _shouldRender;
 

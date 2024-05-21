@@ -16,7 +16,8 @@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Cover</MudTh>
-        <MudTh>Title</MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<UserMangaResponse, object>(x => x.LibraryMangaResponse.Title)">Title</MudTableSortLabel></MudTh>
+        @* <MudTh>Title</MudTh> *@
         <MudTh>Reading status</MudTh>
         <MudTh>Collection status</MudTh>
         <MudTh>Collected volumes</MudTh>
@@ -28,7 +29,7 @@
         <MudTd DataLabel="Cover">
             <MudImage Src="@GetImageUrl(context.LibraryMangaResponse.MainImageUrl)" Width="150" Height="210" Fluid="true" Class="border border-dark"/>
         </MudTd>
-        <MudTd DataLabel="Title" Style="width: 35% !important;">
+        <MudTd DataLabel="Title" Style="width: 30% !important;">
             <MudText Typo="Typo.h6">@context.LibraryMangaResponse.Title</MudText>
         </MudTd>
         <MudTd DataLabel="Reading status">
@@ -62,7 +63,7 @@
     private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     [Parameter]
-    public IEnumerable<UserMangaResponse> Mangas { get; set; }
+    public List<UserMangaResponse> Mangas { get; set; }
 
     private UserMangaResponse selectedItem;
     private string searchString;
@@ -124,7 +125,8 @@
             bool isDeleteSuccess = await UserMangaService.DeleteUserManga(id, _token, _refreshToken, _userId);
             if (isDeleteSuccess)
             {
-                Mangas = Mangas.Where(m => m.Id != id);
+                UserMangaResponse? userMangaResponse = Mangas.FirstOrDefault(x => x.Id == id);
+                Mangas.Remove(userMangaResponse!);
                 StateHasChanged();
             }
         }

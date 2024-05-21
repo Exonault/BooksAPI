@@ -24,7 +24,7 @@ public class UserMangaService : IUserMangaService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<UserMangaResponse>> GetUserMangas(string token, string refreshToken, string userId)
+    public async Task<List<UserMangaResponse>> GetUserMangas(string token, string refreshToken, string userId)
     {
         string url = string.Format(_configuration["Backend:UserMangas:GetUserMangas"]!, userId);
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -39,20 +39,26 @@ public class UserMangaService : IUserMangaService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        if (responseMessage.IsSuccessStatusCode)
         {
-            List<UserMangaResponse>? response =
-                await JsonSerializer.DeserializeAsync<List<UserMangaResponse>>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                List<UserMangaResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<UserMangaResponse>>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
+        {
+            throw new Exception();
         }
     }
 
@@ -84,20 +90,26 @@ public class UserMangaService : IUserMangaService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
-        await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+        if (responseMessage.IsSuccessStatusCode)
         {
-            UserMangaResponse? response =
-                await JsonSerializer.DeserializeAsync<UserMangaResponse>(responseStream);
-
-            if (response is null)
+            await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                throw new Exception();
-            }
+                UserMangaResponse? response =
+                    await JsonSerializer.DeserializeAsync<UserMangaResponse>(responseStream);
 
-            return response;
+                if (response is null)
+                {
+                    throw new Exception();
+                }
+
+                return response;
+            }
+        }
+        else
+        {
+            throw new Exception();
         }
     }
 
@@ -112,7 +124,7 @@ public class UserMangaService : IUserMangaService
         CreateUserMangaRequest requestContent = _mapper.Map<CreateUserMangaRequest>(model);
 
         requestContent.UserId = userId;
-        
+
         request.Content = JsonContent.Create(requestContent);
 
         HttpClient httpClient = _clientFactory.CreateClient();
@@ -125,7 +137,6 @@ public class UserMangaService : IUserMangaService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
         if (responseMessage.IsSuccessStatusCode)
@@ -161,7 +172,6 @@ public class UserMangaService : IUserMangaService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
         if (responseMessage.IsSuccessStatusCode)
@@ -188,7 +198,6 @@ public class UserMangaService : IUserMangaService
             {
                 responseMessage = await RefreshRequest(token, refreshToken, request, httpClient);
             }
-            else throw new Exception();
         }
 
         if (responseMessage.IsSuccessStatusCode)

@@ -47,7 +47,7 @@
 
 @if (_searchDone && !_searchEmpty)
 {
-    <LibraryMangaTable Mangas="SearchResult"/>
+    <LibraryMangaTable Mangas="_searchResult"/>
 }
 
 @code {
@@ -57,7 +57,7 @@
 
     public string SearchQuery { get; set; }
 
-    private IEnumerable<LibraryMangaResponse> SearchResult = Array.Empty<LibraryMangaResponse>();
+    private List<LibraryMangaResponse> _searchResult = new();
     private bool _searchDone = false;
     private bool _shouldRender = false;
     private bool _error = false;
@@ -82,8 +82,8 @@
 
         try
         {
-            SearchResult = await LibraryMangaService.SearchManga(SearchQuery);
-            _searchEmpty = !SearchResult.Any();
+            _searchResult = await LibraryMangaService.SearchManga(SearchQuery);
+            _searchEmpty = !_searchResult.Any();
             _searchDone = true;
             _shouldRender = true;
             _isDataFetching = false;

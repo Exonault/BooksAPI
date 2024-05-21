@@ -18,7 +18,7 @@ public static class UserMangaEndpoints
     public static void MapUserMangaEndpoints(this WebApplication app)
     {
         app.MapPost("/userManga", CreateUserManga)
-            //.RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
+            .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
@@ -29,7 +29,6 @@ public static class UserMangaEndpoints
 
         app.MapGet("/userManga/{id:int}", GetUserMangaById)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
-            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5)).Tag(CacheConstants.UserMangaWithIdTag))
             .Produces(StatusCodes.Status200OK, typeof(UserMangaResponse), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
