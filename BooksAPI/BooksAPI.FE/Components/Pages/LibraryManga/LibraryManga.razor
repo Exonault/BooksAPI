@@ -103,7 +103,7 @@ else
         PageNumber = page;
         await GetMangas(page);
         await JsRuntime.InvokeVoidAsync("window.scrollToTop");
-        NavigationManager.NavigateTo($"/libraryManga/{page}");
+        NavigationManager.NavigateTo($"/libraryMangas/{page}");
         StateHasChanged();
     }
 

@@ -25,11 +25,24 @@
                 </div>
             </NotAuthorized>
             <Authorized>
+                @* <div class="top-row px-4 d-flex justify-content-between align-items-center"> *@
+                @*     <div class=" d-flex flex-column"> *@
+                @*         <MudIcon Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Primary"/> *@
+                @*         <h4>@GetUserName(context.User)</h4> *@
+                @*     </div> *@
+                @*     <div> *@
+                @*         <a href="/searchLibraryManga">Search manga</a> *@
+                @*         <a @onclick="Logout"> Logout</a> *@
+                @*     </div> *@
+                @* </div> *@
                 <div class="top-row px-4 d-flex justify-content-between align-items-center">
-                    <h4>@GetUserName(context.User)</h4>
+                    <div class="d-flex align-items-center">
+                        <MudIcon Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Primary" Size="Size.Large"/>
+                        <h4 class="mb-0 ms-2">@GetUserName(context.User)</h4>
+                    </div>
                     <div>
                         <a href="/searchLibraryManga">Search manga</a>
-                        <a @onclick="Logout"> Logout</a>
+                        <a @onclick="Logout" class="ms-3">Logout</a>
                     </div>
                 </div>
             </Authorized>
