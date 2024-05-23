@@ -50,11 +50,18 @@
 
         <MudGrid Justify="Justify.Center">
             <MudItem xs="6">
-                <MudTextField T="string" Label="Description" InputType="InputType.Text" Variant="Variant.Text"
+                <MudTextField T="string" Label="Description" InputType="InputType.Text" Variant="Variant.Text" AutoGrow
                               @bind-Value="_model.Description"/>
                 <div class="d-flex col-12">
                     <MudDatePicker Editable="true" Mask="@(new DateMask("dd.MM.yyyy"))" DateFormat="dd.MM.yyyy" Class="mr-3"
                                    @bind-Date="_model.Date"/>
+
+                    <MudSelect T="string" Label="Status" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-3"
+                               @bind-Value="_model.Status">
+                        <MudSelectItem Value="@OrderConstants.Status.GetLabelByKey(OrderConstants.Status.Created)"></MudSelectItem>
+                        <MudSelectItem Value="@OrderConstants.Status.GetLabelByKey(OrderConstants.Status.OnTheWay)"></MudSelectItem>
+                        <MudSelectItem Value="@OrderConstants.Status.GetLabelByKey(OrderConstants.Status.Delivered)"></MudSelectItem>
+                    </MudSelect>
 
                     <MudTextField Label="Place" InputType="InputType.Text" Variant="Variant.Text"
                                   @bind-Value="_model.Place"/>
@@ -130,7 +137,6 @@
 
     private async void OnValidSubmit()
     {
-        FormatModel();
         try
         {
             if (_isCreate)
@@ -172,10 +178,11 @@
         // Console.WriteLine(result);
     }
 
-    private void FormatModel()
-    {
-        // _model.Date = DateOnly.FromDateTime((DateTime)_date!);
-    }
+    // private void FormatModel()
+    // {
+    //     
+    //     // _model.Date = DateOnly.FromDateTime((DateTime)_date!);
+    // }
 
 
     private void CloseAlert()

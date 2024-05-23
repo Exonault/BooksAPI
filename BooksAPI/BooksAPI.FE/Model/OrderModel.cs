@@ -13,6 +13,9 @@ public class OrderModel
     [Required(ErrorMessage = OrderMessages.DescriptionRequired)]
     public string Description { get; set; } = string.Empty;
 
+    [Required(ErrorMessage = OrderMessages.StatusRequired)]
+    public string Status { get; set; } = string.Empty;
+
     [Required(ErrorMessage = OrderMessages.PlaceRequired)]
     public string Place { get; set; } = string.Empty;
 

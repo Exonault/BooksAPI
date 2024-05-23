@@ -2,9 +2,9 @@
 
 public static class LibraryMangaMessages
 {
-    public const string TitleLengthMessage = "Title must be at least 3 characters";
-
-    public const string TitleRequired = "Title is required";
+    public const string TitleRomajiRequired = "Title is required";
+    
+    public const string TitleJapaneseRequired = "Title is required";
 
     public const string DemographicRequired = "Demographic is required";
 
@@ -16,4 +16,5 @@ public static class LibraryMangaMessages
 
     public const string TotalVolumesPublishingStatusMessage = "You can't input total volumes when the publishing status is Publishing";
 
+    public const string SynopsisRequired = "Synopsis is required";
 }

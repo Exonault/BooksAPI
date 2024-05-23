@@ -5,7 +5,6 @@
 @using BooksAPI.FE.Extensions
 @using BooksAPI.FE.Interfaces
 @using BooksAPI.FE.Util
-
 @inject NavigationManager NavigationManager;
 @inject ILibraryMangaService LibraryMangaService;
 @inject IUserMangaService UserMangaService;
@@ -64,7 +63,7 @@
 @code {
 
     [Parameter]
-    public List<LibraryMangaForPageResponse> Mangas { get; set; }
+    public List<LibraryMangaResponse> Mangas { get; set; }
 
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
@@ -128,7 +127,7 @@
 
             if (isDeleteSuccess)
             {
-                LibraryMangaForPageResponse? libraryMangaResponse = Mangas.FirstOrDefault(x => x.Id == id);
+                LibraryMangaResponse? libraryMangaResponse = Mangas.FirstOrDefault(x => x.Id == id);
                 Mangas.Remove(libraryMangaResponse!);
                 StateHasChanged();
             }

@@ -8,6 +8,8 @@ public static class OrderMessages
     
     public const string DescriptionRequired = "Description is required";
 
+    public const string StatusRequired = "Status is required";
+
     public const string PlaceRequired = "Place is required";
 
     public const string AmountRequired = "Amount is required";

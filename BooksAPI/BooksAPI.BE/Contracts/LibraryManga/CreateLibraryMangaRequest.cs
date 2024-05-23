@@ -10,6 +10,7 @@ public class CreateLibraryMangaRequest
     public string DemographicType { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
     public string PublishingStatus { get; set; } = string.Empty;
+    public string Synopsis { get; set; }  = string.Empty;
     public string? MainImageUrl { get; set; } = string.Empty;
     public int? TotalVolumes { get; set; }
     public List<AuthorRequest> Authors { get; set; } = new List<AuthorRequest>();

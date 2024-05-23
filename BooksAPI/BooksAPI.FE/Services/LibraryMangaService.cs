@@ -25,7 +25,7 @@ public class LibraryMangaService : ILibraryMangaService
         _refreshTokenService = refreshTokenService;
     }
 
-    public async Task<List<LibraryMangaResponse>> GetMangasForPage(int page, int entries)
+    public async Task<List<LibraryMangaForPageResponse>> GetMangasForPage(int page, int entries)
     {
         string url = string.Format(_configuration["Backend:LibraryMangas:GetLibraryMangasForPage"]!, page, entries);
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -37,8 +37,8 @@ public class LibraryMangaService : ILibraryMangaService
         {
             await using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
-                List<LibraryMangaResponse>? response =
-                    await JsonSerializer.DeserializeAsync<List<LibraryMangaResponse>>(responseStream);
+                List<LibraryMangaForPageResponse>? response =
+                    await JsonSerializer.DeserializeAsync<List<LibraryMangaForPageResponse>>(responseStream);
 
                 if (response is null)
                 {

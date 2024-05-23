@@ -16,7 +16,7 @@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Cover</MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<UserMangaResponse, object>(x => x.LibraryMangaResponse.Title)">Title</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<UserMangaResponse, object>(x => x.LibraryMangaResponse.TitleRomaji)">Title</MudTableSortLabel></MudTh>
         @* <MudTh>Title</MudTh> *@
         <MudTh>Reading status</MudTh>
         <MudTh>Collection status</MudTh>
@@ -30,7 +30,7 @@
             <MudImage Src="@GetImageUrl(context.LibraryMangaResponse.MainImageUrl)" Width="150" Height="210" Fluid="true" Class="border border-dark"/>
         </MudTd>
         <MudTd DataLabel="Title" Style="width: 30% !important;">
-            <MudText Typo="Typo.h6">@context.LibraryMangaResponse.Title</MudText>
+            <MudText Typo="Typo.h6">@context.LibraryMangaResponse.TitleRomaji</MudText>
         </MudTd>
         <MudTd DataLabel="Reading status">
             <MudText Typo="Typo.body1">@UserMangaConstants.ReadingStatus.GetLabelByKey(context.ReadingStatus)</MudText>
@@ -99,7 +99,7 @@
             return true;
         }
 
-        if (element.LibraryMangaResponse.Title.Contains(searchString))
+        if (element.LibraryMangaResponse.TitleRomaji.Contains(searchString))
         {
             return true;
         }

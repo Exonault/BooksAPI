@@ -6,9 +6,13 @@ namespace BooksAPI.FE.Model;
 
 public class LibraryMangaModel
 {
-    [Required(ErrorMessage = LibraryMangaMessages.TitleRequired)]
-    [StringLength(100, ErrorMessage = LibraryMangaMessages.TitleLengthMessage, MinimumLength = 3)]
-    public string Title { get; set; } = string.Empty;
+    [Required(ErrorMessage = LibraryMangaMessages.TitleRomajiRequired)]
+    public string TitleRomaji { get; set; } = string.Empty;
+    
+    public string? TitleEnglish { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = LibraryMangaMessages.TitleJapaneseRequired)]
+    public string TitleJapanese { get; set; } = string.Empty;
     
     [Required(ErrorMessage = LibraryMangaMessages.DemographicRequired)]
     public string DemographicType { get; set; } = string.Empty;
@@ -18,6 +22,9 @@ public class LibraryMangaModel
    
     [Required(ErrorMessage = LibraryMangaMessages.PublishingStatusRequired)]
     public string PublishingStatus { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = LibraryMangaMessages.SynopsisRequired)]
+    public string Synopsis { get; set; } = string.Empty;
     
     public string? MainImageUrl { get; set; } = string.Empty;
    

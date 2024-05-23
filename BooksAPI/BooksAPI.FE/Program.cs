@@ -18,6 +18,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
+builder.Services.AddServerSideBlazor()
+    .AddHubOptions(options => { options.MaximumReceiveMessageSize = null; });
 
 builder.Services.AddMudServices();
 builder.Services.AddBlazorBootstrap();

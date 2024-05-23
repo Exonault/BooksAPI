@@ -5,7 +5,7 @@ namespace BooksAPI.FE.Interfaces;
 
 public interface ILibraryMangaService
 {
-    Task<List<LibraryMangaResponse>> GetMangasForPage(int page, int entries);
+    Task<List<LibraryMangaForPageResponse>> GetMangasForPage(int page, int entries);
 
     Task<LibraryMangaModel> GetMangaModel(int id);
 
