@@ -2,9 +2,9 @@
 
 public static class LibraryMangaMessages
 {
-    public const string TitleRomajiRequired = "Title is required";
+    public const string TitleRomajiRequired = "Romaji title is required";
     
-    public const string TitleJapaneseRequired = "Title is required";
+    public const string TitleJapaneseRequired = "Japanese title is required";
 
     public const string DemographicRequired = "Demographic is required";
 

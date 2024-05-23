@@ -93,68 +93,6 @@
             </MudCard>
         </MudItem>
     </MudGrid>
-
-    <MudContainer MaxWidth="MaxWidth.Medium">
-        <MudCard Outlined="true" Class="mt-3">
-            <MudCardContent>
-                <div class="d-flex flex-wrap mt-1">
-                    <div class="d-flex flex-column align-items-start mr-2">
-                        <MudImage Src="@GetImageUrl(_manga.MainImageUrl)" Width="250" Height="350" Class="border border-dark"/>
-                    </div>
-                    <div class="col ml-4">
-                        <div class="row mb-2">
-                            <MudText Typo="Typo.h6">Title in Romaji</MudText>
-                            <MudText Typo="Typo.body1">@_manga.TitleRomaji</MudText>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col">
-                                <MudText Typo="Typo.h6">Type</MudText>
-                                <MudText Typo="Typo.body1">@LibraryMangaConstants.Type.GetLabelByKey(_manga.Type)</MudText>
-                            </div>
-                            <div class="col">
-                                <MudText Typo="Typo.h6">Demographic</MudText>
-                                <MudText Typo="Typo.body1">@_manga.DemographicType</MudText>
-                            </div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col">
-                                <MudText Typo="Typo.h6">Publishing status</MudText>
-                                <MudText Typo="Typo.body1">@LibraryMangaConstants.PublishingType.GetLabelByKey(_manga.PublishingStatus)</MudText>
-                            </div>
-                            <div class="col">
-                                <MudText Typo="Typo.h6">Total volumes</MudText>
-                                <MudText Typo="Typo.body1">@FormatterUtil.FormatTotalVolumes(_manga.TotalVolumes)</MudText>
-                            </div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col">
-                                <MudText Typo="Typo.h6">Title in English</MudText>
-                                <MudText Typo="Typo.body1">@_manga.TitleEnglish</MudText>
-                            </div>
-                            <div class="col">
-                                <MudText Typo="Typo.h6">Title in Japanese</MudText>
-                                <MudText Typo="Typo.body1">@_manga.TitleJapanese</MudText>
-                            </div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col">
-                                <MudText Typo="Typo.h6">Authors</MudText>
-                                @foreach (AuthorResponse author in _manga.Authors)
-                                {
-                                    <MudText Typo="Typo.body1">@FormatterUtil.FormatAuthor(author)</MudText>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-1">
-                    <MudText Typo="Typo.h6" Class="mb-1">Synopsis</MudText>
-                    <MudText Typo="Typo.body1">@_manga.Synopsis</MudText>
-                </div>
-            </MudCardContent>
-        </MudCard>
-    </MudContainer>
 }
 else if (!_isDataFetched)
 {

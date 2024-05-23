@@ -36,21 +36,25 @@ VALUES ('PlanToRead', 0, 1, 36, 'InProgress', '31643fae-cec0-4756-bf85-aa333bee6
        ('PlanToRead', 0, 0, 20, 'PlanToCollect', '31643fae-cec0-4756-bf85-aa333bee61b4', 1601);
 
 
-INSERT INTO public."Orders" ("Date", "Description", "Place", "Amount", "NumberOfItems", "UserId")
-VALUES ('2024-01-28','Chainsaw man vol 13; Kubo won''t let me be invisible vol 10; Frieren beyond journeys end vol 3', 'Bookholic', 56, 3, '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ('2024-03-17', 'Call of the night vol 14', 'Ozone', 18, 1, '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ('2024-04-01', 'Chainsaw man vol 14; Kubo won''t let me be invisible vol 11; DanDaDan vol 6; ', 'Bookholic', 60, 3, '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ('2024-04-22', 'Boys Abyss vol 3; Oshi no Ko vol 5; ', 'Orange', 39.89, 2, '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ('2024-01-22', 'Boys Abyss vol 3; Oshi no Ko vol 4 ', 'Orange', 48.9, 2, '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ('2023-01-15', 'DaDaDan vol 1; Komi can''t communicate vol 11', 'In person', 36, 2,   '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ('2023-02-20', 'DanDaDan vol 2; Call of the night vol 10; Oshi no ko vol 1; Jujutsu Kaisen vol 18', 'Amazon',  82, 4, '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ('2023-03-14', 'A silent voice box set; Kubo won''t let me be invisible vol 4 and 5 ', 'Amazon', 160, 3,  '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ('2023-04-10', 'Spy x Family vol 9; Jujutsu Kaisen vol 19; Kubo won''t let me be invisible vol 6', 'Amazon',   57.50, 3, '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ( '2023-05-08', 'Your lie in april vol 1,2,9,10,11', 'Amazon', 117.40, 5,   '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ( '2023-05-11', 'Komi can''t communicate vol 12,13,14,15,16', 'Ozone', 65.7, 5,     '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ( '2023-05-23', 'Oshi no ko vol 2; Call of the night vol 11; DanDaDan vol 3;', 'Amazon', 63.80, 3,     '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ( '2023-06-06', 'Boy''s Abyss vol 1', 'Amazon', 23.5, 1, '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ( '2023-06-23', 'Your lie in april vol 3,4,5,6', 'Knigomania', 60, 4, '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ( '2023-07-03', 'Your lie in april vol 7,8', 'Amazon', 46.71, 2, '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ( '2023-07-10', 'Call of the night vol 12; Kubo won''t let me be invisible vol 7; Komi can''t communicate vol 17 ', 'Bookholic',  54, 3, '31643fae-cec0-4756-bf85-aa333bee61b4'),
-       ( '2023-08-20', 'Oshi no ko vol 3', 'Amazon', 8.60, 1, '31643fae-cec0-4756-bf85-aa333bee61b4');
+INSERT INTO public."Orders" ("Date", "Description", "Place", "Amount", "NumberOfItems", "UserId", "Status")
+VALUES
+    ('2024-01-28', 'Chainsaw man vol 13; Kubo won''t let me be invisible vol 10; Frieren beyond journeys end vol 3', 'Bookholic', 56, 3, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2024-03-17', 'Call of the night vol 14', 'Ozone', 18, 1, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2024-04-01', 'Chainsaw man vol 14; Kubo won''t let me be invisible vol 11; DanDaDan vol 6;', 'Bookholic', 60, 3, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2024-04-22', 'Boys Abyss vol 3; Oshi no Ko vol 5;', 'Orange', 39.89, 2, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2024-01-22', 'Boys Abyss vol 3; Oshi no Ko vol 4', 'Orange', 48.9, 2, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2023-01-15', 'DaDaDan vol 1; Komi can''t communicate vol 11', 'In person', 36, 2, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2023-02-20', 'DanDaDan vol 2; Call of the night vol 10; Oshi no ko vol 1; Jujutsu Kaisen vol 18', 'Amazon', 82, 4, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2023-03-14', 'A silent voice box set; Kubo won''t let me be invisible vol 4 and 5', 'Amazon', 160, 3, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2023-04-10', 'Spy x Family vol 9; Jujutsu Kaisen vol 19; Kubo won''t let me be invisible vol 6', 'Amazon', 57.50, 3, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2023-05-08', 'Your lie in april vol 1,2,9,10,11', 'Amazon', 117.40, 5, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2023-05-11', 'Komi can''t communicate vol 12,13,14,15,16', 'Ozone', 65.7, 5, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2023-05-23', 'Oshi no ko vol 2; Call of the night vol 11; DanDaDan vol 3;', 'Amazon', 63.80, 3, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2023-06-06', 'Boy''s Abyss vol 1', 'Amazon', 23.5, 1, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2023-06-23', 'Your lie in april vol 3,4,5,6', 'Knigomania', 60, 4, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2023-07-03', 'Your lie in april vol 7,8', 'Amazon', 46.71, 2, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2023-07-10', 'Call of the night vol 12; Kubo won''t let me be invisible vol 7; Komi can''t communicate vol 17', 'Bookholic', 54, 3, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered'),
+    ('2023-08-20', 'Oshi no ko vol 3', 'Amazon', 8.60, 1, '31643fae-cec0-4756-bf85-aa333bee61b4', 'Delivered');
+
+
+

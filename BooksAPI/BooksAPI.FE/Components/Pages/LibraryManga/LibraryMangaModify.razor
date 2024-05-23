@@ -60,29 +60,35 @@
         }
         <MudGrid Justify="Justify.Center">
             <MudItem xs="6">
-                <MudTextField T="string" Label="Title" InputType="InputType.Text" Variant="Variant.Text"
-                              @bind-Value="_model.TitleRomaji"/>
+                <div class="d-flex col-12">
+                    <MudTextField T="string" Label="Title in Romaji" InputType="InputType.Text" Variant="Variant.Text" Class="mr-3"
+                                  @bind-Value="_model.TitleRomaji"/>
+                    <MudTextField T="string" Label="Title in English" InputType="InputType.Text" Variant="Variant.Text" Class="mr-3"
+                                  @bind-Value="_model.TitleEnglish"/>
+                    <MudTextField T="string" Label="Title in Japanese" InputType="InputType.Text" Variant="Variant.Text" Class="mr-3"
+                                  @bind-Value="_model.TitleJapanese"/>
+                </div>
                 <div class="d-flex col-12">
                     <MudSelect T="string" Label="Demographic type" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-3"
                                @bind-Value="_model.DemographicType">
-                        <MudSelectItem Value="@LibraryMangaConstants.DemographicType.GetLabelByKey(LibraryMangaConstants.DemographicType.Shounen)"/>
-                        <MudSelectItem Value="@LibraryMangaConstants.DemographicType.GetLabelByKey(LibraryMangaConstants.DemographicType.Shoujo)"/>
-                        <MudSelectItem Value="@LibraryMangaConstants.DemographicType.GetLabelByKey(LibraryMangaConstants.DemographicType.Seinen)"/>
-                        <MudSelectItem Value="@LibraryMangaConstants.DemographicType.GetLabelByKey(LibraryMangaConstants.DemographicType.Josei)"/>
+                        <MudSelectItem Value="@LibraryMangaConstants.DemographicType.Shounen">Shounen</MudSelectItem>
+                        <MudSelectItem Value="@LibraryMangaConstants.DemographicType.Shoujo">Shoujo</MudSelectItem>
+                        <MudSelectItem Value="@LibraryMangaConstants.DemographicType.Seinen">Seinen</MudSelectItem>
+                        <MudSelectItem Value="@LibraryMangaConstants.DemographicType.Josei">Josei</MudSelectItem>
                     </MudSelect>
 
                     <MudSelect T="string" Label="Type" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-3"
                                @bind-Value="_model.Type">
-                        <MudSelectItem Value="@LibraryMangaConstants.Type.GetLabelByKey(LibraryMangaConstants.Type.Manga)"/>
-                        <MudSelectItem Value="@LibraryMangaConstants.Type.GetLabelByKey(LibraryMangaConstants.Type.LightNovel)"/>
-                        <MudSelectItem Value="@LibraryMangaConstants.Type.GetLabelByKey(LibraryMangaConstants.Type.OneShot)"/>
+                        <MudSelectItem Value="@LibraryMangaConstants.Type.Manga">Manga</MudSelectItem>
+                        <MudSelectItem Value="@LibraryMangaConstants.Type.LightNovel">Light novel</MudSelectItem>
+                        <MudSelectItem Value="@LibraryMangaConstants.Type.OneShot">One shot</MudSelectItem>
                     </MudSelect>
 
                     <MudSelect T="string" Label="Publishing status" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter"
                                @bind-Value="_model.PublishingStatus">
-                        <MudSelectItem Value="@LibraryMangaConstants.PublishingType.GetLabelByKey(LibraryMangaConstants.PublishingType.Publishing)"/>
-                        <MudSelectItem Value="@LibraryMangaConstants.PublishingType.GetLabelByKey(LibraryMangaConstants.PublishingType.Finished)"/>
-                        <MudSelectItem Value="@LibraryMangaConstants.PublishingType.GetLabelByKey(LibraryMangaConstants.PublishingType.OnHiatus)"/>
+                        <MudSelectItem Value="@LibraryMangaConstants.PublishingType.Publishing">Publishing</MudSelectItem>
+                        <MudSelectItem Value="@LibraryMangaConstants.PublishingType.Finished">Finished</MudSelectItem>
+                        <MudSelectItem Value="@LibraryMangaConstants.PublishingType.OnHiatus">On Hiatus</MudSelectItem>
                     </MudSelect>
                 </div>
 
@@ -104,11 +110,11 @@
                                       @bind-Value="modelAuthor.LastName"/>
                         <MudSelect T="string" Label="Role" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-4"
                                    @bind-Value="modelAuthor.Role">
-                            <MudSelectItem Value="@AuthorConstants.AuthorRole.GetLabelByKey(AuthorConstants.AuthorRole.Story)"/>
-                            <MudSelectItem Value="@AuthorConstants.AuthorRole.GetLabelByKey(AuthorConstants.AuthorRole.Art)"/>
-                            <MudSelectItem Value="@AuthorConstants.AuthorRole.GetLabelByKey(AuthorConstants.AuthorRole.StoryAndArt)"/>
+                            <MudSelectItem Value="@AuthorConstants.AuthorRole.Story">Story</MudSelectItem>
+                            <MudSelectItem Value="@AuthorConstants.AuthorRole.Art">Art</MudSelectItem>
+                            <MudSelectItem Value="@AuthorConstants.AuthorRole.StoryAndArt">Story and Art</MudSelectItem>
                         </MudSelect>
-                        <MudButton Variant="Variant.Filled" Class="h-75" Color="Color.Primary" OnClick="@(() => RemoveAuthor(modelAuthor))">Remove author</MudButton>
+                        <MudButton Variant="Variant.Filled" Class="h-75" Style="flex-shrink: 0;" Color="Color.Primary" OnClick="@(() => RemoveAuthor(modelAuthor))">Remove author</MudButton>
                     </div>
                 }
                 <div class="d-flex justify-content-center">
@@ -182,7 +188,7 @@ else if (!_isDataFetched)
 
     private async void OnValidSubmit()
     {
-        FormatCreateModel();
+        //FormatCreateModel();
         try
         {
             string serialize = JsonSerializer.Serialize(_model);
@@ -215,17 +221,17 @@ else if (!_isDataFetched)
         }
     }
 
-    private void FormatCreateModel()
-    {
-        _model.DemographicType = LibraryMangaConstants.DemographicType.GetKeyByLabel(_model.DemographicType);
-        _model.Type = LibraryMangaConstants.Type.GetKeyByLabel(_model.Type);
-        _model.PublishingStatus = LibraryMangaConstants.PublishingType.GetKeyByLabel(_model.PublishingStatus);
-
-        foreach (AuthorModel author in _model.Authors)
-        {
-            author.Role = AuthorConstants.AuthorRole.GetKeyByLabel(author.Role);
-        }
-    }
+    // private void FormatCreateModel()
+    // {
+    //     _model.DemographicType = LibraryMangaConstants.DemographicType.GetKeyByLabel(_model.DemographicType);
+    //     _model.Type = LibraryMangaConstants.Type.GetKeyByLabel(_model.Type);
+    //     _model.PublishingStatus = LibraryMangaConstants.PublishingType.GetKeyByLabel(_model.PublishingStatus);
+    //
+    //     foreach (AuthorModel author in _model.Authors)
+    //     {
+    //         author.Role = AuthorConstants.AuthorRole.GetKeyByLabel(author.Role);
+    //     }
+    // }
 
     private void FormatUpdateModel()
     {
