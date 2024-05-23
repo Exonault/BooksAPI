@@ -16,8 +16,7 @@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Cover</MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<UserMangaResponse, object>(x => x.LibraryMangaResponse.TitleRomaji)">Title</MudTableSortLabel></MudTh>
-        @* <MudTh>Title</MudTh> *@
+        <MudTh><MudTableSortLabel SortBy="new Func<UserMangaResponse, object>(x => x.LibraryMangaResponse.TitleRomaji)">Title in Romaji</MudTableSortLabel></MudTh>
         <MudTh>Reading status</MudTh>
         <MudTh>Collection status</MudTh>
         <MudTh>Collected volumes</MudTh>
@@ -29,7 +28,7 @@
         <MudTd DataLabel="Cover">
             <MudImage Src="@GetImageUrl(context.LibraryMangaResponse.MainImageUrl)" Width="150" Height="210" Fluid="true" Class="border border-dark"/>
         </MudTd>
-        <MudTd DataLabel="Title" Style="width: 30% !important;">
+        <MudTd DataLabel="Title in Romaji" Style="width: 30% !important;">
             <MudText Typo="Typo.h6">@context.LibraryMangaResponse.TitleRomaji</MudText>
         </MudTd>
         <MudTd DataLabel="Reading status">

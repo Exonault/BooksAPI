@@ -99,6 +99,9 @@
                                      @bind-Value="_model.TotalVolumes"/>
                 </div>
 
+                <MudTextField T="string" Label="Synopsis" InputType="InputType.Text" Variant="Variant.Text" AutoGrow
+                              @bind-Value="_model.Synopsis"/>
+                
                 <MudText Typo="Typo.h6" Class="mt-3 text-center">Authors</MudText>
 
                 @foreach (AuthorModel modelAuthor in _model.Authors)
@@ -170,7 +173,6 @@ else if (!_isDataFetched)
             {
                 _model = await LibraryMangaService.GetMangaModel(_id);
                 _isDataFetched = true;
-                FormatUpdateModel();
             }
 
             _isDataFetched = true;
@@ -188,7 +190,6 @@ else if (!_isDataFetched)
 
     private async void OnValidSubmit()
     {
-        //FormatCreateModel();
         try
         {
             string serialize = JsonSerializer.Serialize(_model);
@@ -197,6 +198,10 @@ else if (!_isDataFetched)
             if (IsCreate)
             {
                 _createSuccess = await LibraryMangaService.CreateManga(_model, _token, _refreshToken);
+                if (!_createSuccess)
+                {
+                    _error = true;
+                }
                 StateHasChanged();
             }
             else
@@ -205,7 +210,12 @@ else if (!_isDataFetched)
 
                 if (updateSuccess)
                 {
-                    NavigationManager.NavigateTo("/libraryManga/1");
+                    NavigationManager.NavigateTo("/libraryMangas/1");
+                }
+                else
+                {
+                    _error = true;
+                    StateHasChanged();
                 }
             }
         }
@@ -218,30 +228,7 @@ else if (!_isDataFetched)
         catch (Exception e)
         {
             _error = true;
-        }
-    }
-
-    // private void FormatCreateModel()
-    // {
-    //     _model.DemographicType = LibraryMangaConstants.DemographicType.GetKeyByLabel(_model.DemographicType);
-    //     _model.Type = LibraryMangaConstants.Type.GetKeyByLabel(_model.Type);
-    //     _model.PublishingStatus = LibraryMangaConstants.PublishingType.GetKeyByLabel(_model.PublishingStatus);
-    //
-    //     foreach (AuthorModel author in _model.Authors)
-    //     {
-    //         author.Role = AuthorConstants.AuthorRole.GetKeyByLabel(author.Role);
-    //     }
-    // }
-
-    private void FormatUpdateModel()
-    {
-        _model.DemographicType = LibraryMangaConstants.DemographicType.GetLabelByKey(_model.DemographicType);
-        _model.Type = LibraryMangaConstants.Type.GetLabelByKey(_model.Type);
-        _model.PublishingStatus = LibraryMangaConstants.PublishingType.GetLabelByKey(_model.PublishingStatus);
-
-        foreach (AuthorModel author in _model.Authors)
-        {
-            author.Role = AuthorConstants.AuthorRole.GetLabelByKey(author.Role);
+            StateHasChanged();
         }
     }
 
@@ -258,8 +245,7 @@ else if (!_isDataFetched)
         _shouldRender = true;
         StateHasChanged();
     }
-
-
+    
     private void CloseAlert()
     {
         _error = false;

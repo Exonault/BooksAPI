@@ -20,12 +20,6 @@ public static class AuthorConstants
             { StoryAndArt, "Story and Art" },
         };
 
-
-        public static string GetKeyByLabel(string value)
-        {
-            return tempDictionary.FirstOrDefault(x => x.Value == value).Key;
-        }
-
         public static string GetLabelByKey(string key)
         {
             return tempDictionary.FirstOrDefault(x => x.Key == key).Value;

@@ -27,11 +27,6 @@ public static class LibraryMangaConstants
             (Josei, "Josei")
         ];
 
-        public static string GetKeyByLabel(string label)
-        {
-            return KeyLabelMapping.FirstOrDefault(x => x.Label == label).Key;
-        }
-
         public static string GetLabelByKey(string key)
         {
             return KeyLabelMapping.FirstOrDefault(x => x.Key == key).Label;
@@ -58,12 +53,6 @@ public static class LibraryMangaConstants
             (OneShot, "One shot")
         ];
 
-
-        public static string GetKeyByLabel(string label)
-        {
-            return KeyLabelMapping.FirstOrDefault(x => x.Label == label).Key;
-        }
-
         public static string GetLabelByKey(string key)
         {
             return KeyLabelMapping.FirstOrDefault(x => x.Key == key).Label;
@@ -89,12 +78,7 @@ public static class LibraryMangaConstants
             (Finished, "Finished"),
             (OnHiatus, "On Hiatus")
         ];
-
-        public static string GetKeyByLabel(string label)
-        {
-            return KeyLabelMapping.FirstOrDefault(x => x.Label == label).Key;
-        }
-
+        
         public static string GetLabelByKey(string key)
         {
             return KeyLabelMapping.FirstOrDefault(x => x.Key == key).Label;

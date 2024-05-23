@@ -120,8 +120,6 @@ public class OrderService : IOrderService
         CreateOrderRequest requestContent = _mapper.Map<CreateOrderRequest>(model);
         
         requestContent.UserId = userId;
-        
-        FormatRequestContent(requestContent); 
 
         request.Content = JsonContent.Create(requestContent);
 
@@ -155,8 +153,6 @@ public class OrderService : IOrderService
         UpdateOrderRequest requestContent = _mapper.Map<UpdateOrderRequest>(model);
 
         requestContent.UserId = userId;
-        
-        FormatRequestContent(requestContent);
 
         // return false;
 
@@ -207,19 +203,6 @@ public class OrderService : IOrderService
         }
 
         return false;
-    }
-
-    private void FormatRequestContent<T>(T request)
-    {
-        if (request is CreateOrderRequest createRequest)
-        {
-            createRequest.Status = OrderConstants.Status.GetKeyByLabel(createRequest.Status);
-        }
-
-        else if (request is UpdateOrderRequest updateRequest)
-        {
-            updateRequest.Status = OrderConstants.Status.GetKeyByLabel(updateRequest.Status);
-        }
     }
 
     private async Task<HttpResponseMessage> RefreshRequest(string token, string refreshToken,

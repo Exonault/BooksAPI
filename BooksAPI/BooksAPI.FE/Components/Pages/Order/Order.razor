@@ -54,7 +54,7 @@
                     <MudText Typo="Typo.body1"> @context.Place</MudText>
                 </MudTd>
                 <MudTd DataLabel="Status">
-                    <MudText Typo="Typo.body1"> @context.Status</MudText>
+                    <MudText Typo="Typo.body1"> @OrderConstants.Status.GetLabelByKey(context.Status)</MudText>
                 </MudTd>
                 <MudTd DataLabel="Description" Class="w-50">
                     <MudText Typo="Typo.body1"> @context.Description</MudText>

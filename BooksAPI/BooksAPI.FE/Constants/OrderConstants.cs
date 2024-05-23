@@ -24,11 +24,6 @@ public class OrderConstants
             (Delivered, "Delivered"),
         ];
 
-        public static string GetKeyByLabel(string label)
-        {
-            return KeyLabelMapping.FirstOrDefault(x => x.Label == label).Key;
-        }
-
         public static string GetLabelByKey(string key)
         {
             return KeyLabelMapping.FirstOrDefault(x => x.Key == key).Label;

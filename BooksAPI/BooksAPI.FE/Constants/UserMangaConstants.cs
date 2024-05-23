@@ -25,11 +25,6 @@ public static class UserMangaConstants
             (PlanToRead, "Plan to read")
         ];
 
-        public static string GetKeyByLabel(string label)
-        {
-            return KeyLabelMapping.FirstOrDefault(x => x.Label == label).Key;
-        }
-
         public static string GetLabelByKey(string key)
         {
             return KeyLabelMapping.FirstOrDefault(x => x.Key == key).Label;
@@ -54,11 +49,6 @@ public static class UserMangaConstants
             (InProgress, "In progress"),
             (PlanToCollect, "Plan to collect")
         ];
-
-        public static string GetKeyByLabel(string label)
-        {
-            return KeyLabelMapping.FirstOrDefault(x => x.Label == label).Key;
-        }
 
         public static string GetLabelByKey(string key)
         {

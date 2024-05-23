@@ -58,9 +58,9 @@
 
                     <MudSelect T="string" Label="Status" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-3"
                                @bind-Value="_model.Status">
-                        <MudSelectItem Value="@OrderConstants.Status.GetLabelByKey(OrderConstants.Status.Created)"></MudSelectItem>
-                        <MudSelectItem Value="@OrderConstants.Status.GetLabelByKey(OrderConstants.Status.OnTheWay)"></MudSelectItem>
-                        <MudSelectItem Value="@OrderConstants.Status.GetLabelByKey(OrderConstants.Status.Delivered)"></MudSelectItem>
+                        <MudSelectItem Value="@OrderConstants.Status.Created">Created</MudSelectItem>
+                        <MudSelectItem Value="@OrderConstants.Status.OnTheWay">On the way</MudSelectItem>
+                        <MudSelectItem Value="@OrderConstants.Status.Delivered">Delivered</MudSelectItem>
                     </MudSelect>
 
                     <MudTextField Label="Place" InputType="InputType.Text" Variant="Variant.Text"
@@ -98,9 +98,6 @@
     private bool _error;
     private bool _isDataFetched;
 
-    // [NotInFuture(ErrorMessage = OrderMessages.NotInFuture)]
-    // private DateTime? _date = DateTime.Today;
-
     private OrderModel _model = new();
 
     protected override async Task OnInitializedAsync()
@@ -122,7 +119,6 @@
             if (!_isCreate)
             {
                 _model = await OrderService.GetOrderModel(_orderId, _token, _refreshToken, _userId);
-                // _date = _model.Date.ToDateTime(new TimeOnly(0, 0));
             }
 
             _isDataFetched = true;
@@ -141,14 +137,32 @@
         {
             if (_isCreate)
             {
-                await OrderService.CreateOrder(_model, _token, _refreshToken, _userId);
+                bool createSuccess = await OrderService.CreateOrder(_model, _token, _refreshToken, _userId);
+
+                if (!createSuccess)
+                {
+                    _error = true;
+                    StateHasChanged();
+                }
+                else
+                {
+                    NavigationManager.NavigateTo("orders");
+                }
             }
             else
             {
-                await OrderService.UpdateOrder(_orderId, _model, _token, _refreshToken, _userId);
-            }
+                bool updateSuccess = await OrderService.UpdateOrder(_orderId, _model, _token, _refreshToken, _userId);
 
-            NavigationManager.NavigateTo("orders");
+                if (!updateSuccess)
+                {
+                    _error = true;
+                    StateHasChanged();
+                }
+                else
+                {
+                    NavigationManager.NavigateTo("orders");
+                }
+            }
         }
         catch (InvalidOperationException e)
         {
@@ -161,28 +175,7 @@
             _error = true;
             StateHasChanged();
         }
-
-        // string result = JsonSerializer.Serialize(_model, new JsonSerializerOptions()
-        // {
-        //     WriteIndented = true
-        // });
-        // Console.WriteLine(result);
-        // var createOrderRequest = Mapper.Map<CreateOrderRequest>(_model);
-        //
-        // result = JsonSerializer.Serialize(createOrderRequest, new JsonSerializerOptions()
-        // {
-        //     WriteIndented = true
-        // });
-        //
-        //
-        // Console.WriteLine(result);
     }
-
-    // private void FormatModel()
-    // {
-    //     
-    //     // _model.Date = DateOnly.FromDateTime((DateTime)_date!);
-    // }
 
 
     private void CloseAlert()
