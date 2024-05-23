@@ -5,16 +5,16 @@ using CsvHelper;
 using CsvHelper.Configuration;
 
 //DO NOT RUN; 
-return;
+//return;
 
-// string filePathData = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
-string filePathData = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\manga - Copy.csv";
-// string filePathAuthorsOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
-string filePathAuthorsOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authors.csv";
-// string filePathMangasOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
-string filePathMangasOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\mangas.csv";
-// string filePathRelations = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authorMangaRelation.csv";
-string filePathRelations = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\authorMangaRelation.csv";
+string filePathData = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\CSV\manga - Copy.csv";
+// string filePathData = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\CSV\manga - Copy.csv";
+string filePathAuthorsOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\CSV\authors.csv";
+// string filePathAuthorsOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\CSV\authors.csv";
+string filePathMangasOut = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\CSV\mangas.csv";
+// string filePathMangasOut = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\CSV\mangasWithSynopsis.csv";
+string filePathRelations = @"C:\Users\k.krachmarov\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\CSV\authorMangaRelation.csv";
+// string filePathRelations = @"C:\Users\krist\Desktop\BooksAPI\BooksAPI\BooksAPI.DataCleaning\CSV\authorMangaRelation.csv";
 if (File.Exists(filePathData))
 {
     var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -27,7 +27,6 @@ if (File.Exists(filePathData))
     {
         List<Author> authorsForCsv = new List<Author>();
         List<LibraryManga> mangasForCsv = new List<LibraryManga>();
-        // List<string> demographicsList = new List<string>();
 
         List<(int authorId, int libraryMangaId)> authorIdLibraryComicIdForCsv = new List<(int, int)>();
 
@@ -54,7 +53,6 @@ if (File.Exists(filePathData))
             //string realEndDate = csv.GetField("real_end_date");
             //string genres = csv.GetField("genres");
             // string themes = csv.GetField("themes");
-            //string synopsis = csv.GetField("synopsis");
             //string background = csv.GetField("background");
            
             //string url = csv.GetField("url");
@@ -68,14 +66,22 @@ if (File.Exists(filePathData))
             // Console.WriteLine($"{synopsis}");
             // Console.WriteLine($"{background}");
 
-            string title = csv.GetField("title");
+            string titleRomaji = csv.GetField("title");
             string type = csv.GetField("type"); //manga; manhwa; light_novel; one_shot; manhua; novel; doujinshi; 
             string status = csv.GetField("status"); // currently_publishing; finished; on_hiatus; discontinued; 
             string volumes = csv.GetField("volumes");
             string demographics = csv.GetField("demographics");
             string authors = csv.GetField("authors");
             string mainPicture = csv.GetField("main_picture");
-
+            string synopsis = csv.GetField("synopsis");
+            string titleEnglish = csv.GetField("title_english");
+            string titleJapanese = csv.GetField("title_japanese");
+             
+            // Console.WriteLine($"{synopsis}");
+            string[] temp = synopsis.Split("[Written by MAL Rewrite]", StringSplitOptions.TrimEntries);
+            // Console.WriteLine(string.Join("|||", temp));
+            
+            synopsis = temp[0];
             //Console.WriteLine($"{title}; {type}; {status}; {volumes}; {demographics}; {authors}");
             type = FormatType(type);
             status = FormatPublishingStatus(status);
@@ -100,19 +106,21 @@ if (File.Exists(filePathData))
             }
             else volumesInt = null;
 
-            List<Author> extractedAuthors = FormatAuthors(authors, title);
+            List<Author> extractedAuthors = FormatAuthors(authors, titleRomaji);
 
             //string authorsSerialized = JsonSerializer.Serialize(extractedAuthors);
             LibraryManga libraryManga = new LibraryManga
             {
                 Id = mangaId,
-                Title = title,
+                TitleRomaji = titleRomaji,
+                TitleEnglish = titleEnglish,
+                TitleJapanese = titleJapanese,
                 DemographicType = demographics,
                 Type = type,
                 PublishingStatus = status,
                 TotalVolumes = volumesInt,
                 MainImageUrl = mainPicture,
-                //Authors = authorsSerialized
+                Synopsis = synopsis,
             };
 
             mangasForCsv.Add(libraryManga);

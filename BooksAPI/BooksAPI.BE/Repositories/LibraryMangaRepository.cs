@@ -38,7 +38,7 @@ public class LibraryMangaRepository : ILibraryMangaRepository
     public async Task<List<LibraryManga>> SearchByTitle(string searchTitle)
     {
         return await _dbContext.LibraryMangas
-            .Where(lm => EF.Functions.ILike(lm.Title, $"%{searchTitle}%"))
+            .Where(lm => EF.Functions.ILike(lm.TitleRomaji, $"%{searchTitle}%"))
             .Include(lm => lm.Authors)
             .ToListAsync();
     }

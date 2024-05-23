@@ -1,10 +1,15 @@
-﻿namespace BooksAPI.BE.Entities;
+﻿using Microsoft.EntityFrameworkCore;
 
+namespace BooksAPI.BE.Entities;
+
+[Index(nameof(Id))]
 public class Order
 {
     public int Id { get; set; }
     
     public DateOnly Date { get; set; }
+
+    public string Status { get; set; }
     
     public string Description { get; set; } = string.Empty;
     

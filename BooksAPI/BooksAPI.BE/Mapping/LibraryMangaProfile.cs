@@ -11,7 +11,11 @@ public class LibraryMangaProfile:Profile
         CreateMap<CreateLibraryMangaRequest, LibraryManga>();
 
         CreateMap<LibraryManga, LibraryMangaResponse>();
+        CreateMap<LibraryManga, LibraryMangaForPageResponse>();
 
         CreateMap<UpdateLibraryMangaRequest, LibraryManga>();
+
+       
+        
     }
 }

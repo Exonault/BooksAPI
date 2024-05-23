@@ -9,13 +9,17 @@ public class LibraryMangaValidator : AbstractValidator<LibraryManga>
 {
     public LibraryMangaValidator()
     {
-        RuleFor(x => x.Title)
+        RuleFor(x => x.TitleRomaji)
             .NotEmpty()
-            .WithMessage(LibraryMangaMessages.TitleValidationMessage);
+            .WithMessage(LibraryMangaMessages.TitleRomajiRequired);
+        
+        RuleFor(x => x.TitleJapanese)
+            .NotEmpty()
+            .WithMessage(LibraryMangaMessages.TitleJapaneseRequired);
         
         RuleFor(x => x.DemographicType)
             .NotEmpty()
-            .WithMessage(LibraryMangaMessages.DemographicTypeRequiredMessage)
+            .WithMessage(LibraryMangaMessages.DemographicTypeRequired)
             .Must(x => LibraryMangaConstants.DemographicType.DemographicTypes.Contains(x))
             .WithMessage(LibraryMangaMessages.DemographicTypeMessage);
 
@@ -27,10 +31,14 @@ public class LibraryMangaValidator : AbstractValidator<LibraryManga>
 
         RuleFor(x => x.PublishingStatus)
             .NotEmpty()
-            .WithMessage(LibraryMangaMessages.PublishingStatusRequiredMessage)
+            .WithMessage(LibraryMangaMessages.PublishingStatusRequired)
             .Must(x => LibraryMangaConstants.PublishingType.PublishingStatuses.Contains(x))
             .WithMessage(LibraryMangaMessages.PublishingStatusValidationMessage);
 
+        RuleFor(x => x.Synopsis)
+            .NotEmpty()
+            .WithMessage(LibraryMangaMessages.SynopsisRequired);
+        
         RuleForEach(x => x.Authors)
             .SetValidator(new AuthorValidator());
         
@@ -39,7 +47,7 @@ public class LibraryMangaValidator : AbstractValidator<LibraryManga>
         {
             if (obj.PublishingStatus is (LibraryMangaConstants.PublishingType.Finished or LibraryMangaConstants.PublishingType.OnHiatus) && obj.TotalVolumes == 0)
             {
-                context.AddFailure("TotalVolumes", LibraryMangaMessages.TotalVolumesRequired);
+                context.AddFailure("TotalVolumes", LibraryMangaMessages.TotalVolumesValidationMessage);
             }
         });
     }

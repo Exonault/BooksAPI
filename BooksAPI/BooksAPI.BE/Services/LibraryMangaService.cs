@@ -85,12 +85,12 @@ public class LibraryMangaService : ILibraryMangaService
         return _mapper.Map<List<LibraryMangaResponse>>(searchResult);
     }
 
-    public async Task<List<LibraryMangaResponse>> GetLibraryMangasForPage(int pageIndex, int pageEntriesCount)
+    public async Task<List<LibraryMangaForPageResponse>> GetLibraryMangasForPage(int pageIndex, int pageEntriesCount)
     {
         List<LibraryManga> libraryMangasForPage = await _libraryMangaRepository
             .GetLibraryMangasForPage(pageIndex - 1, pageEntriesCount); //page 1 = pageIndex 0
 
-        return _mapper.Map<List<LibraryMangaResponse>>(libraryMangasForPage);
+        return _mapper.Map<List<LibraryMangaForPageResponse>>(libraryMangasForPage);
     }
 
     public async Task UpdateLibraryManga(int id, UpdateLibraryMangaRequest request)

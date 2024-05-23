@@ -38,7 +38,7 @@ public static class LibraryMangaEndpoints
             .AllowAnonymous()
             .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(15))
                 .Tag(CacheConstants.LibraryMangaForPageTag))
-            .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaResponse>), "application/json")
+            .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaForPageResponse>), "application/json")
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("libraryManga/search", SearchByTitle)
@@ -138,7 +138,7 @@ public static class LibraryMangaEndpoints
     private static async Task<IResult> GetLibraryMangasForPage([FromQuery] int pageIndex,
         [FromQuery] int pageEntriesCount, ILibraryMangaService service)
     {
-        List<LibraryMangaResponse> libraryMangaResponses =
+        List<LibraryMangaForPageResponse> libraryMangaResponses =
             await service.GetLibraryMangasForPage(pageIndex, pageEntriesCount);
 
         return Results.Ok(libraryMangaResponses);

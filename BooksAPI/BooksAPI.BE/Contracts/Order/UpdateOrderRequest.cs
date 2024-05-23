@@ -6,6 +6,8 @@ public class UpdateOrderRequest
     
     public string Description { get; set; } = string.Empty;
     
+    public string Status { get; set; } = string.Empty;
+    
     public string Place { get; set; } = string.Empty;
     
     public decimal Amount { get; set; }

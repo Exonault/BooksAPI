@@ -8,8 +8,14 @@ public class LibraryMangaResponse
     [JsonPropertyName("id")]
     public int Id { get; set; }
     
-    [JsonPropertyName("title")]
-    public string Title { get; set; } = string.Empty;
+    [JsonPropertyName("titleRomaji")]
+    public string TitleRomaji { get; set; } = string.Empty;
+    
+    [JsonPropertyName("titleEnglish")]
+    public string? TitleEnglish { get; set; } = string.Empty; 
+    
+    [JsonPropertyName("titleJapanese")]
+    public string TitleJapanese { get; set; } = string.Empty; 
 
     [JsonPropertyName("authors")]
     public List<AuthorResponse> Authors { get; set; } = new List<AuthorResponse>();

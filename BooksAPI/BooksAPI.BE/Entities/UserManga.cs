@@ -1,5 +1,8 @@
-﻿namespace BooksAPI.BE.Entities;
+﻿using Microsoft.EntityFrameworkCore;
 
+namespace BooksAPI.BE.Entities;
+
+[Index(nameof(Id))]
 public class UserManga
 {
     public int Id { get; set; }

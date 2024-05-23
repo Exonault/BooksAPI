@@ -11,7 +11,11 @@ public class LibraryMangaConfiguration:IEntityTypeConfiguration<LibraryManga>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
-        builder.Property(x => x.Title).IsRequired();
+        builder.Property(x => x.TitleRomaji).IsRequired();
+        
+        builder.Property(x => x.TitleEnglish).IsRequired(false);
+        
+        builder.Property(x => x.TitleJapanese).IsRequired();
        
         builder.Property(x => x.DemographicType).IsRequired();
         
@@ -23,5 +27,6 @@ public class LibraryMangaConfiguration:IEntityTypeConfiguration<LibraryManga>
 
         builder.Property(x => x.MainImageUrl).IsRequired(false);
 
+        builder.Property(x => x.Synopsis).IsRequired();
     }
 }

@@ -80,7 +80,18 @@ namespace BooksAPI.BE.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("Synopsis")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TitleEnglish")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TitleJapanese")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TitleRomaji")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -123,11 +134,17 @@ namespace BooksAPI.BE.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Id");
 
                     b.HasIndex("UserId");
 
@@ -237,6 +254,8 @@ namespace BooksAPI.BE.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Id");
 
                     b.HasIndex("LibraryMangaId");
 

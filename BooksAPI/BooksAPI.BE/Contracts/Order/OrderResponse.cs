@@ -9,6 +9,9 @@ public class OrderResponse
     
     [JsonPropertyName("date")]
     public DateOnly Date { get; set; }
+
+    [JsonPropertyName("status")]
+    public string Status { get; set; } = string.Empty;
     
     [JsonPropertyName("description")]
     public string Description { get; set; } = string.Empty;

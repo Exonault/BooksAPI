@@ -128,7 +128,7 @@ public class StatisticsService : IStatisticsService
             MangaResponse mapping = new MangaResponse()
             {
                 Price = priceForSeries,
-                Title = userManga.LibraryManga.Title,
+                Title = userManga.LibraryManga.TitleRomaji,
             };
 
             mappings.Add(mapping);
