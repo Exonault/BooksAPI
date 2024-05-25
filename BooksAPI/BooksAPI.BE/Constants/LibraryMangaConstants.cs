@@ -25,7 +25,7 @@ public static class LibraryMangaConstants
         public const string LightNovel = "LightNovel";
         public const string OneShot = "OneShot";
         
-        public static readonly IReadOnlyList<string> ComicTypes = new List<string>
+        public static readonly IReadOnlyList<string> Types = new List<string>
         {
             Manga,
             LightNovel,

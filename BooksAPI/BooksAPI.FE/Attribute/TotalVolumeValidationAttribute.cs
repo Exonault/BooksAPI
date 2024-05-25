@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using BooksAPI.FE.Constants;
+using BooksAPI.FE.Messages;
+using BooksAPI.FE.Model;
 
 namespace BooksAPI.FE.Attribute;
 
@@ -7,21 +9,22 @@ public class TotalVolumeValidationAttribute : ValidationAttribute
 {
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
-        int valueInt = Convert.ToInt32(value);
-        var property = validationContext.ObjectType.GetProperty("PublishingStatus");
-        if (property == null)
+        LibraryMangaModel model = (LibraryMangaModel)validationContext.ObjectInstance;
+
+        string publishingStatus = model.PublishingStatus;
+        string type = model.Type;
+        int? totalVolumes = model.TotalVolumes;
+
+        if (LibraryMangaConstants.PublishingType.Publishing == publishingStatus && totalVolumes != 0)
         {
-            return new ValidationResult($"Unknown property: PublishingStatus");
+            return new ValidationResult(LibraryMangaMessages.TotalVolumesPublishingStatusMessage);
         }
 
-        var otherValue = property.GetValue(validationContext.ObjectInstance, null);
-        string? otherValueString = Convert.ToString(otherValue);
-
-        if (LibraryMangaConstants.PublishingType.Publishing == otherValueString && valueInt != 0)
+        if (LibraryMangaConstants.Type.OneShot == type && totalVolumes is not 1)
         {
-            return new ValidationResult(this.ErrorMessage);
+            return new ValidationResult(LibraryMangaMessages.TotalVolumesOneShot);
         }
 
-        return null;
+        return ValidationResult.Success;
     }
 }

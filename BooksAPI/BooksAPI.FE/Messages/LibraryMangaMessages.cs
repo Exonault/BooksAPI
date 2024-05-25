@@ -17,4 +17,6 @@ public static class LibraryMangaMessages
     public const string TotalVolumesPublishingStatusMessage = "You can't input total volumes when the publishing status is Publishing";
 
     public const string SynopsisRequired = "Synopsis is required";
+
+    public const string TotalVolumesOneShot = "Total volumes must be 1 if the type is One Shot";
 }

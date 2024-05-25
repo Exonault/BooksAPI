@@ -17,8 +17,8 @@ public static class LibraryMangaMessages
 
     public const string TypeRequiredMessage = "Type is required";
     
-    public static readonly string ComicTypeValidationMessage =
-        $"Comic type must be one of the following: " + String.Join(", ", LibraryMangaConstants.Type.ComicTypes);
+    public static readonly string TypeValidationMessage =
+        $"Type must be one of the following: " + String.Join(", ", LibraryMangaConstants.Type.Types);
 
     public const string PublishingStatusRequired = "Publishing status is required.";
 
@@ -29,6 +29,11 @@ public static class LibraryMangaMessages
 
     public const string TotalVolumesValidationMessage =
         "Total volumes are required when the publishing status is Finished or OnHiatus.";
+
+    public const string TotalVolumesOneShotValidationMessage = "Total volumes must be 1 when the type is OneShot";
+
+    public const string PublishingStatusOneShotValidationMessage =
+        "Publishing status must be Finished if the type is OneShot";
 
     public const string SynopsisRequired = "Synopsis is required";
 }

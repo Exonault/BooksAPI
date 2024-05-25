@@ -21,6 +21,7 @@ public class LibraryMangaModel
     public string Type { get; set; } = string.Empty;
    
     [Required(ErrorMessage = LibraryMangaMessages.PublishingStatusRequired)]
+    [PublishingStatusValidation]
     public string PublishingStatus { get; set; } = string.Empty;
 
     [Required(ErrorMessage = LibraryMangaMessages.SynopsisRequired)]
@@ -28,7 +29,7 @@ public class LibraryMangaModel
     
     public string? MainImageUrl { get; set; } = string.Empty;
    
-    [TotalVolumeValidation(ErrorMessage = LibraryMangaMessages.TotalVolumesPublishingStatusMessage)]
+    [TotalVolumeValidation]
     public int? TotalVolumes { get; set; }
     
     [EnsureMinimumElements(1, ErrorMessage = LibraryMangaMessages.AuthorsRequired)]
