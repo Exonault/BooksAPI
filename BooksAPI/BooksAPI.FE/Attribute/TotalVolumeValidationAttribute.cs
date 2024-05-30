@@ -15,7 +15,7 @@ public class TotalVolumeValidationAttribute : ValidationAttribute
         string type = model.Type;
         int? totalVolumes = model.TotalVolumes;
 
-        if (LibraryMangaConstants.PublishingType.Publishing == publishingStatus && totalVolumes != 0)
+        if (LibraryMangaConstants.PublishingType.Publishing == publishingStatus && totalVolumes is not null)
         {
             return new ValidationResult(LibraryMangaMessages.TotalVolumesPublishingStatusMessage);
         }
