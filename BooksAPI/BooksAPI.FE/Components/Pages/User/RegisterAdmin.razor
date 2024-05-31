@@ -1,7 +1,8 @@
-﻿@page "/register"
+﻿@page "/register/admin"
 
-@attribute [AllowAnonymous]
+@attribute [Authorize(Policy = ApplicationConstants.PolicyNames.AdminRolePolicyName)]
 
+@using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.User
 @using BooksAPI.FE.Interfaces
 @using BooksAPI.FE.Messages
@@ -11,8 +12,8 @@
 @inject IUserService UserService
 @inject NavigationManager NavigationManager
 
-<PageTitle>Register</PageTitle>
-<h3 class="text-center mb-4">Register</h3>
+<PageTitle>Register admin</PageTitle>
+<h3 class="text-center mb-4">Register new Admin</h3>
 
 @if (_error)
 {
@@ -56,7 +57,7 @@
     {
         try
         {
-            RegisterResponse? registerResponse = await UserService.Register(_model, false);
+            RegisterResponse? registerResponse = await UserService.Register(_model, true);
             
             if (registerResponse is not null)
             {

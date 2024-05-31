@@ -25,9 +25,10 @@ public class UserService : IUserService
     }
 
 
-    public async Task<RegisterResponse?> Register(RegisterModel model)
+    public async Task<RegisterResponse?> Register(RegisterModel model, bool isAdmin)
     {
         RegisterRequest requestContent = _mapper.Map<RegisterRequest>(model);
+        requestContent.Admin = isAdmin;
         string uri = string.Format(_userUrl, "register");
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, uri);
         request.Content = JsonContent.Create(requestContent);
