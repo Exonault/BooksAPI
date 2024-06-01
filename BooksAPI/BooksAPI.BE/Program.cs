@@ -51,7 +51,8 @@ builder.Services.AddAuthentication(options =>
             ValidateLifetime = true,
             ValidIssuer = configuration["Jwt:Issuer"],
             ValidAudience = configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!)),
+            ClockSkew = TimeSpan.FromSeconds(5)
         };
     });
 
@@ -71,6 +72,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy(corsPolicy,
         policy => { policy.WithOrigins(configuration.GetSection("FrontEndUrl").Value!); });
 });
+
+var app = builder.Build();
+
+app.UseCors(corsPolicy);
 
 //Entity Services
 builder.Services.AddLibraryMangaServices();
@@ -99,7 +104,6 @@ builder.Services.AddOutputCache()
     });
 
 
-var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -110,7 +114,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(corsPolicy);
+
 
 app.UseAuthentication();
 app.UseAuthorization();

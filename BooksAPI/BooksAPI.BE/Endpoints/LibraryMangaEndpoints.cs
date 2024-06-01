@@ -28,7 +28,7 @@ public static class LibraryMangaEndpoints
 
         app.MapGet("/libraryManga/{id:int}", GetLibraryMangaById)
             .AllowAnonymous()
-            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(10))
+            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5))
                 .Tag(CacheConstants.LibraryMangaWithIdTag))
             .Produces(StatusCodes.Status200OK, typeof(LibraryMangaResponse), "application/json")
             .Produces(StatusCodes.Status404NotFound)
@@ -36,21 +36,21 @@ public static class LibraryMangaEndpoints
 
         app.MapGet("/libraryMangas/", GetLibraryMangasForPage)
             .AllowAnonymous()
-            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(15))
+            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5))
                 .Tag(CacheConstants.LibraryMangaForPageTag))
             .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaForPageResponse>), "application/json")
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("libraryManga/search", SearchByTitle)
             .AllowAnonymous()
-            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(10))
+            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5))
                 .Tag(CacheConstants.LibraryMangaSearchTag))
             .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaResponse>), "application/json")
             .Produces(StatusCodes.Status500InternalServerError);
 
         app.MapGet("/libraryMangas/all", GetAllLibraryMangas)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
-            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(15))
+            .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5))
                 .Tag(CacheConstants.AllLibraryMangasTag))
             .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaResponse>), "application/json")
             .Produces(StatusCodes.Status500InternalServerError);

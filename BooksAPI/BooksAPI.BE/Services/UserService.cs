@@ -21,7 +21,7 @@ public class UserService : IUserService
     private readonly IConfiguration _config;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    private static readonly TimeSpan TokenDuration = TimeSpan.FromMinutes(30);
+    private static readonly TimeSpan TokenDuration = TimeSpan.FromMinutes(5);
 
     public UserService(IUserRepository repository, IConfiguration config, IHttpContextAccessor httpContextAccessor)
     {
@@ -109,7 +109,7 @@ public class UserService : IUserService
 
         user.RefreshToken = refreshToken;
 
-        user.RefreshTokenExpiry = DateTime.UtcNow.AddHours(24);
+        user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(30);
 
         await _repository.UpdateUser(user);
 
