@@ -20,26 +20,34 @@ public static class UserEndpoint
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status409Conflict)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Register a user")
+            .WithOpenApi();;
         
         app.MapPost("user/login/", Login)
             .AllowAnonymous()
             .Produces(StatusCodes.Status200OK, typeof(LoginResponse), "application/json")
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Log a user in the system")
+            .WithOpenApi();;
 
         app.MapPost("user/refresh/", Refresh)
             .AllowAnonymous()
             .Produces(StatusCodes.Status200OK, typeof(LoginResponse), "application/json")
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Refresh user tokens")
+            .WithOpenApi();;
 
         app.MapDelete("user/revoke", Revoke)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Revoke all tokens")
+            .WithOpenApi();
     }
 
 

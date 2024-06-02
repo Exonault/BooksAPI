@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.OutputCaching;
 
 namespace BooksAPI.BE.Endpoints;
 
+
 public static class LibraryMangaEndpoints
 {
     public static void MapLibraryMangaEndpoints(this WebApplication app)
@@ -24,36 +25,46 @@ public static class LibraryMangaEndpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Create a library manga entry")
+            .WithOpenApi();
 
         app.MapGet("/libraryManga/{id:int}", GetLibraryMangaById)
-            .AllowAnonymous()
             .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5))
                 .Tag(CacheConstants.LibraryMangaWithIdTag))
+            .AllowAnonymous()
             .Produces(StatusCodes.Status200OK, typeof(LibraryMangaResponse), "application/json")
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Retrieve a library manga by id")
+            .WithOpenApi();
 
         app.MapGet("/libraryMangas/", GetLibraryMangasForPage)
             .AllowAnonymous()
             .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5))
                 .Tag(CacheConstants.LibraryMangaForPageTag))
             .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaForPageResponse>), "application/json")
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Retrieve library mangas for a page entry")
+            .WithOpenApi();
 
         app.MapGet("libraryManga/search", SearchByTitle)
             .AllowAnonymous()
             .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5))
                 .Tag(CacheConstants.LibraryMangaSearchTag))
             .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaResponse>), "application/json")
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Search for library mangas with given title")
+            .WithOpenApi();
 
         app.MapGet("/libraryMangas/all", GetAllLibraryMangas)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
             .CacheOutput(x => x.Expire(TimeSpan.FromMinutes(5))
                 .Tag(CacheConstants.AllLibraryMangasTag))
             .Produces(StatusCodes.Status200OK, typeof(List<LibraryMangaResponse>), "application/json")
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Retrieve ALL library mangas for a page entry")
+            .WithOpenApi();
 
         app.MapPut("/libraryManga/{id:int}", UpdateLibraryMangas)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
@@ -62,7 +73,9 @@ public static class LibraryMangaEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Update a library manga entry")
+            .WithOpenApi();
 
         app.MapDelete("/libraryManga/{id:int}", DeleteLibraryMangas)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
@@ -70,7 +83,9 @@ public static class LibraryMangaEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Delete a library manga entry")
+            .WithOpenApi();
     }
 
 

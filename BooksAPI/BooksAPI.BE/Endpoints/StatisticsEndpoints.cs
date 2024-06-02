@@ -19,7 +19,9 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get statistics about user collection in terms of demographic")
+            .WithOpenApi();
 
         app.MapGet("statistic/userManga/type/{userId}", GetUserMangaBreakdownByType)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
@@ -27,7 +29,9 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get statistics about user collection in terms of type")
+            .WithOpenApi();
 
         app.MapGet("statistic/userManga/publishingStatus/{userId}", GetUserMangaBreakdownByPublishingStatus)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
@@ -35,7 +39,9 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get statistics about user collection in terms of publishing status")
+            .WithOpenApi();
 
         app.MapGet("statistic/userManga/readingStatus/{userId}", GetUserMangaBreakdownByReadingStatus)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
@@ -43,7 +49,9 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get statistics about user collection in terms of reading status")
+            .WithOpenApi();
 
         app.MapGet("statistic/userManga/collectionStatus/{userId}", GetUserMangaBreakdownByCollectionStatus)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
@@ -51,7 +59,9 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get statistics about user collection in terms of collection status")
+            .WithOpenApi();
 
         app.MapGet("statistic/userManga/totalSpending/{userId}", GetUserMangaBreakdownFromTotalSpending)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
@@ -59,7 +69,9 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get statistics about user collection and his total spending")
+            .WithOpenApi();
 
         app.MapGet("statistic/userManga/general/{userId}", GetGeneralStatistics)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
@@ -67,7 +79,9 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get general information about user collection")
+            .WithOpenApi();
 
         app.MapGet("statistic/order/year/{userId}", GetOrderBreakdownByYear)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
@@ -75,7 +89,9 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get statistics about user orders in terms of year")
+            .WithOpenApi();
 
         app.MapGet("statistic/order/monthsByYear/{userId}", GetOrderBreakdownForMonthsByYear)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
@@ -83,7 +99,9 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get statistics about user orders in terms of months for spesific year")
+            .WithOpenApi();
         
         app.MapGet("statistic/order/place/{userId}", GetOrderBreakdownByPlace)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
@@ -91,7 +109,9 @@ public static class StatisticsEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get statistics about user orders in terms of places")
+            .WithOpenApi();
             
     }
 

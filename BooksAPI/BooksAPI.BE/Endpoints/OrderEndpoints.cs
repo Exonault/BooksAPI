@@ -24,7 +24,9 @@ public static class OrderEndpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Create an order")
+            .WithOpenApi();
 
         app.MapGet("/order/{id:int}", GetOrderById)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
@@ -33,7 +35,9 @@ public static class OrderEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Retrieve an order by id")
+            .WithOpenApi();;
 
         app.MapGet("/order/", GetAllOrdersByUserId)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
@@ -41,14 +45,18 @@ public static class OrderEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Retrieve all orders related to a user")
+            .WithOpenApi();;
 
         app.MapGet("/orders/all", GetAllOrders)
             .RequireAuthorization(AppConstants.PolicyNames.AdminRolePolicyName)
             .Produces(StatusCodes.Status200OK, typeof(List<OrderResponse>), "application/json")
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Retrieve ALL orders")
+            .WithOpenApi();;
 
         app.MapPut("/order/{id:int}", UpdateOrder)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
@@ -57,7 +65,9 @@ public static class OrderEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Update an order")
+            .WithOpenApi();;
 
         app.MapDelete("/order/{id:int}", DeleteOrder)
             .RequireAuthorization(AppConstants.PolicyNames.UserRolePolicyName)
