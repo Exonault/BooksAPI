@@ -73,10 +73,6 @@ builder.Services.AddCors(options =>
         policy => { policy.WithOrigins(configuration.GetSection("FrontEndUrl").Value!); });
 });
 
-var app = builder.Build();
-
-app.UseCors(corsPolicy);
-
 //Entity Services
 builder.Services.AddLibraryMangaServices();
 builder.Services.AddUserMangaServices();
@@ -103,6 +99,8 @@ builder.Services.AddOutputCache()
         options.Configuration = configuration["Redis:Url"];
     });
 
+var app = builder.Build();
+
 
 
 // Configure the HTTP request pipeline.
@@ -114,7 +112,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
+app.UseCors(corsPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();
