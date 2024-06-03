@@ -16,7 +16,11 @@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Cover</MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<UserMangaResponse, object>(x => x.LibraryMangaResponse.TitleRomaji)">Title in Romaji</MudTableSortLabel></MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserMangaResponse, object>(x => x.LibraryMangaResponse.TitleRomaji)">
+                Title in Romaji
+            </MudTableSortLabel>
+        </MudTh>
         <MudTh>Reading status</MudTh>
         <MudTh>Collection status</MudTh>
         <MudTh>Collected volumes</MudTh>
@@ -48,12 +52,19 @@
         </MudTd>
         <MudTd DataLabel="Actions" Style="width: 10% !important;">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
+                       OnClick="@(() => NavigationManager.NavigateTo($"libraryMangaInformation?libraryMangaId={context.LibraryMangaResponse.Id}"))">
+                Information
+            </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"
                        OnClick="@(() => NavigationManager.NavigateTo($"/updateUserManga?userMangaId={context.Id}"))">
                 Update
             </MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="() => DeleteManga(context.Id)">Delete</MudButton>
         </MudTd>
     </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 5, 10, 25,}" />
+    </PagerContent>
 </MudTable>
 
 @code {
