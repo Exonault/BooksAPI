@@ -33,46 +33,25 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("/createOrder"))">Add new order</MudButton>
         </div>
 
-        <MudTable Items="_orders">
-            <HeaderContent>
-                <MudTh>
-                    <MudTableSortLabel SortBy="new Func<OrderResponse, object>(x=> x.Date)" InitialDirection="SortDirection.Descending">Date</MudTableSortLabel>
-                </MudTh>
-                @* <MudTh>Date</MudTh> *@
-                <MudTh>Place</MudTh>
-                <MudTh>Status</MudTh>
-                <MudTh>Description</MudTh>
-                <MudTh>Price</MudTh>
-                <MudTh>Count</MudTh>
-                <MudTh>Actions</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Date">
-                    <MudText Typo="Typo.body1"> @context.Date.ToShortDateString()</MudText>
-                </MudTd>
-                <MudTd DataLabel="Place">
-                    <MudText Typo="Typo.body1"> @context.Place</MudText>
-                </MudTd>
-                <MudTd DataLabel="Status">
-                    <MudText Typo="Typo.body1"> @OrderConstants.Status.GetLabelByKey(context.Status)</MudText>
-                </MudTd>
-                <MudTd DataLabel="Description" Class="w-50">
-                    <MudText Typo="Typo.body1"> @context.Description</MudText>
-                </MudTd>
-                <MudTd DataLabel="Price">
-                    <MudText Typo="Typo.body1"> @context.Amount</MudText>
-                </MudTd>
-                <MudTd DataLabel="Count">
-                    <MudText Typo="Typo.body1"> @context.NumberOfItems</MudText>
-                </MudTd>
-                <MudTd DataLabel="Actions" Style="width: 10% !important;">
-                    <div class="justify-content-center">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo($"/updateOrder/?orderId={context.Id}"))">Update</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => DeleteOrder(context.Id))" Class="mt-3">Delete</MudButton>
-                    </div>
-                </MudTd>
-            </RowTemplate>
-        </MudTable>
+        <MudTabs Elevation="2" ApplyEffectsToContainer="true" Centered="true">
+            <MudTabPanel Text="All">
+                <OrderTable Orders="_orders"/>
+            </MudTabPanel>
+            
+            <MudTabPanel Text="Status">
+                <MudTabs Elevation="2" ApplyEffectsToContainer="true" Centered="true">
+                    <MudTabPanel Text="Created">
+                        <OrderTable Orders="_orders.Where(x=> x.Status == OrderConstants.Status.Created).ToList()"/>
+                    </MudTabPanel>
+                    <MudTabPanel Text="On the way">
+                        <OrderTable Orders="_orders.Where(x=> x.Status == OrderConstants.Status.OnTheWay).ToList()"/>
+                    </MudTabPanel>
+                    <MudTabPanel Text="Delivered">
+                        <OrderTable Orders="_orders.Where(x=> x.Status == OrderConstants.Status.Delivered).ToList()"/>
+                    </MudTabPanel>
+                </MudTabs>
+            </MudTabPanel>
+        </MudTabs>
     }
 }
 else
@@ -137,31 +116,6 @@ else
         {
             _error = true;
             _shouldRender = true;
-        }
-    }
-
-    private async Task DeleteOrder(int id)
-    {
-        try
-        {
-            bool isDeleteSuccess = await OrderService.DeleteOrder(id, _token, _refreshToken, _userId);
-
-            //bool isDeleteSuccess = await UserMangaService.DeleteUserManga(id, _token, _refreshToken, _userId);
-            if (isDeleteSuccess)
-            {
-                // UserMangaResponse? userMangaResponse = Mangas.FirstOrDefault(x => x.Id == id);
-                // Mangas.Remove(userMangaResponse!);
-                // StateHasChanged();
-
-                OrderResponse? orderResponse = _orders.FirstOrDefault(x => x.Id == id);
-                _orders.Remove(orderResponse!);
-                StateHasChanged();
-            }
-        }
-        catch (Exception e)
-        {
-            _error = true;
-            StateHasChanged();
         }
     }
 

@@ -1,0 +1,100 @@
+﻿@using BooksAPI.FE.Constants
+@using BooksAPI.FE.Contracts.Order
+@using BooksAPI.FE.Interfaces
+@using BooksAPI.FE.Util
+
+@inject NavigationManager NavigationManager;
+@inject IOrderService OrderService;
+@inject IJSRuntime JsRuntime;
+
+<MudTable Items="Orders">
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<OrderResponse, object>(x=> x.Date)" InitialDirection="SortDirection.Descending">Date</MudTableSortLabel>
+        </MudTh>
+        <MudTh>Place</MudTh>
+        <MudTh>Status</MudTh>
+        <MudTh>Description</MudTh>
+        <MudTh>Price</MudTh>
+        <MudTh>Count</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Date">
+            <MudText Typo="Typo.body1"> @context.Date.ToShortDateString()</MudText>
+        </MudTd>
+        <MudTd DataLabel="Place">
+            <MudText Typo="Typo.body1"> @context.Place</MudText>
+        </MudTd>
+        <MudTd DataLabel="Status">
+            <MudText Typo="Typo.body1"> @OrderConstants.Status.GetLabelByKey(context.Status)</MudText>
+        </MudTd>
+        <MudTd DataLabel="Description" Class="w-50">
+            <MudText Typo="Typo.body1"> @context.Description</MudText>
+        </MudTd>
+        <MudTd DataLabel="Price">
+            <MudText Typo="Typo.body1"> @context.Amount</MudText>
+        </MudTd>
+        <MudTd DataLabel="Count">
+            <MudText Typo="Typo.body1"> @context.NumberOfItems</MudText>
+        </MudTd>
+        <MudTd DataLabel="Actions" Style="width: 10% !important;">
+            <div class="justify-content-center">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo($"/updateOrder/?orderId={context.Id}"))">Update</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => DeleteOrder(context.Id))" Class="mt-3">Delete</MudButton>
+            </div>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 5, 10, 25,}" />
+    </PagerContent>
+</MudTable>
+
+@code{
+    [Parameter]
+    public List<OrderResponse> Orders { get; set; }
+    
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+    
+    private string _token;
+    private string _refreshToken;
+    private string _userId;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState state = await AuthenticationState;
+
+        _userId = UserUtil.GetUserId(state.User);
+
+        try
+        {
+            string[] tokens = await JsRuntime.InvokeAsync<string[]>("getTokens");
+            _token = tokens[0];
+            _refreshToken = tokens[1];
+        }
+        catch (Exception e)
+        {
+            StateHasChanged();
+        }
+    }
+    
+    private async Task DeleteOrder(int id)
+    {
+        try
+        {
+            bool isDeleteSuccess = await OrderService.DeleteOrder(id, _token, _refreshToken, _userId);
+            if (isDeleteSuccess)
+            {
+                OrderResponse? orderResponse = Orders.FirstOrDefault(x => x.Id == id);
+                Orders.Remove(orderResponse!);
+                StateHasChanged();
+            }
+        }
+        catch (Exception e)
+        {
+            StateHasChanged();
+        }
+    }
+
+}

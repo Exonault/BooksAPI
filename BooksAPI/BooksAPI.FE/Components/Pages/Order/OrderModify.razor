@@ -53,7 +53,7 @@
                 <MudTextField T="string" Label="Description" InputType="InputType.Text" Variant="Variant.Text" AutoGrow
                               @bind-Value="_model.Description"/>
                 <div class="d-flex col-12">
-                    <MudDatePicker Editable="true" Mask="@(new DateMask("dd.MM.yyyy"))" DateFormat="dd.MM.yyyy" Class="mr-3"
+                    <MudDatePicker Editable="true" Mask="@(new DateMask("dd.MM.yyyy"))" DateFormat="dd.MM.yyyy" Class="mr-3" Label="Date"
                                    @bind-Date="_model.Date"/>
 
                     <MudSelect T="string" Label="Status" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Class="mr-3"
