@@ -16,6 +16,7 @@
     <HeaderContent>
         <MudTh>Cover</MudTh>
         <MudTh>Title</MudTh>
+        <MudTh>Type</MudTh>
         <MudTh>Authors</MudTh>
         <MudTh>Actions</MudTh>
     </HeaderContent>
@@ -23,8 +24,11 @@
         <MudTd DataLabel="Cover">
             <MudImage Src="@GetImageUrl(context.MainImageUrl)" Width="150" Height="210" Fluid="true" Class="border border-dark"/>
         </MudTd>
-        <MudTd DataLabel="Title" Class="w-50">
+        <MudTd DataLabel="Title"  Style="width: 40% !important;">
             <MudText Typo="Typo.h6">@context.TitleRomaji</MudText>
+        </MudTd>
+        <MudTd DataLabel="Type">
+            <MudText Typo="Typo.body1">@LibraryMangaConstants.Type.GetLabelByKey(context.Type)</MudText>
         </MudTd>
         <MudTd DataLabel="Authors">
             @foreach (AuthorResponse author in context.Authors)

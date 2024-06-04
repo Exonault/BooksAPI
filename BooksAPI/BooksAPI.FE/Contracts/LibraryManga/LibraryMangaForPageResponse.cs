@@ -11,6 +11,9 @@ public class LibraryMangaForPageResponse
     [JsonPropertyName("titleRomaji")]
     public string TitleRomaji { get; set; } = string.Empty;
 
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = string.Empty;
+
     [JsonPropertyName("authors")]
     public List<AuthorResponse> Authors { get; set; } = new List<AuthorResponse>();
     
