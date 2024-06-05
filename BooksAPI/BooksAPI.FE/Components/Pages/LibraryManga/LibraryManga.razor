@@ -1,4 +1,4 @@
-﻿@page "/libraryMangas/{pageNumber:int}"
+﻿@page "/libraryMangas/"
 @using BooksAPI.FE.Constants
 @using BooksAPI.FE.Contracts.LibraryManga
 @using BooksAPI.FE.Interfaces
@@ -34,22 +34,24 @@
             </Authorized>
         </AuthorizeView>
 
+        <MudText Align="Align.Center" Typo="Typo.h6" Class="mb-2">Page: @_pageNumber</MudText>
+        
         <div class="d-flex justify-content-center flex-row mb-5">
-            @if (PageNumber != 1)
+            @if (_pageNumber != 1)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="@(() => PageButtons(PageNumber - 1))">Load previous @Entries</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="@(() => PageButtons(_pageNumber - 1))">Load previous @Entries</MudButton>
             }
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(PageNumber + 1))" Class="">Load next @Entries</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(_pageNumber + 1))" Class="">Load next @Entries</MudButton>
         </div>
 
         <LibraryMangaTable Mangas="_mangas"/>
 
         <div class="d-flex justify-content-center flex-row mt-5">
-            @if (PageNumber != 1)
+            @if (_pageNumber != 1)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="@(() => PageButtons(PageNumber - 1))">Load previous @Entries</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="@(() => PageButtons(_pageNumber - 1))">Load previous @Entries</MudButton>
             }
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(PageNumber + 1))">Load next @Entries</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => PageButtons(_pageNumber + 1))">Load next @Entries</MudButton>
         </div>
     }
 }
@@ -65,8 +67,7 @@ else
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
 
-    [Parameter]
-    public int PageNumber { get; set; }
+    private int _pageNumber;
 
     private List<LibraryMangaForPageResponse>? _mangas = new();
 
@@ -79,7 +80,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await GetMangas(PageNumber);
+        _pageNumber = 1;
+        
+        await GetMangas(_pageNumber);
         _isDataFetched = true;
     }
 
@@ -100,10 +103,9 @@ else
 
     private async Task PageButtons(int page)
     {
-        PageNumber = page;
+        _pageNumber = page;
         await GetMangas(page);
         await JsRuntime.InvokeVoidAsync("window.scrollToTop");
-        NavigationManager.NavigateTo($"/libraryMangas/{page}");
         StateHasChanged();
     }
 

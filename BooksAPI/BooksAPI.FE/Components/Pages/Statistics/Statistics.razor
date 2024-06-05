@@ -45,10 +45,15 @@ else
 
         </MudTabPanel>
         <MudTabPanel Text="Orders" OnClick="@(GenerateOrdersStatistics)">
-            <div id="@OrdersByYearCountChartId" style="width: 100%; height: 500px"></div>
-            <div id="@OrdersByYearPriceChartId" style="width: 100%; height: 500px"></div>
-            <div id="@OrdersByPlaceCountChartId" style="width: 100%; height: 500px"></div>
-            <div id="@OrdersByPlacePriceChartId" style="width: 100%; height: 500px"></div>
+            <div class="d-flex">
+                <div id="@OrdersByYearCountChartId" style="width: 50%; height: 500px"></div>
+                <div id="@OrdersByYearPriceChartId" style="width: 50%; height: 500px"></div>
+            </div>
+
+            <div class="d-flex">
+                <div id="@OrdersByPlaceCountChartId" style="width: 50%; height: 500px"></div>
+                <div id="@OrdersByPlacePriceChartId" style="width: 50%; height: 500px"></div>
+            </div>
         </MudTabPanel>
 
     </MudTabs>
@@ -107,7 +112,6 @@ else
         {
             await GenerateTotalSpendingChart();
         }
-        
     }
 
 
