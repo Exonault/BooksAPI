@@ -25,6 +25,10 @@ function generateDemographicChart(demographicStatistic, chartId) {
         colors: ['#3366CC'],
         legend: "none",
         title: "Breakdown by demographic",
+        titleTextStyle: {
+            bold: true,
+            fontSize: 18
+        }
     };
 
     var view = new google.visualization.DataView(data);
@@ -54,7 +58,11 @@ function generateTypeChart(typeStatistics, chartId) {
     const options = {
         colors: ['#DC3912'],
         legend: "none",
-        title: "Breakdown by type"
+        title: "Breakdown by type",
+        titleTextStyle: {
+            bold: true,
+            fontSize: 18
+        }
     };
 
     var view = new google.visualization.DataView(data);
@@ -94,7 +102,12 @@ function generateReadingChart(readingStatistics, chartId) {
     const options = {
         colors: ['#FF9900'],
         legend: "none",
-        title: "Breakdown by reading status"
+        title: "Breakdown by reading status",
+        titleTextStyle: {
+            bold: true,
+            fontSize: 18
+        }
+        
     };
 
     const chart = new google.visualization.BarChart(document.getElementById(chartId));
@@ -114,7 +127,11 @@ function generateCollectionChart(collectionStatistics, chartId) {
     const options = {
         colors: ['#109618'],
         legend: "none",
-        title: "Breakdown by collection status"
+        title: "Breakdown by collection status",
+        titleTextStyle: {
+            bold: true,
+            fontSize: 18
+        }
     };
 
     var view = new google.visualization.DataView(data);
@@ -144,7 +161,11 @@ function generatePublishingChart(publishingStatistics, chartId) {
     const options = {
         colors: ['#990099'],
         legend: "none",
-        title: "Breakdown by publishing status"
+        title: "Breakdown by publishing status",
+        titleTextStyle: {
+            bold: true,
+            fontSize: 18
+        }
     };
 
     var view = new google.visualization.DataView(data);
@@ -181,7 +202,11 @@ function generateTotalSpendingChart(mangas, chartId) {
             height: '75%'
         },
         pieSliceText: 'value',
-        title: "Breakdown of total spending by series"
+        title: "Breakdown of total spending by series",
+        titleTextStyle: {
+            bold: true,
+            fontSize: 18
+        }
     };
 
     const chart = new google.visualization.PieChart(document.getElementById(chartId));
@@ -210,12 +235,20 @@ function generateOrderByYearCharts(orders, countChartId, priceChartId) {
         colors: ['#3366CC'],
         legend: "none",
         title: "Number of orders per year",
+        titleTextStyle: {
+            bold: true,
+            fontSize: 18
+        }
     };
 
     const sumOptions = {
         colors: ['#DC3912'],
         legend: "none",
         title: "Price of orders per year",
+        titleTextStyle: {
+            bold: true,
+            fontSize: 18
+        }
     };
 
     var countView = new google.visualization.DataView(countData);
@@ -263,12 +296,20 @@ function generateOrderByPlaceCharts(orders, countChartId, priceChartId) {
         colors: ['#109618'],
         legend: "none",
         title: "Number of orders from each place",
+        titleTextStyle: {
+            bold: true,
+            fontSize: 18
+        }
     };
 
     const sumOptions = {
         colors: ['#FF9900'],
         legend: "none",
         title: "Price of order from each place",
+        titleTextStyle: {
+            bold: true,
+            fontSize: 18
+        }
     };
 
     var countView = new google.visualization.DataView(countData);
