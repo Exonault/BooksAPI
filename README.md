@@ -1,2 +1,2 @@
 # BooksAPI
-A test API related to comics tracking and order about said comics
+An API for tracking manga collections and orders
