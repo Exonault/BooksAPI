@@ -17,7 +17,7 @@ public class CollectionStatusValidationAttribute : ValidationAttribute
         if (collectionStatus == UserMangaConstants.CollectingStatus.Collected &&
             libraryManga!.PublishingStatus == LibraryMangaConstants.PublishingType.Publishing)
         {
-            return new ValidationResult("You cant have a collected manga that is still publishing");
+            return new ValidationResult("You can't have a collected manga that is still publishing");
         }
 
         if (collectionStatus == UserMangaConstants.CollectingStatus.Collected &&

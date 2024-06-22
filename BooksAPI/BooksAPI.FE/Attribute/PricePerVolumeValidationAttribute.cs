@@ -18,7 +18,7 @@ public class PricePerVolumeValidationAttribute:ValidationAttribute
         if ((collectionStatus is UserMangaConstants.CollectingStatus.InProgress or UserMangaConstants.CollectingStatus.Collected)
             && pricePerVolume == Decimal.Zero)
         {
-            return new ValidationResult($"Price cannot be zero when status is {collectionStatus}");
+            return new ValidationResult($"Price can't be zero when status is {collectionStatus}");
         }
         
         return ValidationResult.Success;

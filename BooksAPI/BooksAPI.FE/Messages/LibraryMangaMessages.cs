@@ -12,7 +12,7 @@ public static class LibraryMangaMessages
 
     public const string PublishingStatusRequired = "Publishing status is required";
 
-    public const string AuthorsRequired = "You need to add atleast one author";
+    public const string AuthorsRequired = "You need to add at least one author";
 
     public const string TotalVolumesPublishingStatusMessage = "You can't input total volumes when the publishing status is Publishing";
 

@@ -18,7 +18,7 @@ public static class OrderMessages
 
     public const string NumberOfItemsRequired = "Number of items is required";
 
-    public const string NumberOfItemsAtLeastOne = "Number of items must be at more than or equal one";
+    public const string NumberOfItemsAtLeastOne = "Number of items must be greater than or equal to one";
 
    
 }
